@@ -1,4 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
+import { AuthProvider } from './context/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
 import BottomNav from './components/BottomNav'
 import Hero from './components/Hero'
@@ -14,6 +16,7 @@ import FAQ from './components/FAQ'
 import SocialSection from './components/SocialSection'
 import Footer from './components/Footer'
 import PortfolioPage from './pages/PortfolioPage'
+import LoginPage from './pages/LoginPage'
 import AdminPage from './pages/AdminPage'
 
 function HomePage() {
@@ -34,20 +37,37 @@ function HomePage() {
   )
 }
 
-export default function App() {
+function AppRoutes() {
   const { pathname } = useLocation()
+  const isAuth = pathname.startsWith('/login')
   const isAdmin = pathname.startsWith('/admin')
 
   return (
     <>
-      {!isAdmin && <Navbar />}
+      {!isAuth && !isAdmin && <Navbar />}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
-        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
-      {!isAdmin && <Footer />}
-      {!isAdmin && <BottomNav />}
+      {!isAuth && !isAdmin && <Footer />}
+      {!isAuth && !isAdmin && <BottomNav />}
     </>
+  )
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
   )
 }
