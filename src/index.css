@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Phudu", sans-serif;
+  --font-body: "Be Vietnam Pro", sans-serif;
+  --font-alt: "Poppins", sans-serif;
+
+  --color-ink: #161616;
+  --color-ink-2: #141414;
+  --color-paper: #f7f7f7;
+  --color-card: #f9f9f9;
+  --color-lilac: #a796f0;
+  --color-pastel-blue: #bfcff5;
+  --color-pastel-pink: #fbd2cf;
+  --color-pastel-green: #c9f0d4;
+  --color-pastel-orange: #ffe2c4;
+  --color-pastel-purple: #f0dbff;
+  --color-pastel-gray: #f0efef;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: #ffffff;
+  color: var(--color-ink);
+  overflow-x: hidden;
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+::selection {
+  background: var(--color-lilac);
+  color: #fff;
+}
