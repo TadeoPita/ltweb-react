@@ -18,6 +18,7 @@ import Footer from './components/Footer'
 import PortfolioPage from './pages/PortfolioPage'
 import LoginPage from './pages/LoginPage'
 import AdminPage from './pages/AdminPage'
+import NotFoundPage from './pages/NotFoundPage'
 
 function HomePage() {
   return (
@@ -57,6 +58,7 @@ function AppRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       {!isAuth && !isAdmin && <Footer />}
       {!isAuth && !isAdmin && <BottomNav />}
