@@ -8,6 +8,7 @@ import Capabilities from './components/Capabilities'
 import ClientsShowcase from './components/ClientsShowcase'
 import Portfolio from './components/Portfolio'
 import Solutions from './components/Solutions'
+import Manifesto from './components/Manifesto'
 import About from './components/About'
 import Steps from './components/Steps'
 import FAQ from './components/FAQ'
@@ -30,6 +31,7 @@ function HomePage() {
       <ClientsShowcase />
       <Portfolio />
       <Solutions />
+      <Manifesto />
       <About />
       <Steps />
       <FAQ />
