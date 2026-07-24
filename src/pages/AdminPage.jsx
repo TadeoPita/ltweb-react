@@ -27,15 +27,57 @@ function Field({ label, children }) {
 const inputCls =
   'w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm font-body focus:outline-none focus:border-black/40'
 
+/* Buffer local por campo: la UI responde al instante (setLocal es síncrono),
+   y recién después de `delay` ms sin tipear se manda la escritura real a
+   Supabase. Mientras el campo tiene cambios sin confirmar ("dirty"), se
+   ignoran las actualizaciones que lleguen desde afuera (realtime) para que
+   no te "pisen" lo que estás escribiendo. */
+function useDebouncedField(value, commit, delay = 500) {
+  const [local, setLocal] = useState(value)
+  const dirty = useRef(false)
+  const timer = useRef(null)
+
+  useEffect(() => {
+    if (!dirty.current) setLocal(value)
+  }, [value])
+
+  useEffect(() => () => clearTimeout(timer.current), [])
+
+  function onChange(next) {
+    setLocal(next)
+    dirty.current = true
+    clearTimeout(timer.current)
+    timer.current = setTimeout(() => {
+      dirty.current = false
+      commit(next)
+    }, delay)
+  }
+
+  return [local, onChange]
+}
+
 function ItemEditor({ item, index, total }) {
   const fileRef = useRef(null)
   const [uploading, setUploading] = useState(false)
 
+  const update = (patch) => portfolioStore.updateItem(item.id, patch)
+
+  const [name, setName] = useDebouncedField(item.name, (v) => update({ name: v }))
+  const [type, setType] = useDebouncedField(item.type, (v) => update({ type: v }))
+  const [url, setUrl] = useDebouncedField(item.url ?? '', (v) => update({ url: v }))
+  const [image, setImage] = useDebouncedField(item.image, (v) => update({ image: v }))
+  const [label, setLabel] = useDebouncedField(item.label ?? '', (v) => update({ label: v || undefined }))
+  // Selección/checkbox: no hay riesgo de "perder letras", así que se confirma al toque (delay 0)
+  // pero igual usan el buffer local para que el click se vea reflejado sin esperar la ida y vuelta a Supabase.
+  const [size, setSize] = useDebouncedField(item.size ?? 'normal', (v) => update({ size: v }), 0)
+  const [blurred, setBlurred] = useDebouncedField(!!item.blurred, (v) => update({ blurred: v }), 0)
+  const [home, setHome] = useDebouncedField(!!item.home, (v) => update({ home: v }), 0)
+
   async function onFile(e) {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 5 * 1024 * 1024) {
-      alert('La imagen pesa más de 5 MB. Subí una versión más liviana.')
+    if (file.size > 8 * 1024 * 1024) {
+      alert('La imagen pesa más de 8 MB. Subí una versión más liviana.')
       e.target.value = ''
       return
     }
@@ -54,22 +96,22 @@ function ItemEditor({ item, index, total }) {
     <div className="rounded-2xl bg-white border border-black/8 p-5 flex flex-col gap-4">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
-          <img src={item.image} alt="" className="w-16 h-12 object-cover object-top rounded-md border border-black/10 shrink-0" />
+          <img src={image} alt="" className="w-16 h-12 object-cover object-top rounded-md border border-black/10 shrink-0" />
           <div className="min-w-0">
-            <p className="font-display font-bold uppercase truncate">{item.name || 'Sin nombre'}</p>
-            <p className="text-xs text-ink/50">{item.type}</p>
+            <p className="font-display font-bold uppercase truncate">{name || 'Sin nombre'}</p>
+            <p className="text-xs text-ink/50">{type}</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
           <button
-            title={item.home ? 'Visible en el inicio' : 'Oculto en el inicio'}
-            onClick={() => portfolioStore.updateItem(item.id, { home: !item.home })}
+            title={home ? 'Visible en el inicio' : 'Oculto en el inicio'}
+            onClick={() => setHome(!home)}
             className={
               'flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold border transition-colors cursor-pointer ' +
-              (item.home ? 'bg-ink text-white border-ink' : 'bg-white text-ink/50 border-black/15')
+              (home ? 'bg-ink text-white border-ink' : 'bg-white text-ink/50 border-black/15')
             }
           >
-            {item.home ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+            {home ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
             Inicio
           </button>
           <button title="Subir" onClick={() => portfolioStore.moveItem(item.id, -1)} disabled={index === 0} className="p-2 rounded-lg border border-black/10 disabled:opacity-30 hover:bg-black/5 cursor-pointer">
@@ -90,20 +132,20 @@ function ItemEditor({ item, index, total }) {
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <Field label="Nombre">
-          <input className={inputCls} value={item.name} onChange={(e) => portfolioStore.updateItem(item.id, { name: e.target.value })} />
+          <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} />
         </Field>
         <Field label="Tipo (subtítulo celeste)">
-          <input className={inputCls} value={item.type} onChange={(e) => portfolioStore.updateItem(item.id, { type: e.target.value })} />
+          <input className={inputCls} value={type} onChange={(e) => setType(e.target.value)} />
         </Field>
         <Field label="URL del sitio">
-          <input className={inputCls} value={item.url ?? ''} onChange={(e) => portfolioStore.updateItem(item.id, { url: e.target.value })} placeholder="https://..." />
+          <input className={inputCls} value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://..." />
         </Field>
-        <Field label="Imagen (URL o archivo)">
+        <Field label="Imagen (URL o archivo, hasta 8MB)">
           <div className="flex gap-2">
             <input
               className={inputCls}
-              value={item.image}
-              onChange={(e) => portfolioStore.updateItem(item.id, { image: e.target.value })}
+              value={image}
+              onChange={(e) => setImage(e.target.value)}
               placeholder="/images/... o https://..."
               disabled={uploading}
             />
@@ -118,20 +160,20 @@ function ItemEditor({ item, index, total }) {
           </div>
         </Field>
         <Field label="Tamaño de card">
-          <select className={inputCls} value={item.size ?? 'normal'} onChange={(e) => portfolioStore.updateItem(item.id, { size: e.target.value })}>
+          <select className={inputCls} value={size} onChange={(e) => setSize(e.target.value)}>
             {SIZES.map((s) => (
               <option key={s.value} value={s.value}>{s.label}</option>
             ))}
           </select>
         </Field>
         <Field label="Etiqueta overlay (opcional)">
-          <input className={inputCls} value={item.label ?? ''} onChange={(e) => portfolioStore.updateItem(item.id, { label: e.target.value || undefined })} placeholder='Ej: "En Actualización"' />
+          <input className={inputCls} value={label} onChange={(e) => setLabel(e.target.value)} placeholder='Ej: "En Actualización"' />
         </Field>
         <label className="flex items-center gap-2 pt-6">
           <input
             type="checkbox"
-            checked={!!item.blurred}
-            onChange={(e) => portfolioStore.updateItem(item.id, { blurred: e.target.checked })}
+            checked={blurred}
+            onChange={(e) => setBlurred(e.target.checked)}
             className="w-4 h-4 accent-ink cursor-pointer"
           />
           <span className="text-sm font-body">Imagen desenfocada (blur) — ej. "Próximamente"</span>
