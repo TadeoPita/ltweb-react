@@ -68,7 +68,7 @@ export function NewProjectCard({ className = '' }) {
           className="font-display font-bold uppercase text-2xl text-gradient"
           style={{ backgroundImage: 'linear-gradient(180deg, #FFFFFF 20%, #A0A0A0 100%)' }}
         >
-          ¡Trabajemos juntos!
+          Contanos tu proyecto
         </p>
         <p
           className="font-display font-semibold uppercase text-lg mt-2 text-gradient"

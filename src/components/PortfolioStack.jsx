@@ -48,7 +48,7 @@ function CtaVisual() {
         <Plus className="w-9 h-9" strokeWidth={2.5} />
       </span>
       <div>
-        <p className="font-display font-bold uppercase text-2xl text-white">¡Trabajemos juntos!</p>
+        <p className="font-display font-bold uppercase text-2xl text-white">Contanos tu proyecto</p>
         <p className="font-display font-semibold uppercase text-lg mt-2 text-white/70">Nuevo proyecto</p>
       </div>
     </div>

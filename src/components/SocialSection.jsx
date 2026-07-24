@@ -39,7 +39,7 @@ const RIGHT_OFFSETS = [150, 0, 150, 20]
 
 export default function SocialSection() {
   return (
-    <section id="contacto" className="bg-paper pb-28 pt-4 overflow-hidden">
+    <section className="bg-paper pb-28 pt-4 overflow-hidden">
       <div className="mx-auto max-w-[1440px] px-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.85, y: 12 }}
@@ -109,7 +109,7 @@ export default function SocialSection() {
 
         <TextReveal
           as="p"
-          text="Conéctate con LT WEB y descubre las últimas tendencias en diseño web, estrategias digitales y optimización online. ¡No te pierdas nuestras novedades! 🚀"
+          text="Compartimos proyectos nuevos, procesos de diseño y detrás de escena del estudio."
           dim={0.14}
           stagger={0.06}
           className="mt-14 text-center font-body text-ink/70 max-w-md mx-auto leading-relaxed"

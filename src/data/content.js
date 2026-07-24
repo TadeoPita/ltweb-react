@@ -5,23 +5,38 @@ export const INSTAGRAM_URL = 'https://www.instagram.com/ltweb__/'
 export const TIKTOK_URL = 'https://www.tiktok.com/@ltweb__'
 export const CONTACT_PHONE = '(+54) 11 5953-2487'
 export const CONTACT_EMAIL = 'ltwebs.studio@gmail.com'
+export const LOCATION = 'Buenos Aires, Argentina'
 
 export const NAV_LINKS = [
   { label: 'Inicio', href: '#inicio' },
+  { label: 'Proyectos', href: '#proyectos' },
   { label: 'Servicios', href: '#servicios' },
-  { label: 'Portfolio', href: '#portfolio' },
-  { label: 'FAQ', href: '#faq' },
+  { label: 'Proceso', href: '#proceso' },
   { label: 'Contacto', href: '#contacto' },
 ]
 
+/* Capacidades: la franja sobria debajo del hero.
+   Cuatro áreas concretas, sin adjetivos de venta. */
+export const CAPABILITIES = [
+  'Diseño UX/UI',
+  'Desarrollo WordPress',
+  'E-commerce',
+  'Soluciones personalizadas',
+]
+
+/* Casos destacados con formato problema/solución/servicios.
+   Reemplaza el texto largo genérico anterior por información útil. */
 export const CLIENTS = [
   {
     id: 'mch',
-    label: 'MCH',
-    title: 'MCH\nODONTOLOGÍA\nLASER',
+    label: 'MCH ODONTOLOGÍA LÁSER',
+    title: 'MCH\nODONTOLOGÍA\nLÁSER',
     titleGradient: ['#1e3a68', '#6d9ce0'],
     bg: '#bfcff5',
-    text: 'Tuvimos el privilegio de diseñar y desarrollar el sitio web de MCH Odontología Láser, creando una web que refleja su compromiso con la innovación y la excelencia en el cuidado dental.',
+    category: 'Salud',
+    problem: 'Necesitaban una web que reflejara la seriedad de una clínica y mostrara con claridad sus tratamientos.',
+    solution: 'Diseñamos una landing institucional con foco en tratamientos, equipo y contacto directo por WhatsApp.',
+    tags: ['UX/UI', 'WordPress', 'Responsive'],
     image: '/images/76.png',
     url: 'https://mchodontolaser.com.ar',
   },
@@ -31,7 +46,10 @@ export const CLIENTS = [
     title: 'HEY INSTITUTE',
     titleGradient: ['#e2564e', '#f4a09a'],
     bg: '#fbd2cf',
-    text: 'Tuvimos el honor de diseñar y desarrollar su sitio web, reflejando su dedicación a la educación de calidad y su compromiso con el aprendizaje del inglés.',
+    category: 'Educación',
+    problem: 'Un instituto de inglés que necesitaba comunicar sus niveles, docentes y formas de inscripción.',
+    solution: 'Armamos una web autoadministrable con secciones ordenadas para cursos, testimonios y consultas.',
+    tags: ['UX/UI', 'WordPress', 'Formularios'],
     image: '/images/hey-tablets.webp',
     url: 'https://heyinstitute.com.ar',
   },
@@ -41,127 +59,82 @@ export const CLIENTS = [
     title: 'FGM TECH',
     titleGradient: ['#2ebd52', '#7ce69a'],
     bg: '#c9f0d4',
-    text: 'Diseñamos su sitio web para transmitir su compromiso con la innovación en salud y bienestar, ofreciendo una experiencia clara y funcional para sus clientes.',
+    category: 'Tecnología',
+    problem: 'Una empresa de tecnología en salud sin presencia digital que representara su nivel.',
+    solution: 'Diseñamos un sitio claro que explica productos, casos de uso y facilita el contacto comercial.',
+    tags: ['UX/UI', 'WordPress', 'Responsive'],
     image: '/images/34-1.png',
     url: 'https://fgmtech.com.ar',
   },
 ]
 
-export const SOLUTIONS = [
+/* Servicios: las 3 áreas del brief con capacidades por área. */
+export const SERVICES = [
   {
+    id: 'diseno',
     icon: 'check',
-    title: 'REDISEÑO WEB',
-    text: 'Transformamos tu sitio con un diseño moderno, optimizado y estratégico, mejorando la experiencia del usuario y aumentando la conversión en cualquier dispositivo.',
+    title: 'Diseño y rediseño web',
+    text: 'Creamos o renovamos sitios institucionales, landing pages y experiencias responsive alineadas con la identidad y los objetivos de cada empresa.',
+    items: ['Arquitectura', 'UX/UI', 'Web institucional', 'Landing pages', 'Rediseño', 'Responsive'],
   },
   {
+    id: 'ecommerce',
     icon: 'rocket',
-    title: 'ECOMMERCE',
-    text: 'Creamos tiendas online escalables, seguras y optimizadas, con procesos de compra intuitivos que maximizan las ventas y mejoran la experiencia del cliente.',
+    title: 'E-commerce',
+    text: 'Diseñamos tiendas claras, confiables y preparadas para facilitar cada etapa del proceso de compra.',
+    items: ['WooCommerce', 'Catálogos', 'Filtros', 'Medios de pago', 'Optimización de conversión'],
   },
   {
+    id: 'desarrollo',
     icon: 'chat',
-    title: 'COMUNICACION',
-    text: 'Diseñamos estrategias digitales efectivas, asegurando que tu mensaje sea claro, impactante y optimizado para atraer, conectar y convertir a tu audiencia.',
+    title: 'Desarrollo y soluciones personalizadas',
+    text: 'Desarrollamos funciones e integraciones específicas cuando una solución estándar no alcanza.',
+    items: ['Automatizaciones', 'Integraciones', 'Reservas', 'Formularios avanzados', 'Sistemas personalizados'],
   },
 ]
 
-export const MARQUEE_ITEMS = [
-  'Diseño responsivo',
-  'Web personalizada',
-  'Experiencia optimizada',
-  'Soluciones digitales',
-  'Remodelación web',
-  'Estrategia digital',
-  'UX/UI profesional',
-  'Conversión efectiva',
-  'Desarrollo a medida',
-  'Gestión eficiente',
-  'Innovación web',
-  'SEO optimizado',
-  'Carga rápida',
-  'Interfaz intuitiva',
-  'Soporte continuo',
+/* Servicios complementarios: se muestran como capacidades adicionales debajo del bloque principal. */
+export const EXTRA_CAPABILITIES = ['SEO', 'Mantenimiento', 'Rendimiento', 'Soporte']
+
+/* Diferenciales del estudio (sección Sobre LTWEB). */
+export const DIFFERENTIATORS = [
+  'Diseño personalizado',
+  'Contacto directo',
+  'Desarrollo responsive',
+  'Sitios autoadministrables',
+  'Acompañamiento después del lanzamiento',
+  'Soluciones adaptadas a cada proyecto',
 ]
 
-export const PLANS = [
-  {
-    number: '01',
-    title: 'LANDING PAGE ESTÁNDAR',
-    image: 'https://ltweb.com.ar/wp-content/uploads/2025/03/mostudiomedia.com_.png',
-    text: 'Aumenta tu presencia digital con una página rápida y efectiva. Ideal para captar lectores, mostrar servicios y generar conversiones.',
-  },
-  {
-    number: '02',
-    title: 'LANDING PAGE PRO',
-    image: '/images/pf-acevedo.png',
-    text: 'Potencia tu negocio con una landing optimizada y avanzada. Incluye formularios dinámicos, automatizaciones y diseño estratégico.',
-  },
-  {
-    number: '03',
-    title: 'E-COMMERCE',
-    image: '/images/pf-piccoli.png',
-    text: 'Vende sin límites con una tienda online segura y escalable. Ofrece pagos integrados, gestión de productos y experiencia optimizada.',
-  },
-]
-
-export const STATEMENTS = [
-  { icon: 'profile', text: 'Webs que convierten y crecen.' },
-  { icon: 'key', text: 'Tu negocio, siempre online.' },
-  { icon: 'ok', text: 'Diseño estratégico, resultados reales.' },
-]
-
+/* Proceso: 4 pasos claros, sin promesas vacías. */
 export const STEPS = [
   {
     number: '1',
-    title: 'HABLEMOS DE TU PROYECTO',
-    text: 'Contanos qué necesitas y te asesoramos con la mejor solución para tu negocio.',
+    title: 'Diagnóstico',
+    text: 'Entendemos el negocio, el público, los objetivos y el alcance del proyecto.',
   },
   {
     number: '2',
-    title: 'DESARROLLO A MEDIDA',
-    text: 'Diseñamos y desarrollamos tu sitio con un enfoque estratégico, optimizado para conversión.',
+    title: 'Estrategia y diseño',
+    text: 'Organizamos el contenido, definimos la estructura y diseñamos la experiencia.',
   },
   {
     number: '3',
-    title: 'PUBLICACIÓN Y ÉXITO',
-    text: 'Publicamos tu web, aseguramos su rendimiento y te ayudamos a potenciar su alcance.',
+    title: 'Desarrollo',
+    text: 'Construimos la web, adaptamos todos los dispositivos y verificamos sus funciones.',
+  },
+  {
+    number: '4',
+    title: 'Lanzamiento y soporte',
+    text: 'Publicamos el sitio y acompañamos su evolución después de la entrega.',
   },
 ]
 
-export const DEVICES = [
-  {
-    number: '01',
-    title: 'OPTIMIZACIÓN PARA MÓVILE',
-    gradient: ['#FFBA71', '#FF8200'],
-    bg: '#ffe2c4',
-    text: 'Creamos sitios web con un enfoque mobile-first, asegurando carga rápida, navegación sencilla y una experiencia eficiente en smartphones.',
-    image: 'https://ltweb.com.ar/wp-content/uploads/2025/03/5656.png',
-    device: 'phone',
-  },
-  {
-    number: '02',
-    title: 'DISEÑO FLUIDO EN TABLETS',
-    gradient: ['#FC8787', '#F1355B'],
-    bg: '#f0dbff',
-    text: 'Diseñamos sitios web flexibles y dinámicos, garantizando una navegación fluida y una experiencia cómoda en cualquier tablet.',
-    image: 'https://ltweb.com.ar/wp-content/uploads/2025/03/455.png',
-    device: 'tablet',
-  },
-  {
-    number: '03',
-    title: 'ALTO RENDIMIENTO EN ESCRITORIO',
-    gradient: ['#8A8A8A', '#202020'],
-    bg: '#f0efef',
-    text: 'Tu web tendrá un diseño profesional, intuitivo y optimizado para máxima velocidad y rendimiento en computadoras.',
-    image: '/images/macbook-mch.png',
-    device: 'laptop',
-  },
-]
-
+/* Portfolio: se mantiene la data actual, solo con etiquetas más precisas. */
 export const PORTFOLIO = [
   { id: 'auralys', name: 'AURALYS', type: 'LANDING PAGE PRO', image: '/images/pf-auralys.png', url: 'https://auralys.com.ar', size: 'wide', home: true },
   { id: 'hey', name: 'HEY INSTITUTE', type: 'LANDING PAGE PRO', image: '/images/pf-heyinstitute.png', url: 'https://heyinstitute.com.ar', size: 'tall', home: true },
-  { id: 'mch', name: 'MCH ODONTALGÍA LÁSER', type: 'LANDING PAGE PRO', image: 'https://ltweb.com.ar/wp-content/uploads/2025/03/mchodontolaser.com_.ar_.png', url: 'https://mchodontolaser.com.ar', size: 'tall', home: true },
+  { id: 'mch', name: 'MCH ODONTOLOGÍA LÁSER', type: 'LANDING PAGE PRO', image: 'https://ltweb.com.ar/wp-content/uploads/2025/03/mchodontolaser.com_.ar_.png', url: 'https://mchodontolaser.com.ar', size: 'tall', home: true },
   { id: 'acevedo', name: 'ACEVEDO PERFORACIONES', type: 'LANDING PAGE PRO', image: '/images/pf-acevedo.png', url: 'https://perforacionesacevedo.com.ar', size: 'normal', home: true },
   { id: 'corteza', name: 'CORTEZA', type: 'E-COMMERCE', image: '/images/pf-corteza.png', url: 'https://corteza.com.ar', size: 'tall', home: true },
   { id: 'biovitality', name: 'BIOVITALITY', type: 'LANDING PAGE', image: '/images/pf-biovitality.png', url: 'https://biovitalitywc.com', size: 'normal', label: 'Modificada por terceros actualmente', home: true },
@@ -169,47 +142,44 @@ export const PORTFOLIO = [
   { id: 'piccoli', name: 'PICCOLI QUESTION', type: 'E-COMMERCE', image: '/images/pf-piccoli.png', url: 'https://piccoliquestion.com.ar', size: 'wide', home: true },
   { id: 'mostudio', name: 'MO STUDIO', type: 'LANDING PAGE', image: 'https://ltweb.com.ar/wp-content/uploads/2025/03/FireShot-Capture-021-mostudiomedia.com-mostudiomedia.com_.png', url: 'https://mostudiomedia.com', size: 'tall', home: true },
   { id: 'mundalma', name: 'MUNDALMA', type: 'LANDING PAGE PRO', image: '/images/pf-mundalma.png', url: 'https://mundalma.com.ar', size: 'tall', home: true },
-  { id: 'baldomero', name: 'CENTRO BALDOMERO', type: 'LANDING PAGE', image: '/images/pf-baldomero.jpg', url: 'https://centrobaldomero.com.ar', size: 'normal', label: 'En Actualización', home: true },
+  { id: 'baldomero', name: 'CENTRO BALDOMERO', type: 'LANDING PAGE', image: '/images/pf-baldomero.jpg', url: 'https://centrobaldomero.com.ar', size: 'normal', label: 'En actualización', home: true },
   { id: 'glamhair', name: 'GLAM HAIR', type: 'LANDING PAGE', image: '/images/pf-glamhair.png', url: 'https://glamhair.com.ar', size: 'tall', home: true },
   { id: 'turnera', name: 'PROXIMAMENTE', type: 'LANDING TURNERA', image: '/images/pf-turnera.png', url: '#', size: 'normal', blurred: true, home: true },
   { id: 'modolaser', name: 'MODO LÁSER', type: 'LANDING PAGE', image: '/images/pf-modolaser.jpg', url: 'https://estancialaser.com', size: 'normal', home: true },
   { id: 'crucero', name: 'CRUCERO LÁSER', type: 'LANDING PAGE', image: '/images/pf-crucero.png', url: '#', size: 'normal', home: true },
 ]
 
+/* FAQ: preguntas del brief con respuestas concretas y sin promesas vacías. */
 export const FAQS = [
   {
-    q: '¿Cuánto tiempo tarda el desarrollo de una web?',
-    a: 'Depende del tipo de web. Una <strong>Landing Page</strong> puede estar lista en <strong>5-7 días hábiles</strong>, mientras que un <strong>E-Commerce</strong> o un sitio más complejo puede tardar <strong>2-4 semanas</strong>.',
+    q: '¿Cuánto tarda un proyecto?',
+    a: 'Depende del alcance. Una <strong>landing page</strong> suele estar lista en <strong>1 a 2 semanas</strong>; un sitio institucional entre <strong>3 y 5 semanas</strong>; una <strong>tienda online</strong> entre <strong>4 y 8 semanas</strong>. En el diagnóstico inicial te damos un plazo estimado real.',
   },
   {
-    q: '¿Qué incluye el servicio de diseño web?',
-    a: 'Incluye <strong>diseño personalizado, desarrollo responsivo, optimización SEO básica y configuración inicial</strong>. También brindamos integración con formularios y redes sociales.',
+    q: '¿La web queda autoadministrable?',
+    a: 'Sí. Entregamos los sitios en <strong>WordPress</strong>, con un panel para que puedas editar textos, imágenes y publicaciones sin depender de nosotros. Te dejamos un instructivo breve al momento de la entrega.',
   },
   {
-    q: '¿Puedo modificar mi sitio después de la entrega?',
-    a: 'Sí, entregamos sitios <strong>autoadministrables</strong>. También ofrecemos <strong>planes de mantenimiento</strong> si prefieres que nos encarguemos de las actualizaciones.',
+    q: '¿Trabajan sobre sitios existentes?',
+    a: 'Sí. Hacemos <strong>rediseños</strong> y ajustes puntuales sobre sitios que ya están online. Antes de arrancar revisamos la web actual y te decimos si conviene rediseñar desde cero o intervenir sobre lo existente.',
   },
   {
-    q: '¿Hacen rediseño de sitios web?',
-    a: 'Sí, optimizamos y remodelamos sitios existentes para mejorar su <strong>diseño, velocidad y conversión</strong> sin perder contenido importante.',
+    q: '¿Ofrecen mantenimiento?',
+    a: 'Sí, ofrecemos <strong>planes de mantenimiento</strong> mensuales que incluyen actualizaciones, backups, monitoreo de rendimiento y cambios menores de contenido. Es opcional, no es requisito para trabajar con nosotros.',
   },
   {
-    q: '¿Cuánto cuesta hacer una web?',
-    a: 'Depende del tipo y funcionalidades. Escríbenos y te enviamos un <strong>presupuesto personalizado</strong> sin compromiso.',
+    q: '¿Cómo se define el presupuesto?',
+    a: 'Después de una charla inicial armamos una <strong>propuesta escrita</strong> con alcance, plazo y precio cerrado. No trabajamos por hora ni con costos abiertos: sabés desde el principio cuánto vas a pagar.',
   },
   {
-    q: '¿Mi sitio será visible en Google?',
-    a: 'Sí, optimizamos tu web con <strong>SEO básico</strong> para que aparezca en los buscadores. Para estrategias avanzadas, ofrecemos <strong>servicios adicionales de SEO y marketing digital</strong>.',
+    q: '¿La web se adapta a celulares?',
+    a: 'Sí, todos los sitios se diseñan <strong>responsive</strong> desde el primer boceto. Antes de publicar los probamos en teléfono, tablet y escritorio.',
   },
   {
-    q: '¿Qué métodos de pago aceptan?',
-    a: 'Aceptamos <strong>transferencias bancarias, Mercado Pago y PayPal</strong>. También ofrecemos <strong>facilidades de pago en cuotas</strong> según el proyecto.',
-  },
-  {
-    q: '¿Cómo contrato el servicio?',
-    a: 'Fácil y rápido: <strong>nos contactas, definimos el proyecto, desarrollamos tu web y la lanzamos</strong>.',
+    q: '¿Pueden integrar pagos, formularios o reservas?',
+    a: 'Sí. Integramos <strong>Mercado Pago, Stripe, PayPal, WhatsApp, formularios avanzados, sistemas de reservas</strong> y otras herramientas según lo que necesite tu negocio.',
   },
 ]
 
-export const SOCIAL_CHIPS_LEFT = ['eCommerce', 'diseño web', 'estrategias digitales', 'optimización']
-export const SOCIAL_CHIPS_RIGHT = ['conversión', 'tendencias', 'innovación', 'branding digital']
+export const SOCIAL_CHIPS_LEFT = ['diseño web', 'e-commerce', 'WordPress', 'UX/UI']
+export const SOCIAL_CHIPS_RIGHT = ['landing pages', 'rediseño', 'integraciones', 'responsive']

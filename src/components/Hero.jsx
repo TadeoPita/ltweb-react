@@ -27,23 +27,23 @@ export default function Hero() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="relative mx-auto max-w-4xl px-6 text-center"
+        className="relative mx-auto max-w-5xl px-6 text-center"
       >
         {/* Badge */}
         <motion.div variants={item} className="inline-flex items-center gap-3 rounded-full bg-white/80 backdrop-blur border border-black/5 shadow-[0_10px_30px_rgba(0,0,0,0.08)] pl-1.5 pr-6 py-1.5">
           <span className="rounded-full bg-white border border-black/8 shadow-sm px-4 py-1.5 text-[13px] font-semibold font-body">
-            Exclusivo
+            Estudio
           </span>
-          <span className="text-[13px] font-semibold font-body text-ink">Asesoramiento 100% Gratuito</span>
+          <span className="text-[13px] font-semibold font-body text-ink">Diseño y desarrollo web · Buenos Aires</span>
         </motion.div>
 
         {/* Título */}
         <motion.h1
           variants={item}
-          className="mt-10 font-display font-bold uppercase text-ink leading-[0.95] text-5xl sm:text-7xl lg:text-[92px] tracking-tight"
+          className="mt-10 font-display font-bold uppercase text-ink leading-[0.95] text-4xl sm:text-6xl lg:text-[76px] tracking-tight"
         >
-          Hacemos la web
-          <span className="flex items-center justify-center gap-3 sm:gap-5">
+          Tu negocio ya creció.
+          <span className="flex items-center justify-center gap-3 sm:gap-5 mt-2">
             <motion.span
               animate={{ rotate: [0, 12, -8, 0], scale: [1, 1.12, 1] }}
               transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
@@ -51,17 +51,17 @@ export default function Hero() {
             >
               <img src="/images/sparkle.svg" alt="" aria-hidden className="w-9 h-9 sm:w-14 sm:h-14" />
             </motion.span>
-            que soñas
+            Tu web también.
           </span>
         </motion.h1>
 
         {/* Subtítulo */}
-        <motion.p variants={item} className="mt-8 text-lg sm:text-xl font-alt font-medium text-ink/85">
-          Diseñamos tu pagina web sin rellenos.
+        <motion.p variants={item} className="mt-8 text-base sm:text-lg font-alt font-medium text-ink/70 max-w-2xl mx-auto leading-relaxed">
+          Diseño UX/UI, desarrollo WordPress, tiendas online y soluciones personalizadas para empresas que necesitan comunicar mejor y generar nuevas oportunidades.
         </motion.p>
 
-        {/* CTA */}
-        <motion.div variants={item} className="mt-10">
+        {/* CTAs */}
+        <motion.div variants={item} className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <motion.a
             href={WHATSAPP_URL}
             target="_blank"
@@ -69,9 +69,18 @@ export default function Hero() {
             whileHover={{ scale: 1.04, y: -2 }}
             whileTap={{ scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-            className="inline-block rounded-xl bg-[#2b2b2b] text-[#fdfdfd] font-body font-semibold text-base sm:text-lg px-9 py-4 shadow-[0_18px_40px_rgba(0,0,0,0.25)] hover:bg-[#060606] transition-colors"
+            className="inline-block rounded-xl bg-[#2b2b2b] text-[#fdfdfd] font-body font-semibold text-base sm:text-lg px-8 py-4 shadow-[0_18px_40px_rgba(0,0,0,0.25)] hover:bg-[#060606] transition-colors"
           >
-            Contáctanos Ahora
+            Contanos tu proyecto
+          </motion.a>
+          <motion.a
+            href="#proyectos"
+            whileHover={{ scale: 1.04, y: -2 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+            className="inline-block rounded-xl bg-white text-ink font-body font-semibold text-base sm:text-lg px-8 py-4 border border-black/10 hover:border-black/25 transition-colors"
+          >
+            Ver proyectos
           </motion.a>
         </motion.div>
       </motion.div>

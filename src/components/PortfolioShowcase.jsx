@@ -115,7 +115,7 @@ export default function PortfolioShowcase({ items }) {
               className="font-display font-bold uppercase leading-none text-3xl sm:text-5xl lg:text-6xl text-gradient"
               style={{ backgroundImage: 'linear-gradient(180deg, #FFFFFF 20%, #A0A0A0 100%)' }}
             >
-              ¡Trabajemos juntos!
+              Contanos tu proyecto
             </h3>
             <p className="mt-2 font-display font-semibold uppercase text-[#a796f0] text-xs sm:text-sm tracking-wide">
               Nuevo proyecto

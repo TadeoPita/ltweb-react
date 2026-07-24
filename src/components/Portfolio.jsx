@@ -11,22 +11,22 @@ import { usePortfolio } from '../data/portfolioStore'
 export function PortfolioHeader() {
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.85, y: 12 }}
-        whileInView={{ opacity: 1, scale: 1, y: 0 }}
-        viewport={{ once: false, margin: '-80px' }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="flex justify-center mb-10"
+      <motion.p
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        className="text-center font-display font-semibold uppercase tracking-wide text-[#7db6e8]"
       >
-        <img src="/images/users.svg" alt="" aria-hidden className="w-14 h-16" />
-      </motion.div>
+        Nuestro trabajo
+      </motion.p>
 
       <TextReveal
         as="h2"
-        text="Para todos los negocios"
+        text="Proyectos seleccionados"
         dim={0.14}
         stagger={0.16}
-        className="text-center font-display font-bold uppercase text-white leading-[0.95] text-4xl sm:text-6xl lg:text-7xl"
+        className="mt-4 text-center font-display font-bold uppercase text-white leading-[0.95] text-4xl sm:text-6xl lg:text-7xl"
       />
 
       <motion.p
@@ -34,10 +34,9 @@ export function PortfolioHeader() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="mt-6 text-center font-body text-white/50 text-base sm:text-lg max-w-3xl mx-auto"
+        className="mt-6 text-center font-body text-white/50 text-base sm:text-lg max-w-2xl mx-auto"
       >
-        LT WEB crea sitios web estratégicos y escalables, adaptados tanto para emprendedores como para empresas
-        consolidadas.
+        Diseñamos cada experiencia a partir de las necesidades reales del negocio, su público y sus objetivos.
       </motion.p>
     </>
   )
@@ -50,7 +49,7 @@ export default function Portfolio() {
   if (loading) return null
 
   return (
-    <section id="portfolio" className="bg-ink-2 py-24 sm:py-32">
+    <section id="proyectos" className="bg-ink-2 py-24 sm:py-32">
       <div className="mx-auto max-w-[1140px] px-6">
         <PortfolioHeader />
 

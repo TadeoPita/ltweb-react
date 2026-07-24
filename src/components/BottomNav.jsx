@@ -13,7 +13,7 @@ export default function BottomNav() {
 
   useEffect(() => {
     if (!onHome) {
-      setActive(pathname.startsWith('/portfolio') ? '#portfolio' : '')
+      setActive(pathname.startsWith('/portfolio') ? '#proyectos' : '')
       return
     }
 
@@ -72,7 +72,7 @@ export default function BottomNav() {
       <div className="flex items-center gap-1 rounded-full bg-[#15161a]/85 backdrop-blur-md px-2.5 py-2 shadow-2xl shadow-black/30">
         {NAV_LINKS.map((link) => {
           const isActive = active === link.href
-          const isPortfolio = link.href === '#portfolio'
+          const isPortfolio = link.href === '#proyectos'
 
           if (isPortfolio) {
             return (

@@ -4,36 +4,37 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
 import BottomNav from './components/BottomNav'
 import Hero from './components/Hero'
+import Capabilities from './components/Capabilities'
 import ClientsShowcase from './components/ClientsShowcase'
-import Solutions from './components/Solutions'
-import Marquee from './components/Marquee'
-import Plans from './components/Plans'
-import Statements from './components/Statements'
-import Steps from './components/Steps'
-import Devices from './components/Devices'
 import Portfolio from './components/Portfolio'
+import Solutions from './components/Solutions'
+import About from './components/About'
+import Steps from './components/Steps'
 import FAQ from './components/FAQ'
 import SocialSection from './components/SocialSection'
+import FinalCTA from './components/FinalCTA'
 import Footer from './components/Footer'
 import PortfolioPage from './pages/PortfolioPage'
 import LoginPage from './pages/LoginPage'
 import AdminPage from './pages/AdminPage'
 import NotFoundPage from './pages/NotFoundPage'
 
+/* Estructura de la home reordenada según el brief de comunicación:
+   Hero → Capacidades (franja) → Casos destacados → Proyectos (bento) →
+   Servicios → Sobre LTWEB → Proceso → FAQ → Redes → CTA final → Footer */
 function HomePage() {
   return (
     <main>
       <Hero />
+      <Capabilities />
       <ClientsShowcase />
-      <Solutions />
-      <Marquee />
-      <Plans />
-      <Statements />
-      <Steps />
-      <Devices />
       <Portfolio />
+      <Solutions />
+      <About />
+      <Steps />
       <FAQ />
       <SocialSection />
+      <FinalCTA />
     </main>
   )
 }

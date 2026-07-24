@@ -67,7 +67,7 @@ export default function FAQ() {
           transition={{ duration: 0.8, delay: 0.15 }}
           className="mt-5 text-center font-body text-ink/60 max-w-md mx-auto"
         >
-          Resolvemos tus dudas con información clara y precisa para ayudarte a entender nuestro servicio.
+          Las dudas más comunes que nos escriben antes de arrancar un proyecto.
         </motion.p>
 
         <motion.div

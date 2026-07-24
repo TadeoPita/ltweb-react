@@ -1,10 +1,20 @@
-import { NAV_LINKS, INSTAGRAM_URL, TIKTOK_URL, WHATSAPP_URL, CONTACT_PHONE, CONTACT_EMAIL } from '../data/content'
+import { NAV_LINKS, INSTAGRAM_URL, TIKTOK_URL, WHATSAPP_URL, CONTACT_PHONE, CONTACT_EMAIL, LOCATION } from '../data/content'
 
 export default function Footer() {
   return (
     <footer className="bg-[#111113] text-white pt-20 pb-28">
-      <div className="mx-auto max-w-[1140px] px-6">
-        <div className="grid gap-12 md:grid-cols-[1fr_1fr_1.2fr_1.6fr]">
+      <div className="mx-auto max-w-[1280px] px-6">
+        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1.4fr]">
+          {/* Marca */}
+          <div>
+            <img src="/images/logo-blanco.png" alt="LT WEB" className="h-10 w-auto" />
+            <p className="mt-5 font-body text-white/60 text-[15px] leading-relaxed max-w-xs">
+              Estudio de diseño y desarrollo web. Trabajamos con empresas que quieren comunicar mejor y generar nuevas oportunidades.
+            </p>
+            <p className="mt-5 text-[11px] font-semibold tracking-[0.15em] uppercase text-white/45">Ubicación</p>
+            <p className="mt-1.5 font-alt font-semibold text-base">{LOCATION}</p>
+          </div>
+
           {/* Secciones */}
           <div>
             <h3 className="font-alt font-semibold text-xl">Secciones</h3>
@@ -19,9 +29,9 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Redes Sociales */}
+          {/* Redes */}
           <div>
-            <h3 className="font-alt font-semibold text-xl">Redes Sociales</h3>
+            <h3 className="font-alt font-semibold text-xl">Seguinos</h3>
             <ul className="mt-6 flex flex-col gap-3.5">
               <li>
                 <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="font-body text-white/70 hover:text-white transition-colors duration-300">
@@ -31,6 +41,11 @@ export default function Footer() {
               <li>
                 <a href={TIKTOK_URL} target="_blank" rel="noreferrer" className="font-body text-white/70 hover:text-white transition-colors duration-300">
                   Tiktok
+                </a>
+              </li>
+              <li>
+                <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="font-body text-white/70 hover:text-white transition-colors duration-300">
+                  WhatsApp
                 </a>
               </li>
             </ul>
@@ -52,28 +67,13 @@ export default function Footer() {
               </a>
             </div>
           </div>
-
-          {/* Card CTA */}
-          <div className="rounded-2xl border border-white/12 p-8 sm:p-10 text-center self-start">
-            <h3 className="font-alt font-semibold text-xl">Transforma tu web hoy</h3>
-            <p className="mt-4 font-body text-white/60 leading-relaxed">
-              Potencia tu negocio con un diseño profesional y estratégico.
-            </p>
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-7 inline-block rounded-xl bg-white/8 border border-white/15 px-7 py-3.5 font-alt font-semibold hover:bg-white/15 transition-colors duration-300"
-            >
-              ¡Contáctanos Ahora!
-            </a>
-          </div>
         </div>
 
         <div className="mt-16 h-px bg-white/15" />
 
-        <div className="mt-8 flex justify-center sm:justify-end">
-          <p className="font-body text-white/70">© Copyright {new Date().getFullYear()} by LT WEB 🚀</p>
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="font-body text-white/50 text-sm">© {new Date().getFullYear()} LTWEB. Todos los derechos reservados.</p>
+          <p className="font-body text-white/50 text-sm">Diseño y desarrollo por LTWEB</p>
         </div>
       </div>
     </footer>
