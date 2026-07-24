@@ -39,3 +39,31 @@ body {
   background: var(--color-lilac);
   color: #fff;
 }
+
+/* Orbes flotantes y glitch de texto de la página 404 */
+@keyframes float-orb-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, -30px) scale(1.08); }
+  66% { transform: translate(-30px, 20px) scale(0.95); }
+}
+
+@keyframes float-orb-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-50px, 40px) scale(1.1); }
+}
+
+@keyframes glitch-shift-1 {
+  0%, 92%, 100% { transform: translate(0, 0); opacity: 0; }
+  93% { transform: translate(-4px, 2px); opacity: 0.55; }
+  95% { transform: translate(3px, -2px); opacity: 0.55; }
+  97% { transform: translate(-2px, 1px); opacity: 0.35; }
+  98% { transform: translate(0, 0); opacity: 0; }
+}
+
+@keyframes glitch-shift-2 {
+  0%, 90%, 100% { transform: translate(0, 0); opacity: 0; }
+  91% { transform: translate(4px, -3px); opacity: 0.5; }
+  94% { transform: translate(-3px, 2px); opacity: 0.45; }
+  96% { transform: translate(2px, -1px); opacity: 0.3; }
+  98% { transform: translate(0, 0); opacity: 0; }
+}

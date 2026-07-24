@@ -183,8 +183,40 @@ function ItemEditor({ item, index, total }) {
   )
 }
 
+const VARIANTS = [
+  { value: 'classic', label: 'Clásico (grilla)' },
+  { value: 'showcase', label: 'Lista interactiva' },
+  { value: 'gallery', label: 'Galería horizontal' },
+  { value: 'bento', label: 'Mosaico bento' },
+]
+
+function VariantPicker({ title, hint, value, onChange }) {
+  return (
+    <div className="rounded-2xl bg-white border border-black/8 p-5 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p className="font-display font-bold uppercase">{title}</p>
+        <p className="text-sm text-ink/50 font-body">{hint}</p>
+      </div>
+      <div className="flex flex-wrap rounded-full border border-black/10 p-1 bg-paper">
+        {VARIANTS.map((v) => (
+          <button
+            key={v.value}
+            onClick={() => onChange(v.value)}
+            className={
+              'rounded-full px-5 py-2 text-sm font-semibold transition-colors cursor-pointer ' +
+              (value === v.value ? 'bg-ink text-white' : 'text-ink/60 hover:text-ink')
+            }
+          >
+            {v.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function AdminPage() {
-  const { items, variant, loading, error } = usePortfolio()
+  const { items, variant, pageVariant, loading, error } = usePortfolio()
   const [importOpen, setImportOpen] = useState(false)
   const [importText, setImportText] = useState('')
 
@@ -270,31 +302,18 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* Diseño del portfolio del inicio */}
-        <div className="rounded-2xl bg-white border border-black/8 p-5 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="font-display font-bold uppercase">Diseño del portfolio en el inicio</p>
-            <p className="text-sm text-ink/50 font-body">Podés cambiar entre los tres diseños cuando quieras.</p>
-          </div>
-          <div className="flex rounded-full border border-black/10 p-1 bg-paper">
-            {[
-              { value: 'classic', label: 'Clásico (grilla)' },
-              { value: 'showcase', label: 'Lista interactiva' },
-              { value: 'gallery', label: 'Galería horizontal' },
-            ].map((v) => (
-              <button
-                key={v.value}
-                onClick={() => portfolioStore.setVariant(v.value)}
-                className={
-                  'rounded-full px-5 py-2 text-sm font-semibold transition-colors cursor-pointer ' +
-                  (variant === v.value ? 'bg-ink text-white' : 'text-ink/60 hover:text-ink')
-                }
-              >
-                {v.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <VariantPicker
+          title="Diseño del portfolio en el inicio"
+          hint="Cómo se ve la sección de portfolio en la página principal."
+          value={variant}
+          onChange={portfolioStore.setVariant}
+        />
+        <VariantPicker
+          title="Diseño de la página /portfolio completa"
+          hint="Cómo se ve el portfolio completo cuando alguien entra a /portfolio."
+          value={pageVariant}
+          onChange={portfolioStore.setPageVariant}
+        />
 
         <div className="flex items-center justify-between">
           <p className="font-body text-sm text-ink/60">

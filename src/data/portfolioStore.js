@@ -8,7 +8,7 @@ import { supabase } from '../lib/supabase'
    configuradas en Supabase). El admin (/admin) edita este store y los
    cambios se reflejan para todos los visitantes en tiempo real. */
 
-let state = { variant: 'gallery', items: [], loading: true, error: null }
+let state = { variant: 'gallery', pageVariant: 'classic', items: [], loading: true, error: null }
 const listeners = new Set()
 
 function emit() {
@@ -50,6 +50,7 @@ async function loadInitial() {
   }
   state = {
     variant: settingsRes.data?.variant ?? 'gallery',
+    pageVariant: settingsRes.data?.page_variant ?? 'classic',
     items: itemsFromRows(itemsRes.data),
     loading: false,
     error: null,
@@ -72,7 +73,7 @@ async function seedDefaults() {
     position: i,
   }))
   await supabase.from('portfolio_items').insert(rows)
-  await supabase.from('portfolio_settings').upsert({ id: 1, variant: 'gallery' })
+  await supabase.from('portfolio_settings').upsert({ id: 1, variant: 'gallery', page_variant: 'classic' })
   state = { ...state, seeding: false }
   await loadInitial()
 }
@@ -114,6 +115,10 @@ export const portfolioStore = {
 
   async setVariant(variant) {
     must(await supabase.from('portfolio_settings').update({ variant }).eq('id', 1))
+  },
+
+  async setPageVariant(pageVariant) {
+    must(await supabase.from('portfolio_settings').update({ page_variant: pageVariant }).eq('id', 1))
   },
 
   async updateItem(id, patch) {
@@ -203,11 +208,17 @@ export const portfolioStore = {
       position: i,
     }))
     must(await supabase.from('portfolio_items').insert(rows))
-    must(await supabase.from('portfolio_settings').upsert({ id: 1, variant: parsed.variant ?? 'gallery' }))
+    must(
+      await supabase.from('portfolio_settings').upsert({
+        id: 1,
+        variant: parsed.variant ?? 'gallery',
+        page_variant: parsed.pageVariant ?? 'classic',
+      }),
+    )
   },
 
   exportJSON() {
-    return JSON.stringify({ variant: state.variant, items: state.items }, null, 2)
+    return JSON.stringify({ variant: state.variant, pageVariant: state.pageVariant, items: state.items }, null, 2)
   },
 
   async reset() {

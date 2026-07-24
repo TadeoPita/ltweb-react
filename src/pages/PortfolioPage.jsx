@@ -2,10 +2,13 @@ import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import TextReveal from '../components/TextReveal'
 import { PortfolioGrid, NewProjectCard } from '../components/PortfolioCards'
+import PortfolioShowcase from '../components/PortfolioShowcase'
+import PortfolioGallery from '../components/PortfolioGallery'
+import PortfolioBento from '../components/PortfolioBento'
 import { usePortfolio } from '../data/portfolioStore'
 
 export default function PortfolioPage() {
-  const { items, loading } = usePortfolio()
+  const { items, pageVariant, loading } = usePortfolio()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -45,6 +48,12 @@ export default function PortfolioPage() {
         <div className="mt-20">
           {loading ? (
             <p className="text-center font-body text-white/40">Cargando portfolio...</p>
+          ) : pageVariant === 'showcase' ? (
+            <PortfolioShowcase items={items} />
+          ) : pageVariant === 'gallery' ? (
+            <PortfolioGallery items={items} />
+          ) : pageVariant === 'bento' ? (
+            <PortfolioBento items={items} />
           ) : (
             <PortfolioGrid items={items}>
               <NewProjectCard />
