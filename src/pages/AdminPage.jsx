@@ -4,9 +4,9 @@ import { ArrowUp, ArrowDown, Trash2, Plus, Download, Upload, RotateCcw, Home, Ey
 import { portfolioStore, usePortfolio } from '../data/portfolioStore'
 
 /* Panel de administración del portfolio.
-   Los cambios se guardan en el navegador (localStorage) al instante.
-   "Exportar JSON" permite guardar la configuración para pasarla a otro
-   navegador o dejarla fija en el código (src/data/content.js). */
+   Los cambios se guardan en Supabase y se reflejan al instante para
+   cualquier visitante del sitio, no solo en este navegador.
+   "Exportar JSON" permite guardar un respaldo de la configuración. */
 
 const SIZES = [
   { value: 'normal', label: 'Normal (1 col)' },
@@ -29,17 +29,25 @@ const inputCls =
 
 function ItemEditor({ item, index, total }) {
   const fileRef = useRef(null)
+  const [uploading, setUploading] = useState(false)
 
-  function onFile(e) {
+  async function onFile(e) {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 1.5 * 1024 * 1024) {
-      alert('La imagen pesa más de 1.5 MB. Para no llenar el almacenamiento del navegador, subí una versión comprimida o usá una URL.')
+    if (file.size > 5 * 1024 * 1024) {
+      alert('La imagen pesa más de 5 MB. Subí una versión más liviana.')
+      e.target.value = ''
       return
     }
-    const reader = new FileReader()
-    reader.onload = () => portfolioStore.updateItem(item.id, { image: reader.result })
-    reader.readAsDataURL(file)
+    setUploading(true)
+    try {
+      await portfolioStore.uploadImage(file, item.id)
+    } catch (err) {
+      alert('No se pudo subir la imagen: ' + err.message)
+    } finally {
+      setUploading(false)
+      e.target.value = ''
+    }
   }
 
   return (
@@ -94,14 +102,19 @@ function ItemEditor({ item, index, total }) {
           <div className="flex gap-2">
             <input
               className={inputCls}
-              value={item.image.startsWith('data:') ? '(imagen subida)' : item.image}
+              value={item.image}
               onChange={(e) => portfolioStore.updateItem(item.id, { image: e.target.value })}
               placeholder="/images/... o https://..."
+              disabled={uploading}
             />
-            <button onClick={() => fileRef.current.click()} className="shrink-0 rounded-lg border border-black/10 px-3 text-xs font-semibold hover:bg-black/5 cursor-pointer">
-              Subir
+            <button
+              onClick={() => fileRef.current.click()}
+              disabled={uploading}
+              className="shrink-0 rounded-lg border border-black/10 px-3 text-xs font-semibold hover:bg-black/5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {uploading ? 'Subiendo...' : 'Subir'}
             </button>
-            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onFile} />
+            <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onFile} disabled={uploading} />
           </div>
         </Field>
         <Field label="Tamaño de card">
@@ -114,13 +127,22 @@ function ItemEditor({ item, index, total }) {
         <Field label="Etiqueta overlay (opcional)">
           <input className={inputCls} value={item.label ?? ''} onChange={(e) => portfolioStore.updateItem(item.id, { label: e.target.value || undefined })} placeholder='Ej: "En Actualización"' />
         </Field>
+        <label className="flex items-center gap-2 pt-6">
+          <input
+            type="checkbox"
+            checked={!!item.blurred}
+            onChange={(e) => portfolioStore.updateItem(item.id, { blurred: e.target.checked })}
+            className="w-4 h-4 accent-ink cursor-pointer"
+          />
+          <span className="text-sm font-body">Imagen desenfocada (blur) — ej. "Próximamente"</span>
+        </label>
       </div>
     </div>
   )
 }
 
 export default function AdminPage() {
-  const { items, variant } = usePortfolio()
+  const { items, variant, loading, error } = usePortfolio()
   const [importOpen, setImportOpen] = useState(false)
   const [importText, setImportText] = useState('')
 
@@ -139,14 +161,30 @@ export default function AdminPage() {
     URL.revokeObjectURL(a.href)
   }
 
-  function doImport() {
+  async function doImport() {
     try {
-      portfolioStore.importJSON(importText)
+      await portfolioStore.importJSON(importText)
       setImportOpen(false)
       setImportText('')
     } catch (e) {
       alert('No se pudo importar: ' + e.message)
     }
+  }
+
+  if (loading) {
+    return (
+      <main className="bg-paper min-h-screen flex items-center justify-center">
+        <p className="font-body text-ink/50">Cargando portfolio...</p>
+      </main>
+    )
+  }
+
+  if (error) {
+    return (
+      <main className="bg-paper min-h-screen flex items-center justify-center p-6 text-center">
+        <p className="font-body text-red-500">Error al cargar el portfolio: {error}</p>
+      </main>
+    )
   }
 
   return (
@@ -156,7 +194,7 @@ export default function AdminPage() {
           <div>
             <h1 className="font-display font-bold uppercase text-2xl">Admin · Portfolio</h1>
             <p className="text-sm text-ink/50 font-body">
-              Los cambios se guardan automáticamente en este navegador y se ven al instante en la web.
+              Los cambios se guardan automáticamente y se ven al instante para cualquier visitante de la web.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -194,7 +232,7 @@ export default function AdminPage() {
         <div className="rounded-2xl bg-white border border-black/8 p-5 flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="font-display font-bold uppercase">Diseño del portfolio en el inicio</p>
-            <p className="text-sm text-ink/50 font-body">Podés cambiar entre los dos diseños cuando quieras.</p>
+            <p className="text-sm text-ink/50 font-body">Podés cambiar entre los tres diseños cuando quieras.</p>
           </div>
           <div className="flex rounded-full border border-black/10 p-1 bg-paper">
             {[

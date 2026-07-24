@@ -42,8 +42,10 @@ export function PortfolioHeader() {
 }
 
 export default function Portfolio() {
-  const { items, variant } = usePortfolio()
+  const { items, variant, loading } = usePortfolio()
   const homeItems = items.filter((p) => p.home)
+
+  if (loading) return null
 
   return (
     <section id="portfolio" className="bg-ink-2 py-24 sm:py-32">

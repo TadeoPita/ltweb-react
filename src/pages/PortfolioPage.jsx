@@ -5,7 +5,7 @@ import { PortfolioGrid, NewProjectCard } from '../components/PortfolioCards'
 import { usePortfolio } from '../data/portfolioStore'
 
 export default function PortfolioPage() {
-  const { items } = usePortfolio()
+  const { items, loading } = usePortfolio()
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -43,9 +43,13 @@ export default function PortfolioPage() {
         </motion.p>
 
         <div className="mt-20">
-          <PortfolioGrid items={items}>
-            <NewProjectCard />
-          </PortfolioGrid>
+          {loading ? (
+            <p className="text-center font-body text-white/40">Cargando portfolio...</p>
+          ) : (
+            <PortfolioGrid items={items}>
+              <NewProjectCard />
+            </PortfolioGrid>
+          )}
         </div>
       </div>
     </main>
