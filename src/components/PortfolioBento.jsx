@@ -90,29 +90,12 @@ function NewProjectBentoCard() {
       href={WHATSAPP_URL}
       target="_blank"
       rel="noreferrer"
-      className="col-span-2 row-span-2 group flex flex-col items-center justify-center gap-6 rounded-2xl border-2 border-dashed border-white/25 bg-gradient-to-br from-[#3b2a8f] to-[#5a2ea6] p-8 text-center"
+      className="col-span-1 row-span-1 group flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-white/25 bg-[#3b2a8f] p-6 text-center"
     >
-      <motion.span
-        whileHover={{ rotate: 90 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-        className="flex items-center justify-center w-20 h-20 rounded-full bg-white text-[#3b2a8f]"
-      >
-        <Plus className="w-9 h-9" strokeWidth={2.5} />
-      </motion.span>
-      <div>
-        <p
-          className="font-display font-bold uppercase text-2xl text-gradient"
-          style={{ backgroundImage: 'linear-gradient(180deg, #FFFFFF 20%, #A0A0A0 100%)' }}
-        >
-          ¡Trabajemos juntos!
-        </p>
-        <p
-          className="font-display font-semibold uppercase text-lg mt-2 text-gradient"
-          style={{ backgroundImage: 'linear-gradient(180deg, #FFFFFF 20%, #A0A0A0 100%)' }}
-        >
-          Nuevo proyecto
-        </p>
-      </div>
+      <span className="flex items-center justify-center w-11 h-11 rounded-full bg-white text-[#3b2a8f] group-hover:rotate-90 transition-transform duration-500 ease-out">
+        <Plus className="w-5 h-5" strokeWidth={2.5} />
+      </span>
+      <p className="font-display font-bold uppercase text-sm text-white">Nuevo proyecto</p>
     </a>
   )
 }
