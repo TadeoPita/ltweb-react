@@ -4,13 +4,13 @@ import { PORTFOLIO } from './content'
 /* Store del portfolio con persistencia en localStorage.
    - items: lista completa de proyectos (la página /portfolio muestra todos)
    - home: flag por proyecto → aparece en la grilla del inicio
-   - variant: diseño del portfolio del inicio ('classic' | 'showcase')
+   - variant: diseño del portfolio del inicio ('classic' | 'showcase' | 'gallery')
    El admin (/admin) edita este store; "Restablecer" vuelve a los datos de content.js */
 
 const STORAGE_KEY = 'ltweb-portfolio-v1'
 
 const defaults = () => ({
-  variant: 'classic',
+  variant: 'gallery',
   items: PORTFOLIO.map((p) => ({ ...p })),
 })
 
