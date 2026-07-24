@@ -40,6 +40,15 @@ body {
   color: #fff;
 }
 
+/* Bug de Chrome/Safari: un elemento con overflow-hidden + border-radius
+   pierde el recorte redondeado por un instante cuando se transforma
+   (scale, rotate) en el hover. Forzar un mask-image evita que el navegador
+   recomponga el clip como una capa nueva a mitad de la transición. */
+.clip-fix {
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  mask-image: radial-gradient(white, black);
+}
+
 /* Orbes flotantes y glitch de texto de la página 404 */
 @keyframes float-orb-a {
   0%, 100% { transform: translate(0, 0) scale(1); }

@@ -49,7 +49,7 @@ function BentoCard({ project, index }) {
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.6, delay: Math.min(index * 0.05, 0.3), ease: [0.22, 1, 0.36, 1] }}
       style={{ rotateX, rotateY, transformPerspective: 900 }}
-      className={PATTERN[index % PATTERN.length] + ' group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02]'}
+      className={PATTERN[index % PATTERN.length] + ' clip-fix group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02]'}
     >
       <img
         src={project.image}

@@ -17,7 +17,7 @@ export function ProjectCard({ project, className = '' }) {
     >
       <h3 className="font-display font-bold uppercase text-white text-lg sm:text-xl leading-tight">{project.name}</h3>
       <p className="font-display font-semibold uppercase text-[#7db6e8] text-sm sm:text-base mt-0.5">{project.type}</p>
-      <div className="relative mt-5 rounded-xl overflow-hidden flex-1">
+      <div className="clip-fix relative mt-5 rounded-xl overflow-hidden flex-1">
         <motion.img
           src={project.image}
           alt={project.name}

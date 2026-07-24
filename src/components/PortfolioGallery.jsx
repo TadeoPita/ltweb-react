@@ -18,7 +18,7 @@ function GalleryCard({ project, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.7, delay: Math.min(index * 0.06, 0.3), ease: [0.22, 1, 0.36, 1] }}
-      className="group relative shrink-0 w-[78vw] sm:w-[420px] rounded-2xl overflow-hidden border border-white/8 bg-white/[0.03]"
+      className="clip-fix group relative shrink-0 w-[78vw] sm:w-[420px] rounded-2xl overflow-hidden border border-white/8 bg-white/[0.03]"
     >
       <div className="relative h-[420px] sm:h-[460px] overflow-hidden">
         <img

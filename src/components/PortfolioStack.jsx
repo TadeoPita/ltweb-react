@@ -11,7 +11,7 @@ import { WHATSAPP_URL } from '../data/content'
 
 function CardVisual({ project }) {
   return (
-    <div className="absolute inset-0 rounded-3xl overflow-hidden border border-white/10 bg-white/[0.03] shadow-2xl shadow-black/50">
+    <div className="clip-fix absolute inset-0 rounded-3xl overflow-hidden border border-white/10 bg-white/[0.03] shadow-2xl shadow-black/50">
       <img
         src={project.image}
         alt={project.name}
@@ -43,7 +43,7 @@ function CardVisual({ project }) {
 
 function CtaVisual() {
   return (
-    <div className="absolute inset-0 rounded-3xl overflow-hidden border-2 border-dashed border-white/25 bg-gradient-to-br from-[#3b2a8f] flex flex-col items-center justify-center gap-6 text-center p-8 shadow-2xl shadow-black/50">
+    <div className="clip-fix absolute inset-0 rounded-3xl overflow-hidden border-2 border-dashed border-white/25 bg-gradient-to-br from-[#3b2a8f] flex flex-col items-center justify-center gap-6 text-center p-8 shadow-2xl shadow-black/50">
       <span className="flex items-center justify-center w-20 h-20 rounded-full bg-white text-[#3b2a8f]">
         <Plus className="w-9 h-9" strokeWidth={2.5} />
       </span>
