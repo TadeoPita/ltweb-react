@@ -5,7 +5,7 @@ import { PortfolioGrid, NewProjectCard } from './PortfolioCards'
 import PortfolioShowcase from './PortfolioShowcase'
 import PortfolioGallery from './PortfolioGallery'
 import PortfolioBento from './PortfolioBento'
-import PortfolioAccordion from './PortfolioAccordion'
+import PortfolioStack from './PortfolioStack'
 import { usePortfolio } from '../data/portfolioStore'
 
 export function PortfolioHeader() {
@@ -61,8 +61,8 @@ export default function Portfolio() {
             <PortfolioGallery items={homeItems} />
           ) : variant === 'bento' ? (
             <PortfolioBento items={homeItems} />
-          ) : variant === 'accordion' ? (
-            <PortfolioAccordion items={homeItems} />
+          ) : variant === 'stack' ? (
+            <PortfolioStack items={homeItems} />
           ) : (
             <PortfolioGrid items={homeItems}>
               <NewProjectCard />

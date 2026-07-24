@@ -191,7 +191,7 @@ const VARIANTS = [
   { value: 'showcase', label: 'Lista interactiva' },
   { value: 'gallery', label: 'Galería horizontal' },
   { value: 'bento', label: 'Mosaico bento' },
-  { value: 'accordion', label: 'Acordeón expansivo' },
+  { value: 'stack', label: 'Mazo interactivo' },
 ]
 
 function VariantPicker({ title, hint, value, onChange }) {
