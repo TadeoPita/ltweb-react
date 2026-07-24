@@ -21,8 +21,8 @@ function BentoCard({ project, index }) {
   const ref = useRef(null)
   const mx = useMotionValue(0.5)
   const my = useMotionValue(0.5)
-  const rotateX = useSpring(useTransform(my, [0, 1], [7, -7]), { stiffness: 200, damping: 20 })
-  const rotateY = useSpring(useTransform(mx, [0, 1], [-7, 7]), { stiffness: 200, damping: 20 })
+  const rotateX = useSpring(useTransform(my, [0, 1], [4, -4]), { stiffness: 200, damping: 20 })
+  const rotateY = useSpring(useTransform(mx, [0, 1], [-4, 4]), { stiffness: 200, damping: 20 })
   const spotlight = useTransform([mx, my], ([x, y]) => `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(255,255,255,0.20), transparent 55%)`)
   const big = index % PATTERN.length === 0
 
@@ -90,12 +90,29 @@ function NewProjectBentoCard() {
       href={WHATSAPP_URL}
       target="_blank"
       rel="noreferrer"
-      className="col-span-1 row-span-1 group flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-white/25 bg-gradient-to-br from-[#3b2a8f] to-[#5a2ea6] p-6 text-center"
+      className="col-span-2 row-span-2 group flex flex-col items-center justify-center gap-6 rounded-2xl border-2 border-dashed border-white/25 bg-gradient-to-br from-[#3b2a8f] to-[#5a2ea6] p-8 text-center"
     >
-      <span className="flex items-center justify-center w-11 h-11 rounded-full bg-white text-[#3b2a8f] group-hover:rotate-90 transition-transform duration-500 ease-out">
-        <Plus className="w-5 h-5" strokeWidth={2.5} />
-      </span>
-      <p className="font-display font-bold uppercase text-sm text-white">Nuevo proyecto</p>
+      <motion.span
+        whileHover={{ rotate: 90 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 18 }}
+        className="flex items-center justify-center w-20 h-20 rounded-full bg-white text-[#3b2a8f]"
+      >
+        <Plus className="w-9 h-9" strokeWidth={2.5} />
+      </motion.span>
+      <div>
+        <p
+          className="font-display font-bold uppercase text-2xl text-gradient"
+          style={{ backgroundImage: 'linear-gradient(180deg, #FFFFFF 20%, #A0A0A0 100%)' }}
+        >
+          ¡Trabajemos juntos!
+        </p>
+        <p
+          className="font-display font-semibold uppercase text-lg mt-2 text-gradient"
+          style={{ backgroundImage: 'linear-gradient(180deg, #FFFFFF 20%, #A0A0A0 100%)' }}
+        >
+          Nuevo proyecto
+        </p>
+      </div>
     </a>
   )
 }

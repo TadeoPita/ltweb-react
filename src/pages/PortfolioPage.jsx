@@ -5,6 +5,7 @@ import { PortfolioGrid, NewProjectCard } from '../components/PortfolioCards'
 import PortfolioShowcase from '../components/PortfolioShowcase'
 import PortfolioGallery from '../components/PortfolioGallery'
 import PortfolioBento from '../components/PortfolioBento'
+import PortfolioAccordion from '../components/PortfolioAccordion'
 import { usePortfolio } from '../data/portfolioStore'
 
 export default function PortfolioPage() {
@@ -54,6 +55,8 @@ export default function PortfolioPage() {
             <PortfolioGallery items={items} />
           ) : pageVariant === 'bento' ? (
             <PortfolioBento items={items} />
+          ) : pageVariant === 'accordion' ? (
+            <PortfolioAccordion items={items} />
           ) : (
             <PortfolioGrid items={items}>
               <NewProjectCard />

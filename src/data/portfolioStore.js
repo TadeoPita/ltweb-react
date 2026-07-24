@@ -115,10 +115,14 @@ export const portfolioStore = {
 
   async setVariant(variant) {
     must(await supabase.from('portfolio_settings').update({ variant }).eq('id', 1))
+    state = { ...state, variant }
+    emit()
   },
 
   async setPageVariant(pageVariant) {
     must(await supabase.from('portfolio_settings').update({ page_variant: pageVariant }).eq('id', 1))
+    state = { ...state, pageVariant }
+    emit()
   },
 
   async updateItem(id, patch) {
@@ -133,24 +137,28 @@ export const portfolioStore = {
     if ('label' in patch) row.label = patch.label ?? null
     if ('blurred' in patch) row.blurred = patch.blurred
     must(await supabase.from('portfolio_items').update(row).eq('id', id))
+    state = { ...state, items: state.items.map((it) => (it.id === id ? { ...it, ...patch } : it)) }
+    emit()
   },
 
   async addItem(item) {
     const id = 'p' + Date.now().toString(36)
-    must(
-      await supabase.from('portfolio_items').insert({
-        id,
-        name: item.name ?? '',
-        type: item.type ?? '',
-        image: item.image ?? '',
-        url: item.url ?? '#',
-        size: item.size ?? 'normal',
-        home: item.home ?? true,
-        label: item.label ?? null,
-        blurred: item.blurred ?? false,
-        position: state.items.length,
-      }),
-    )
+    const row = {
+      name: item.name ?? '',
+      type: item.type ?? '',
+      image: item.image ?? '',
+      url: item.url ?? '#',
+      size: item.size ?? 'normal',
+      home: item.home ?? true,
+      label: item.label ?? null,
+      blurred: item.blurred ?? false,
+    }
+    must(await supabase.from('portfolio_items').insert({ id, ...row, position: state.items.length }))
+    state = {
+      ...state,
+      items: [...state.items, { id, ...row, label: row.label ?? undefined, imagePath: undefined }],
+    }
+    emit()
     return id
   },
 
@@ -160,8 +168,10 @@ export const portfolioStore = {
     if (item?.imagePath) {
       supabase.storage.from('portfolio-images').remove([item.imagePath]).catch(() => {})
     }
-    // Renumerar para que las posiciones sigan 0..n-1 sin huecos (moveItem depende de esto).
     const remaining = state.items.filter((it) => it.id !== id)
+    state = { ...state, items: remaining }
+    emit()
+    // Renumerar para que las posiciones sigan 0..n-1 sin huecos (moveItem depende de esto).
     await Promise.all(
       remaining.map((it, i) => supabase.from('portfolio_items').update({ position: i }).eq('id', it.id)),
     )
@@ -176,6 +186,10 @@ export const portfolioStore = {
       must(await supabase.from('portfolio_items').update({ position: j }).eq('id', items[i].id)),
       must(await supabase.from('portfolio_items').update({ position: i }).eq('id', items[j].id)),
     ])
+    const next = items.slice()
+    ;[next[i], next[j]] = [next[j], next[i]]
+    state = { ...state, items: next }
+    emit()
   },
 
   async uploadImage(file, itemId) {
@@ -215,6 +229,7 @@ export const portfolioStore = {
         page_variant: parsed.pageVariant ?? 'classic',
       }),
     )
+    await loadInitial()
   },
 
   exportJSON() {

@@ -47,9 +47,12 @@ function useDebouncedField(value, commit, delay = 500) {
     setLocal(next)
     dirty.current = true
     clearTimeout(timer.current)
-    timer.current = setTimeout(() => {
-      dirty.current = false
-      commit(next)
+    timer.current = setTimeout(async () => {
+      try {
+        await commit(next)
+      } finally {
+        dirty.current = false
+      }
     }, delay)
   }
 
@@ -188,6 +191,7 @@ const VARIANTS = [
   { value: 'showcase', label: 'Lista interactiva' },
   { value: 'gallery', label: 'Galería horizontal' },
   { value: 'bento', label: 'Mosaico bento' },
+  { value: 'accordion', label: 'Acordeón expansivo' },
 ]
 
 function VariantPicker({ title, hint, value, onChange }) {
