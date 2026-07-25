@@ -76,6 +76,13 @@ function ItemEditor({ item, index, total }) {
   const [blurred, setBlurred] = useDebouncedField(!!item.blurred, (v) => update({ blurred: v }), 0)
   const [home, setHome] = useDebouncedField(!!item.home, (v) => update({ home: v }), 0)
 
+  // Campos de la ficha del proyecto (/proyecto/:id)
+  const [category, setCategory] = useDebouncedField(item.category ?? '', (v) => update({ category: v }))
+  const [problem, setProblem] = useDebouncedField(item.problem ?? '', (v) => update({ problem: v }))
+  const [solution, setSolution] = useDebouncedField(item.solution ?? '', (v) => update({ solution: v }))
+  const [description, setDescription] = useDebouncedField(item.description ?? '', (v) => update({ description: v }))
+  const [services, setServices] = useDebouncedField(item.services ?? '', (v) => update({ services: v }))
+
   async function onFile(e) {
     const file = e.target.files?.[0]
     if (!file) return
@@ -182,6 +189,40 @@ function ItemEditor({ item, index, total }) {
           <span className="text-sm font-body">Imagen desenfocada (blur) — ej. "Próximamente"</span>
         </label>
       </div>
+
+      {/* Ficha del proyecto: lo que se ve al entrar a /proyecto/<id> */}
+      <details className="border-t border-black/8 pt-4">
+        <summary className="cursor-pointer text-[11px] font-semibold uppercase tracking-wide text-ink/50 select-none">
+          Ficha del proyecto (página de detalle)
+        </summary>
+        <div className="mt-4 grid gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Field label="Categoría (rubro)">
+              <input className={inputCls} value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Ej: Salud, Educación, Tecnología" />
+            </Field>
+            <Field label="Servicios (separados por coma)">
+              <input className={inputCls} value={services} onChange={(e) => setServices(e.target.value)} placeholder="UX/UI, WordPress, Responsive" />
+            </Field>
+          </div>
+          <Field label="Problema — qué necesitaba el cliente">
+            <textarea className={inputCls} rows={2} value={problem} onChange={(e) => setProblem(e.target.value)} placeholder="Una o dos frases." />
+          </Field>
+          <Field label="Solución — qué hicimos">
+            <textarea className={inputCls} rows={2} value={solution} onChange={(e) => setSolution(e.target.value)} placeholder="Una o dos frases." />
+          </Field>
+          <Field label="Qué hicimos (detalle largo — un párrafo por línea)">
+            <textarea className={inputCls} rows={5} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Explicación completa del trabajo. Cada salto de línea es un párrafo nuevo." />
+          </Field>
+          <a
+            href={`/proyecto/${item.id}`}
+            target="_blank"
+            rel="noreferrer"
+            className="justify-self-start text-xs font-semibold text-ink/60 hover:text-ink underline"
+          >
+            Ver la ficha en la web →
+          </a>
+        </div>
+      </details>
     </div>
   )
 }

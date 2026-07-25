@@ -74,6 +74,9 @@ export const SERVICES = [
     id: 'diseno',
     icon: 'check',
     title: 'Diseño y rediseño web',
+    // Los pasteles son los mismos que usan las fichas de clientes, para que
+    // la paleta del sitio se sienta una sola.
+    tint: 'var(--color-pastel-blue)',
     text: 'Creamos o renovamos sitios institucionales, landing pages y experiencias responsive alineadas con la identidad y los objetivos de cada empresa.',
     items: ['Arquitectura', 'UX/UI', 'Web institucional', 'Landing pages', 'Rediseño', 'Responsive'],
   },
@@ -81,6 +84,7 @@ export const SERVICES = [
     id: 'ecommerce',
     icon: 'rocket',
     title: 'E-commerce',
+    tint: 'var(--color-pastel-pink)',
     text: 'Diseñamos tiendas claras, confiables y preparadas para facilitar cada etapa del proceso de compra.',
     items: ['WooCommerce', 'Catálogos', 'Filtros', 'Medios de pago', 'Optimización de conversión'],
   },
@@ -88,6 +92,7 @@ export const SERVICES = [
     id: 'desarrollo',
     icon: 'chat',
     title: 'Desarrollo y soluciones personalizadas',
+    tint: 'var(--color-pastel-green)',
     text: 'Desarrollamos funciones e integraciones específicas cuando una solución estándar no alcanza.',
     items: ['Automatizaciones', 'Integraciones', 'Reservas', 'Formularios avanzados', 'Sistemas personalizados'],
   },
@@ -104,6 +109,8 @@ export const DIFFERENTIATORS = [
   'Sitios autoadministrables',
   'Acompañamiento después del lanzamiento',
   'Soluciones adaptadas a cada proyecto',
+  'Sistemas personalizados',
+  'Plazos y presupuesto cerrados',
 ]
 
 /* Proceso: 4 pasos claros, sin promesas vacías. */

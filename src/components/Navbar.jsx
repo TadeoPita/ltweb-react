@@ -4,8 +4,9 @@ import { InstagramIcon, WhatsAppIcon } from './Icons'
 import { INSTAGRAM_URL, WHATSAPP_URL } from '../data/content'
 
 export default function Navbar() {
-  // En /portfolio el fondo es oscuro: usamos el logo blanco
-  const onDark = useLocation().pathname.startsWith('/portfolio')
+  // En /portfolio y en las fichas de proyecto el fondo es oscuro: logo blanco
+  const { pathname } = useLocation()
+  const onDark = pathname.startsWith('/portfolio') || pathname.startsWith('/proyecto')
   return (
     <motion.header
       initial={{ y: -24, opacity: 0 }}

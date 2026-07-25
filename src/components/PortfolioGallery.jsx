@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 import { ArrowUpRight, Plus } from 'lucide-react'
+import MotionLink, { projectPath } from './MotionLink'
 import { WHATSAPP_URL } from '../data/content'
 
 /* Tercera versión del portfolio: galería horizontal cinemática.
@@ -10,10 +11,8 @@ import { WHATSAPP_URL } from '../data/content'
 
 function GalleryCard({ project, index }) {
   return (
-    <motion.a
-      href={project.url}
-      target={project.url && project.url !== '#' ? '_blank' : undefined}
-      rel="noreferrer"
+    <MotionLink
+      to={projectPath(project)}
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -47,7 +46,7 @@ function GalleryCard({ project, index }) {
           </span>
         </div>
       </div>
-    </motion.a>
+    </MotionLink>
   )
 }
 

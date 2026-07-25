@@ -30,6 +30,11 @@ function itemsFromRows(rows) {
       home: r.home,
       label: r.label ?? undefined,
       blurred: r.blurred,
+      category: r.category ?? '',
+      problem: r.problem ?? '',
+      solution: r.solution ?? '',
+      description: r.description ?? '',
+      services: r.services ?? '',
     }))
 }
 
@@ -136,6 +141,11 @@ export const portfolioStore = {
     if ('home' in patch) row.home = patch.home
     if ('label' in patch) row.label = patch.label ?? null
     if ('blurred' in patch) row.blurred = patch.blurred
+    if ('category' in patch) row.category = patch.category ?? ''
+    if ('problem' in patch) row.problem = patch.problem ?? ''
+    if ('solution' in patch) row.solution = patch.solution ?? ''
+    if ('description' in patch) row.description = patch.description ?? ''
+    if ('services' in patch) row.services = patch.services ?? ''
     must(await supabase.from('portfolio_items').update(row).eq('id', id))
     state = { ...state, items: state.items.map((it) => (it.id === id ? { ...it, ...patch } : it)) }
     emit()
@@ -152,6 +162,11 @@ export const portfolioStore = {
       home: item.home ?? true,
       label: item.label ?? null,
       blurred: item.blurred ?? false,
+      category: item.category ?? '',
+      problem: item.problem ?? '',
+      solution: item.solution ?? '',
+      description: item.description ?? '',
+      services: item.services ?? '',
     }
     must(await supabase.from('portfolio_items').insert({ id, ...row, position: state.items.length }))
     state = {
@@ -219,6 +234,11 @@ export const portfolioStore = {
       home: p.home ?? true,
       label: p.label ?? null,
       blurred: p.blurred ?? false,
+      category: p.category ?? '',
+      problem: p.problem ?? '',
+      solution: p.solution ?? '',
+      description: p.description ?? '',
+      services: p.services ?? '',
       position: i,
     }))
     must(await supabase.from('portfolio_items').insert(rows))

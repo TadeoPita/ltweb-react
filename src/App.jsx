@@ -16,6 +16,7 @@ import SocialSection from './components/SocialSection'
 import FinalCTA from './components/FinalCTA'
 import Footer from './components/Footer'
 import PortfolioPage from './pages/PortfolioPage'
+import ProjectPage from './pages/ProjectPage'
 import LoginPage from './pages/LoginPage'
 import AdminPage from './pages/AdminPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -52,6 +53,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
+        <Route path="/proyecto/:id" element={<ProjectPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/admin"

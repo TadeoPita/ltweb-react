@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion'
 import { ArrowUpRight, Plus } from 'lucide-react'
+import MotionLink, { projectPath } from './MotionLink'
 import { WHATSAPP_URL } from '../data/content'
 
 /* Diseño alternativo del portfolio: lista tipográfica grande.
@@ -49,11 +50,9 @@ export default function PortfolioShowcase({ items }) {
         {items.map((p, i) => {
           const isActive = active === p.id
           return (
-            <motion.a
+            <MotionLink
               key={p.id}
-              href={p.url}
-              target={p.url && p.url !== '#' ? '_blank' : undefined}
-              rel="noreferrer"
+              to={projectPath(p)}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-30px' }}
@@ -94,7 +93,7 @@ export default function PortfolioShowcase({ items }) {
               >
                 <ArrowUpRight className="w-5 h-5" />
               </motion.span>
-            </motion.a>
+            </MotionLink>
           )
         })}
 

@@ -70,14 +70,15 @@ export default function Solutions() {
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -6 }}
-              className="rounded-2xl bg-card border border-black/4 p-8 flex flex-col"
+              style={{ backgroundColor: s.tint }}
+              className="rounded-2xl border border-black/5 p-8 flex flex-col"
             >
               <div className="text-ink">{icons[s.icon]}</div>
               <h3 className="mt-7 font-display font-bold uppercase text-[22px] text-[#101a3c]">{s.title}</h3>
-              <p className="mt-4 font-body text-[15px] leading-relaxed text-ink/70">{s.text}</p>
-              <ul className="mt-6 pt-6 border-t border-black/8 flex flex-wrap gap-2">
+              <p className="mt-4 font-body text-[15px] leading-relaxed text-ink/75">{s.text}</p>
+              <ul className="mt-6 pt-6 border-t border-black/10 flex flex-wrap gap-2">
                 {s.items.map((item) => (
-                  <li key={item} className="rounded-full bg-white border border-black/8 px-3 py-1 text-xs font-body text-ink/70">
+                  <li key={item} className="rounded-full bg-white/70 border border-black/8 px-3 py-1 text-xs font-body text-ink/75">
                     {item}
                   </li>
                 ))}
@@ -88,7 +89,7 @@ export default function Solutions() {
 
         {/* Capacidades complementarias */}
         <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
-          <span className="text-xs font-semibold uppercase tracking-wide text-ink/40">También trabajamos</span>
+          <span className="text-sheen text-xs font-semibold uppercase tracking-wide">También trabajamos</span>
           {EXTRA_CAPABILITIES.map((cap) => (
             <span
               key={cap}

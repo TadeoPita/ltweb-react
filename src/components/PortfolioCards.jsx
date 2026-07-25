@@ -1,13 +1,12 @@
 import { motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
+import MotionLink, { projectPath } from './MotionLink'
 import { WHATSAPP_URL } from '../data/content'
 
 export function ProjectCard({ project, className = '' }) {
   return (
-    <motion.a
-      href={project.url}
-      target={project.url && project.url !== '#' ? '_blank' : undefined}
-      rel="noreferrer"
+    <MotionLink
+      to={projectPath(project)}
       initial={{ opacity: 0, y: 36 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
@@ -35,7 +34,7 @@ export function ProjectCard({ project, className = '' }) {
           </div>
         )}
       </div>
-    </motion.a>
+    </MotionLink>
   )
 }
 

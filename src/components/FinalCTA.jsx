@@ -9,7 +9,7 @@ const ease = [0.22, 1, 0.36, 1]
    Se ancla como #contacto para que el link del nav caiga acá. */
 export default function FinalCTA() {
   return (
-    <section id="contacto" className="bg-ink-2 py-24 sm:py-32">
+    <section id="contacto" className="bg-[#111113] py-24 sm:py-32">
       <div className="mx-auto max-w-[1140px] px-6 text-center">
         <motion.p
           initial={{ opacity: 0, y: 14 }}

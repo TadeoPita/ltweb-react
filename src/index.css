@@ -49,6 +49,37 @@ body {
   mask-image: radial-gradient(white, black);
 }
 
+/* Barrido de luz sobre texto ("También trabajamos").
+   Una banda de contraste cruza las letras y después queda quieta un rato
+   largo, para que llame la atención sin ser una animación permanente. */
+@keyframes text-sheen {
+  0% { background-position: 190% center; }
+  16% { background-position: -90% center; }
+  100% { background-position: -90% center; }
+}
+
+.text-sheen {
+  background-image: linear-gradient(
+    100deg,
+    rgba(22, 22, 22, 0.38) 42%,
+    rgba(22, 22, 22, 0.95) 50%,
+    rgba(22, 22, 22, 0.38) 58%
+  );
+  background-size: 250% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: text-sheen 6.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-sheen {
+    animation: none;
+    color: rgba(22, 22, 22, 0.4);
+    background-image: none;
+  }
+}
+
 /* Orbes flotantes y glitch de texto de la página 404 */
 @keyframes float-orb-a {
   0%, 100% { transform: translate(0, 0) scale(1); }

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import { ArrowLeft, ArrowRight, ArrowUpRight, Plus } from 'lucide-react'
+import MotionLink, { projectPath } from './MotionLink'
 import { WHATSAPP_URL } from '../data/content'
 
 /* Quinta versión del portfolio: mazo de cards arrastrables, como cartas.
@@ -69,11 +70,15 @@ function FrontCard({ project, onSwiped }) {
     }
   }
 
+  // El CTA sale a WhatsApp (link externo); los proyectos van a su ficha interna.
+  const Wrapper = project.isCta ? motion.a : MotionLink
+  const linkProps = project.isCta
+    ? { href: WHATSAPP_URL, target: '_blank', rel: 'noreferrer' }
+    : { to: projectPath(project) }
+
   return (
-    <motion.a
-      href={project.isCta ? WHATSAPP_URL : project.url}
-      target={project.isCta || (project.url && project.url !== '#') ? '_blank' : undefined}
-      rel="noreferrer"
+    <Wrapper
+      {...linkProps}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.7}
@@ -83,7 +88,7 @@ function FrontCard({ project, onSwiped }) {
       className="absolute inset-0 block cursor-grab active:cursor-grabbing touch-none"
     >
       {project.isCta ? <CtaVisual /> : <CardVisual project={project} />}
-    </motion.a>
+    </Wrapper>
   )
 }
 

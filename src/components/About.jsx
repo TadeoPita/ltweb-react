@@ -9,7 +9,7 @@ export default function About() {
   return (
     <section className="bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-[1280px] px-6">
-        <div className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-start">
+        <div className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
           <div>
             <p className="font-display font-semibold uppercase tracking-wide text-[#7db6e8] text-sm">
               Sobre LTWEB

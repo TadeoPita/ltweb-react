@@ -15,7 +15,7 @@ export default function ClientsShowcase() {
   }, [paused])
 
   return (
-    <section className="relative bg-white pb-16">
+    <section className="relative bg-white pt-20 sm:pt-28 pb-16">
       <div
         className="mx-auto max-w-[1140px] px-4 sm:px-6"
         onMouseEnter={() => setPaused(true)}

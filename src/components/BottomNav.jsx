@@ -13,7 +13,8 @@ export default function BottomNav() {
 
   useEffect(() => {
     if (!onHome) {
-      setActive(pathname.startsWith('/portfolio') ? '#proyectos' : '')
+      const inProjects = pathname.startsWith('/portfolio') || pathname.startsWith('/proyecto')
+      setActive(inProjects ? '#proyectos' : '')
       return
     }
 
