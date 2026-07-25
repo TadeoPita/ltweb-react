@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react'
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion'
 import { ArrowUpRight, Plus } from 'lucide-react'
+import MotionLink, { projectPath } from './MotionLink'
+import { useLightbox } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
 
 /* Diseño alternativo del portfolio: lista tipográfica grande.
@@ -9,6 +11,16 @@ import { WHATSAPP_URL } from '../data/content'
    thumbnails fijos al lado de cada fila. */
 export default function PortfolioShowcase({ items }) {
   const [active, setActive] = useState(null)
+  const { open } = useLightbox()
+
+  /* Es una lista tipográfica, no una grilla de fotos: acá no tiene sentido
+     el efecto de expandir desde la card, solo interceptamos el click. */
+  function onRowClick(e, p) {
+    if (!open) return
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+    e.preventDefault()
+    open(p)
+  }
   const ref = useRef(null)
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
@@ -49,11 +61,10 @@ export default function PortfolioShowcase({ items }) {
         {items.map((p, i) => {
           const isActive = active === p.id
           return (
-            <motion.a
+            <MotionLink
               key={p.id}
-              href={p.url}
-              target={p.url && p.url !== '#' ? '_blank' : undefined}
-              rel="noreferrer"
+              to={projectPath(p)}
+              onClick={(e) => onRowClick(e, p)}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-30px' }}
@@ -94,7 +105,7 @@ export default function PortfolioShowcase({ items }) {
               >
                 <ArrowUpRight className="w-5 h-5" />
               </motion.span>
-            </motion.a>
+            </MotionLink>
           )
         })}
 

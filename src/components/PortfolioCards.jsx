@@ -1,13 +1,15 @@
 import { motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
+import MotionLink, { projectPath } from './MotionLink'
+import { useProjectCard } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
 
 export function ProjectCard({ project, className = '' }) {
+  const card = useProjectCard(project, 'grid')
   return (
-    <motion.a
-      href={project.url}
-      target={project.url && project.url !== '#' ? '_blank' : undefined}
-      rel="noreferrer"
+    <MotionLink
+      to={projectPath(project)}
+      onClick={card.onClick}
       initial={{ opacity: 0, y: 36 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
@@ -17,7 +19,7 @@ export function ProjectCard({ project, className = '' }) {
     >
       <h3 className="font-display font-bold uppercase text-white text-lg sm:text-xl leading-tight">{project.name}</h3>
       <p className="font-display font-semibold uppercase text-[#7db6e8] text-sm sm:text-base mt-0.5">{project.type}</p>
-      <div className="clip-fix relative mt-5 rounded-xl overflow-hidden flex-1">
+      <motion.div {...card.imageProps} className="clip-fix relative mt-5 rounded-xl overflow-hidden flex-1">
         <motion.img
           src={project.image}
           alt={project.name}
@@ -34,8 +36,8 @@ export function ProjectCard({ project, className = '' }) {
             </span>
           </div>
         )}
-      </div>
-    </motion.a>
+      </motion.div>
+    </MotionLink>
   )
 }
 

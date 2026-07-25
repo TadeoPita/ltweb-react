@@ -1,21 +1,25 @@
 import { useRef } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { ArrowUpRight, Plus } from 'lucide-react'
+import MotionLink, { projectPath } from './MotionLink'
+import { useProjectCard } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
 
 /* Cuarta versión del portfolio: mosaico tipo "bento".
-   Las cards varían de tamaño en un patrón asimétrico (repite cada 6),
+   El tamaño de cada card sale del campo "size" que se edita en /admin,
    y al pasar el mouse cada una inclina levemente en 3D y muestra un
    spotlight que sigue al cursor, todo con física spring. */
 
-const PATTERN = [
-  'col-span-2 row-span-2',
-  'col-span-1 row-span-1',
-  'col-span-1 row-span-2',
-  'col-span-1 row-span-1',
-  'col-span-2 row-span-1',
-  'col-span-1 row-span-1',
-]
+const SPANS = {
+  normal: 'col-span-1 row-span-1',
+  tall: 'col-span-1 row-span-2',
+  wide: 'col-span-2 row-span-1',
+  full: 'col-span-2 row-span-2',
+}
+
+function spanFor(size) {
+  return SPANS[size] ?? SPANS.normal
+}
 
 function BentoCard({ project, index }) {
   const ref = useRef(null)
@@ -24,7 +28,9 @@ function BentoCard({ project, index }) {
   const rotateX = useSpring(useTransform(my, [0, 1], [4, -4]), { stiffness: 200, damping: 20 })
   const rotateY = useSpring(useTransform(mx, [0, 1], [-4, 4]), { stiffness: 200, damping: 20 })
   const spotlight = useTransform([mx, my], ([x, y]) => `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(255,255,255,0.20), transparent 55%)`)
-  const big = index % PATTERN.length === 0
+  // El título crece solo en las cards que ocupan más de una columna
+  const big = project.size === 'full' || project.size === 'wide'
+  const card = useProjectCard(project, 'bento')
 
   function onMove(e) {
     const rect = ref.current.getBoundingClientRect()
@@ -37,11 +43,10 @@ function BentoCard({ project, index }) {
   }
 
   return (
-    <motion.a
+    <MotionLink
       ref={ref}
-      href={project.url}
-      target={project.url && project.url !== '#' ? '_blank' : undefined}
-      rel="noreferrer"
+      to={projectPath(project)}
+      onClick={card.onClick}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       initial={{ opacity: 0, y: 30 }}
@@ -49,17 +54,19 @@ function BentoCard({ project, index }) {
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.6, delay: Math.min(index * 0.05, 0.3), ease: [0.22, 1, 0.36, 1] }}
       style={{ rotateX, rotateY, transformPerspective: 900 }}
-      className={PATTERN[index % PATTERN.length] + ' clip-fix group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02]'}
+      className={spanFor(project.size) + ' clip-fix group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02]'}
     >
-      <img
-        src={project.image}
-        alt={project.name}
-        loading="lazy"
-        className={
-          'absolute inset-0 w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.06] ' +
-          (project.blurred ? 'blur-[6px] scale-105' : '')
-        }
-      />
+      <motion.div {...card.imageProps} className="absolute inset-0">
+        <img
+          src={project.image}
+          alt={project.name}
+          loading="lazy"
+          className={
+            'w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.06] ' +
+            (project.blurred ? 'blur-[6px] scale-105' : '')
+          }
+        />
+      </motion.div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
       <motion.div
         aria-hidden
@@ -80,7 +87,7 @@ function BentoCard({ project, index }) {
       <span className="absolute top-4 right-4 flex items-center justify-center w-9 h-9 rounded-full bg-white/10 backdrop-blur border border-white/15 text-white opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
         <ArrowUpRight className="w-4 h-4" />
       </span>
-    </motion.a>
+    </MotionLink>
   )
 }
 
