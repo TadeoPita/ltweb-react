@@ -5,13 +5,11 @@ import { useProjectCard } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
 
 export function ProjectCard({ project, className = '' }) {
-  const card = useProjectCard(project)
+  const card = useProjectCard(project, 'grid')
   return (
     <MotionLink
       to={projectPath(project)}
       onClick={card.onClick}
-      layoutId={card.layoutId}
-      style={card.style}
       initial={{ opacity: 0, y: 36 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
@@ -21,7 +19,7 @@ export function ProjectCard({ project, className = '' }) {
     >
       <h3 className="font-display font-bold uppercase text-white text-lg sm:text-xl leading-tight">{project.name}</h3>
       <p className="font-display font-semibold uppercase text-[#7db6e8] text-sm sm:text-base mt-0.5">{project.type}</p>
-      <div className="clip-fix relative mt-5 rounded-xl overflow-hidden flex-1">
+      <motion.div {...card.imageProps} className="clip-fix relative mt-5 rounded-xl overflow-hidden flex-1">
         <motion.img
           src={project.image}
           alt={project.name}
@@ -38,7 +36,7 @@ export function ProjectCard({ project, className = '' }) {
             </span>
           </div>
         )}
-      </div>
+      </motion.div>
     </MotionLink>
   )
 }

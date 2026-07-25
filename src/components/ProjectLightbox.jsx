@@ -13,6 +13,11 @@ import { EASE } from '../lib/motion'
    El contexto deja que cualquier variante del portfolio abra el visor sin
    tener que pasar props por toda la jerarquía. */
 
+/* Misma física de ida y de vuelta: si la apertura y el cierre usan curvas
+   distintas, el movimiento se siente cortado. Un spring suave da el
+   arranque y la frenada progresivos del efecto de iOS. */
+const LAYOUT_SPRING = { type: 'spring', stiffness: 260, damping: 30, mass: 0.9 }
+
 const LightboxContext = createContext(null)
 
 export function useLightbox() {
@@ -34,22 +39,37 @@ function photosOf(project) {
    El link a /proyecto/:id se mantiene (sirve para ctrl+click, "abrir en
    pestaña nueva" y para los buscadores), pero el click común lo intercepta
    y abre el visor en su lugar. */
-export function useProjectCard(project) {
+/* `scope` distingue el contexto donde se dibuja la card. Hace falta porque
+   algunas variantes montan la misma lista dos veces (por ejemplo la galería
+   arma la pista de desktop y la pila de mobile, y CSS oculta una de las dos):
+   con dos elementos vivos compartiendo layoutId, Framer elige uno como
+   "líder" y deja el otro en opacity 0. Con el scope cada uno tiene su id y el
+   visor usa el de la card que realmente se tocó. */
+export function useProjectCard(project, scope = 'default') {
   const { open, openId } = useLightbox()
-  const isOpen = openId === project.id
+  const layoutId = `project-photo-${scope}-${project.id}`
+  const isOpen = openId === layoutId
 
   function onClick(e) {
     if (!open) return
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
     e.preventDefault()
-    open(project)
+    open(project, 0, layoutId)
   }
 
   return {
+    /* Va en la raíz de la card. */
     onClick,
-    layoutId: `project-photo-${project.id}`,
-    // Mientras el visor muestra esta card, la ocultamos para que no se duplique.
-    style: isOpen ? { opacity: 0 } : undefined,
+    /* Va en el contenedor de la imagen, NUNCA en la raíz de la card: la card
+       tiene su propia animación de entrada y, en el mosaico, una inclinación
+       3D. La proyección de layout de Framer pelea con las dos: la entrada
+       quedaba trabada en opacity 0 y al abrir el visor se veía un salto. */
+    imageProps: {
+      layoutId,
+      transition: LAYOUT_SPRING,
+      // Mientras el visor muestra esta foto la ocultamos, si no se duplica.
+      style: isOpen ? { opacity: 0 } : undefined,
+    },
   }
 }
 
@@ -61,9 +81,12 @@ export function ProjectLightboxProvider({ children }) {
      que termine la animación de salida, por eso se limpia en onExitComplete. */
   const [activeId, setActiveId] = useState(null)
 
-  const open = useCallback((p, startIndex = 0) => {
+  /* `layoutId` es el de la card concreta que se tocó; el visor se expande
+     desde esa. Si no viene (por ejemplo desde la galería de la ficha), el
+     visor entra sin origen y simplemente aparece. */
+  const open = useCallback((p, startIndex = 0, layoutId = null) => {
     setProject(p)
-    setActiveId(p.id)
+    setActiveId(layoutId)
     setIndex(startIndex)
   }, [])
 
@@ -121,8 +144,8 @@ export function ProjectLightboxProvider({ children }) {
 
               {/* Imagen: comparte layoutId con la card de origen */}
               <motion.div
-                layoutId={`project-photo-${project.id}`}
-                transition={{ duration: 0.45, ease: EASE }}
+                layoutId={activeId ?? undefined}
+                transition={LAYOUT_SPRING}
                 className="relative z-10 max-w-5xl w-full max-h-[78vh] rounded-2xl overflow-hidden bg-ink-2 shadow-[0_40px_90px_rgba(0,0,0,0.6)]"
               >
                 <AnimatePresence mode="wait">

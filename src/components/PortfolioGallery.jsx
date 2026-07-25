@@ -10,21 +10,19 @@ import { WHATSAPP_URL } from '../data/content'
    la pista se desliza en horizontal con física suave.
    En mobile cae a una grilla vertical simple con imágenes grandes. */
 
-function GalleryCard({ project, index }) {
-  const card = useProjectCard(project)
+function GalleryCard({ project, index, scope }) {
+  const card = useProjectCard(project, scope)
   return (
     <MotionLink
       to={projectPath(project)}
       onClick={card.onClick}
-      layoutId={card.layoutId}
-      style={card.style}
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.7, delay: Math.min(index * 0.06, 0.3), ease: [0.22, 1, 0.36, 1] }}
       className="clip-fix group relative shrink-0 w-[78vw] sm:w-[420px] rounded-2xl overflow-hidden border border-white/8 bg-white/[0.03]"
     >
-      <div className="relative h-[420px] sm:h-[460px] overflow-hidden">
+      <motion.div {...card.imageProps} className="relative h-[420px] sm:h-[460px] overflow-hidden">
         <img
           src={project.image}
           alt={project.name}
@@ -50,7 +48,7 @@ function GalleryCard({ project, index }) {
             <ArrowUpRight className="w-5 h-5" />
           </span>
         </div>
-      </div>
+      </motion.div>
     </MotionLink>
   )
 }
@@ -120,7 +118,7 @@ export default function PortfolioGallery({ items }) {
         <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
           <motion.div ref={trackRef} style={{ x }} className="flex gap-6 pl-[max(2.5rem,calc(50vw-570px))] pr-10">
             {items.map((p, i) => (
-              <GalleryCard key={p.id ?? p.name} project={p} index={i} />
+              <GalleryCard key={p.id ?? p.name} project={p} index={i} scope="gallery-desktop" />
             ))}
             <NewProjectGalleryCard />
           </motion.div>
@@ -135,7 +133,7 @@ export default function PortfolioGallery({ items }) {
       {/* Mobile / tablet: pila vertical con imágenes grandes */}
       <div className="lg:hidden flex flex-col gap-5 items-center">
         {items.map((p, i) => (
-          <GalleryCard key={p.id ?? p.name} project={p} index={i} />
+          <GalleryCard key={p.id ?? p.name} project={p} index={i} scope="gallery-mobile" />
         ))}
         <NewProjectGalleryCard />
       </div>
