@@ -15,7 +15,7 @@ function Chip({ text, delay }) {
       transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      className="inline-flex items-center gap-2.5 rounded-full bg-white shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-black/4 px-5 py-2.5 font-body font-medium text-[15px] text-ink cursor-default select-none"
+      className="inline-flex items-center gap-2.5 rounded-full bg-paper border border-black/4 px-5 py-2.5 font-body font-medium text-[15px] text-ink cursor-default select-none shadow-none hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-300"
     >
       <motion.img
         layout
@@ -85,9 +85,9 @@ export default function SocialSection() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             
-            className="block mx-auto w-full max-w-md border-0 border-ink rounded-[2.5rem] overflow-hidden"
+            className="block mx-auto w-full max-w-md border-0 border-ink rounded-[22px] overflow-hidden"
           >
-            <img src="/images/instagram-phone.png" alt="Instagram de LT WEB" loading="lazy" className="w-full h-auto" />
+            <img src="/images/instagram-phone.png" alt="Instagram de LT WEB" loading="lazy" className="w-full h-auto rounded-[22px]" />
           </motion.a>
 
           {/* Chips derecha */}

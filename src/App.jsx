@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { ProjectLightboxProvider } from './components/ProjectLightbox'
 import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
 import BottomNav from './components/BottomNav'
@@ -16,6 +17,7 @@ import FAQ from './components/FAQ'
 import SocialSection from './components/SocialSection'
 import Footer from './components/Footer'
 import PortfolioPage from './pages/PortfolioPage'
+import ProjectPage from './pages/ProjectPage'
 import LoginPage from './pages/LoginPage'
 import AdminPage from './pages/AdminPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -49,6 +51,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/portfolio" element={<PortfolioPage />} />
+        <Route path="/proyecto/:id" element={<ProjectPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/admin"
@@ -69,7 +72,9 @@ function AppRoutes() {
 export default function App() {
   return (
     <AuthProvider>
-      <AppRoutes />
+      <ProjectLightboxProvider>
+        <AppRoutes />
+      </ProjectLightboxProvider>
     </AuthProvider>
   )
 }

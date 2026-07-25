@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
 import { ArrowLeft, ArrowRight, ArrowUpRight, Plus } from 'lucide-react'
+import MotionLink, { projectPath } from './MotionLink'
+import { useLightbox } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
 
 /* Quinta versión del portfolio: mazo de cards arrastrables, como cartas.
@@ -58,6 +60,17 @@ function CtaVisual() {
 function FrontCard({ project, onSwiped }) {
   const x = useMotionValue(0)
   const rotate = useTransform(x, [-260, 260], [-14, 14])
+  const { open } = useLightbox()
+
+  /* Al arrastrar, el navegador igual dispara click al soltar: si la card se
+     movió, no abrimos el visor. */
+  function onClick(e) {
+    if (project.isCta || !open) return
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+    if (Math.abs(x.get()) > 4) return
+    e.preventDefault()
+    open(project)
+  }
 
   function onDragEnd(_e, info) {
     const passed = Math.abs(info.offset.x) > 120 || Math.abs(info.velocity.x) > 500
@@ -69,11 +82,16 @@ function FrontCard({ project, onSwiped }) {
     }
   }
 
+  // El CTA sale a WhatsApp (link externo); los proyectos van a su ficha interna.
+  const Wrapper = project.isCta ? motion.a : MotionLink
+  const linkProps = project.isCta
+    ? { href: WHATSAPP_URL, target: '_blank', rel: 'noreferrer' }
+    : { to: projectPath(project) }
+
   return (
-    <motion.a
-      href={project.isCta ? WHATSAPP_URL : project.url}
-      target={project.isCta || (project.url && project.url !== '#') ? '_blank' : undefined}
-      rel="noreferrer"
+    <Wrapper
+      {...linkProps}
+      onClick={onClick}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.7}
@@ -83,7 +101,7 @@ function FrontCard({ project, onSwiped }) {
       className="absolute inset-0 block cursor-grab active:cursor-grabbing touch-none"
     >
       {project.isCta ? <CtaVisual /> : <CardVisual project={project} />}
-    </motion.a>
+    </Wrapper>
   )
 }
 
