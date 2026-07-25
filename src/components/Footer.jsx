@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1.4fr]">
           {/* Marca */}
           <div>
-            <img src="/images/logo-blanco.png" alt="LT WEB" className="h-10 w-auto" />
+            <img src="/images/logo-blanco.png" alt="LT WEB" className="h-16 w-auto" />
             <p className="mt-5 font-body text-white/60 text-[15px] leading-relaxed max-w-xs">
               Estudio de diseño y desarrollo web. Trabajamos con empresas que quieren comunicar mejor y generar nuevas oportunidades.
             </p>

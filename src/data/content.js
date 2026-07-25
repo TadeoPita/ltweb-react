@@ -19,9 +19,9 @@ export const NAV_LINKS = [
    Cuatro áreas concretas, sin adjetivos de venta. */
 export const CAPABILITIES = [
   'Diseño UX/UI',
-  'Desarrollo WordPress',
+  'Desarrollo web',
   'E-commerce',
-  'Soluciones personalizadas',
+  'Sistemas personalizados',
 ]
 
 /* Casos destacados con formato problema/solución/servicios.

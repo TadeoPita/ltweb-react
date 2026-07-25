@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { blurUp, blurStagger, blurChild } from '../lib/motion'
 import { SERVICES, EXTRA_CAPABILITIES } from '../data/content'
 
 const icons = {
@@ -29,46 +30,31 @@ export default function Solutions() {
       />
 
       <div className="relative mx-auto max-w-[1280px] px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 18 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.6 }}
-          className="text-center"
-        >
+        <motion.div {...blurUp(0)} className="text-center">
           <span className="inline-block rounded-full bg-white border border-black/6 shadow-[0_8px_24px_rgba(0,0,0,0.07)] px-6 py-2.5 text-sm font-semibold font-body">
             Servicios
           </span>
         </motion.div>
 
         <motion.h2
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          {...blurUp(0.08)}
           className="relative mt-8 text-center font-display font-bold uppercase text-ink leading-[0.95] text-4xl sm:text-6xl"
         >
           Qué hacemos
         </motion.h2>
 
         <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          {...blurUp(0.16)}
           className="mt-6 text-center font-body text-ink/60 text-base sm:text-lg max-w-2xl mx-auto"
         >
           Tres áreas de trabajo que cubren desde una landing simple hasta soluciones a medida integradas con el resto de tu negocio.
         </motion.p>
 
-        <div className="mt-16 grid md:grid-cols-3 gap-4">
-          {SERVICES.map((s, i) => (
+        <motion.div {...blurStagger(0.12)} className="mt-16 grid md:grid-cols-3 gap-4">
+          {SERVICES.map((s) => (
             <motion.div
               key={s.id}
-              initial={{ opacity: 0, y: 36 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+              variants={blurChild}
               whileHover={{ y: -6 }}
               style={{ backgroundColor: s.tint }}
               className="rounded-2xl border border-black/5 p-8 flex flex-col"
@@ -85,10 +71,10 @@ export default function Solutions() {
               </ul>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Capacidades complementarias */}
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
+        <motion.div {...blurUp(0.1)} className="mt-12 flex flex-wrap items-center justify-center gap-3">
           <span className="text-sheen text-xs font-semibold uppercase tracking-wide">También trabajamos</span>
           {EXTRA_CAPABILITIES.map((cap) => (
             <span
@@ -98,7 +84,7 @@ export default function Solutions() {
               {cap}
             </span>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   )

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { EASE } from '../lib/motion'
 import { WHATSAPP_URL } from '../data/content'
 
 const container = {
@@ -7,12 +8,12 @@ const container = {
 }
 
 const item = {
-  hidden: { opacity: 0, y: 28, filter: 'blur(6px)' },
+  hidden: { opacity: 0, y: 28, filter: 'blur(10px)' },
   show: {
     opacity: 1,
     y: 0,
     filter: 'blur(0px)',
-    transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.9, ease: EASE },
   },
 }
 

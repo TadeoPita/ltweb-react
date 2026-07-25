@@ -59,9 +59,13 @@ function useDebouncedField(value, commit, delay = 500) {
   return [local, onChange]
 }
 
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024
+
 function ItemEditor({ item, index, total }) {
   const fileRef = useRef(null)
+  const galleryRef = useRef(null)
   const [uploading, setUploading] = useState(false)
+  const [galleryBusy, setGalleryBusy] = useState(false)
 
   const update = (patch) => portfolioStore.updateItem(item.id, patch)
 
@@ -86,7 +90,7 @@ function ItemEditor({ item, index, total }) {
   async function onFile(e) {
     const file = e.target.files?.[0]
     if (!file) return
-    if (file.size > 8 * 1024 * 1024) {
+    if (file.size > MAX_UPLOAD_BYTES) {
       alert('La imagen pesa más de 8 MB. Subí una versión más liviana.')
       e.target.value = ''
       return
@@ -101,6 +105,43 @@ function ItemEditor({ item, index, total }) {
       e.target.value = ''
     }
   }
+
+  /* Galería: se pueden elegir varias fotos de una. Se suben de a una para
+     poder avisar cuál falló sin cortar el resto. */
+  async function onGalleryFiles(e) {
+    const files = [...(e.target.files ?? [])]
+    if (!files.length) return
+    const tooBig = files.filter((f) => f.size > MAX_UPLOAD_BYTES)
+    if (tooBig.length) {
+      alert(`Estas superan los 8 MB y se omiten:\n${tooBig.map((f) => f.name).join('\n')}`)
+    }
+    setGalleryBusy(true)
+    try {
+      for (const file of files.filter((f) => f.size <= MAX_UPLOAD_BYTES)) {
+        try {
+          await portfolioStore.addGalleryImage(file, item.id)
+        } catch (err) {
+          alert(`No se pudo subir "${file.name}": ` + err.message)
+        }
+      }
+    } finally {
+      setGalleryBusy(false)
+      e.target.value = ''
+    }
+  }
+
+  async function removeGalleryPhoto(i) {
+    setGalleryBusy(true)
+    try {
+      await portfolioStore.removeGalleryImage(item.id, i)
+    } catch (err) {
+      alert('No se pudo eliminar la foto: ' + err.message)
+    } finally {
+      setGalleryBusy(false)
+    }
+  }
+
+  const gallery = item.gallery ?? []
 
   return (
     <div className="rounded-2xl bg-white border border-black/8 p-5 flex flex-col gap-4">
@@ -213,6 +254,57 @@ function ItemEditor({ item, index, total }) {
           <Field label="Qué hicimos (detalle largo — un párrafo por línea)">
             <textarea className={inputCls} rows={5} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Explicación completa del trabajo. Cada salto de línea es un párrafo nuevo." />
           </Field>
+          {/* Galería: fotos extra que se muestran en la ficha */}
+          <div className="border-t border-black/8 pt-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="block text-[11px] font-semibold uppercase tracking-wide text-ink/50">
+                Galería de fotos ({gallery.length})
+              </span>
+              <button
+                onClick={() => galleryRef.current.click()}
+                disabled={galleryBusy}
+                className="rounded-lg border border-black/10 px-3 py-1.5 text-xs font-semibold hover:bg-black/5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {galleryBusy ? 'Subiendo...' : 'Agregar fotos'}
+              </button>
+              <input
+                ref={galleryRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={onGalleryFiles}
+                disabled={galleryBusy}
+              />
+            </div>
+
+            {gallery.length === 0 ? (
+              <p className="mt-2 text-xs text-ink/40 font-body">
+                Sin fotos extra. Podés subir varias a la vez (hasta 8 MB cada una).
+              </p>
+            ) : (
+              <div className="mt-3 grid grid-cols-3 sm:grid-cols-5 gap-2">
+                {gallery.map((photo, i) => (
+                  <div key={photo.url} className="relative group">
+                    <img
+                      src={photo.url}
+                      alt=""
+                      className="w-full h-20 object-cover rounded-md border border-black/10"
+                    />
+                    <button
+                      onClick={() => removeGalleryPhoto(i)}
+                      disabled={galleryBusy}
+                      title="Quitar foto"
+                      className="absolute top-1 right-1 flex items-center justify-center w-6 h-6 rounded-full bg-white/90 border border-black/10 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer disabled:cursor-not-allowed"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <a
             href={`/proyecto/${item.id}`}
             target="_blank"

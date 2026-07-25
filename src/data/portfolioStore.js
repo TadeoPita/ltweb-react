@@ -15,6 +15,19 @@ function emit() {
   listeners.forEach((l) => l())
 }
 
+/* La galería se guarda como JSON en una columna de texto:
+   [{ url, path }]. Guardamos también el path del Storage para poder
+   borrar el archivo cuando se saca una foto de la galería. */
+function parseGallery(raw) {
+  if (!raw) return []
+  try {
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed.filter((g) => g && g.url) : []
+  } catch {
+    return []
+  }
+}
+
 function itemsFromRows(rows) {
   return rows
     .slice()
@@ -35,6 +48,7 @@ function itemsFromRows(rows) {
       solution: r.solution ?? '',
       description: r.description ?? '',
       services: r.services ?? '',
+      gallery: parseGallery(r.gallery),
     }))
 }
 
@@ -146,6 +160,7 @@ export const portfolioStore = {
     if ('solution' in patch) row.solution = patch.solution ?? ''
     if ('description' in patch) row.description = patch.description ?? ''
     if ('services' in patch) row.services = patch.services ?? ''
+    if ('gallery' in patch) row.gallery = JSON.stringify(patch.gallery ?? [])
     must(await supabase.from('portfolio_items').update(row).eq('id', id))
     state = { ...state, items: state.items.map((it) => (it.id === id ? { ...it, ...patch } : it)) }
     emit()
@@ -167,11 +182,12 @@ export const portfolioStore = {
       solution: item.solution ?? '',
       description: item.description ?? '',
       services: item.services ?? '',
+      gallery: '[]',
     }
     must(await supabase.from('portfolio_items').insert({ id, ...row, position: state.items.length }))
     state = {
       ...state,
-      items: [...state.items, { id, ...row, label: row.label ?? undefined, imagePath: undefined }],
+      items: [...state.items, { id, ...row, label: row.label ?? undefined, imagePath: undefined, gallery: [] }],
     }
     emit()
     return id
@@ -180,8 +196,10 @@ export const portfolioStore = {
   async removeItem(id) {
     const item = state.items.find((it) => it.id === id)
     must(await supabase.from('portfolio_items').delete().eq('id', id))
-    if (item?.imagePath) {
-      supabase.storage.from('portfolio-images').remove([item.imagePath]).catch(() => {})
+    // Limpiamos del Storage tanto la portada como las fotos de la galería.
+    const paths = [item?.imagePath, ...(item?.gallery ?? []).map((g) => g.path)].filter(Boolean)
+    if (paths.length) {
+      supabase.storage.from('portfolio-images').remove(paths).catch(() => {})
     }
     const remaining = state.items.filter((it) => it.id !== id)
     state = { ...state, items: remaining }
@@ -219,6 +237,30 @@ export const portfolioStore = {
     }
   },
 
+  /* Sube una foto extra a la galería del proyecto y la agrega al final. */
+  async addGalleryImage(file, itemId) {
+    const path = `${itemId}/galeria/${Date.now()}-${file.name}`
+    const { error: uploadError } = await supabase.storage.from('portfolio-images').upload(path, file)
+    if (uploadError) throw uploadError
+    const { data } = supabase.storage.from('portfolio-images').getPublicUrl(path)
+    const current = state.items.find((it) => it.id === itemId)?.gallery ?? []
+    await portfolioStore.updateItem(itemId, {
+      gallery: [...current, { url: data.publicUrl, path }],
+    })
+  },
+
+  /* Saca una foto de la galería y borra el archivo del Storage si era nuestro. */
+  async removeGalleryImage(itemId, index) {
+    const current = state.items.find((it) => it.id === itemId)?.gallery ?? []
+    const removed = current[index]
+    await portfolioStore.updateItem(itemId, {
+      gallery: current.filter((_, i) => i !== index),
+    })
+    if (removed?.path) {
+      supabase.storage.from('portfolio-images').remove([removed.path]).catch(() => {})
+    }
+  },
+
   async importJSON(json) {
     const parsed = JSON.parse(json)
     if (!Array.isArray(parsed.items)) throw new Error('JSON inválido: falta "items"')
@@ -239,6 +281,7 @@ export const portfolioStore = {
       solution: p.solution ?? '',
       description: p.description ?? '',
       services: p.services ?? '',
+      gallery: JSON.stringify(p.gallery ?? []),
       position: i,
     }))
     must(await supabase.from('portfolio_items').insert(rows))

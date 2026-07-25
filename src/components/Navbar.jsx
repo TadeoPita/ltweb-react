@@ -19,26 +19,10 @@ export default function Navbar() {
           <img
             src={onDark ? '/images/logo-blanco.png' : '/images/logo-negro.png'}
             alt="LT WEB"
-            className="h-10 sm:h-12 w-auto"
+            className="h-14 sm:h-18 w-auto"
           />
         </a>
         <div className="flex items-center gap-2 sm:gap-3">
-          <motion.a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noreferrer"
-            whileHover={{ scale: 1.04, y: -1 }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-            className={
-              'hidden sm:inline-flex items-center gap-2 rounded-full font-body font-semibold text-sm px-5 py-2.5 transition-colors ' +
-              (onDark
-                ? 'bg-white text-ink hover:bg-white/90'
-                : 'bg-ink text-white hover:bg-[#060606]')
-            }
-          >
-            Contanos tu proyecto
-          </motion.a>
           <motion.a
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.94 }}

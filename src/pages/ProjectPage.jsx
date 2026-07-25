@@ -143,6 +143,40 @@ export default function ProjectPage() {
                 Estamos preparando el detalle de este proyecto.
               </motion.p>
             )}
+
+            {/* Galería de fotos extra cargadas desde /admin */}
+            {(project.gallery?.length ?? 0) > 0 && (
+              <div>
+                <motion.p
+                  {...fadeUp(0.2)}
+                  className="font-display font-semibold uppercase tracking-wide text-[#7db6e8] text-xs"
+                >
+                  Más imágenes
+                </motion.p>
+                <div className="mt-4 grid sm:grid-cols-2 gap-4">
+                  {project.gallery.map((photo, i) => (
+                    <motion.a
+                      key={photo.url}
+                      href={photo.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
+                      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                      viewport={{ once: true, margin: '-40px' }}
+                      transition={{ duration: 0.7, delay: Math.min(i * 0.06, 0.3), ease }}
+                      className="clip-fix group block rounded-xl overflow-hidden border border-white/10 bg-white/[0.02]"
+                    >
+                      <img
+                        src={photo.url}
+                        alt={`${project.name} — imagen ${i + 1}`}
+                        loading="lazy"
+                        className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                      />
+                    </motion.a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Ficha lateral */}
