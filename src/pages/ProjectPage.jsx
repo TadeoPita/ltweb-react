@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
 import { usePortfolio } from '../data/portfolioStore'
+import { useLightbox } from '../components/ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
 import NotFoundPage from './NotFoundPage'
 
@@ -29,6 +30,7 @@ function DetailBlock({ label, text, delay }) {
 export default function ProjectPage() {
   const { id } = useParams()
   const { items, loading } = usePortfolio()
+  const { open } = useLightbox()
   const project = items.find((p) => p.id === id)
 
   useEffect(() => {
@@ -160,6 +162,12 @@ export default function ProjectPage() {
                       href={photo.url}
                       target="_blank"
                       rel="noreferrer"
+                      onClick={(e) => {
+                        if (!open || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+                        e.preventDefault()
+                        // i + 1 porque la foto 0 del visor es la portada
+                        open(project, i + 1)
+                      }}
                       initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
                       whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                       viewport={{ once: true, margin: '-40px' }}

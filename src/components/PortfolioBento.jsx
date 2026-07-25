@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { ArrowUpRight, Plus } from 'lucide-react'
 import MotionLink, { projectPath } from './MotionLink'
+import { useProjectCard } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
 
 /* Cuarta versión del portfolio: mosaico tipo "bento".
@@ -29,6 +30,7 @@ function BentoCard({ project, index }) {
   const spotlight = useTransform([mx, my], ([x, y]) => `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(255,255,255,0.20), transparent 55%)`)
   // El título crece solo en las cards que ocupan más de una columna
   const big = project.size === 'full' || project.size === 'wide'
+  const card = useProjectCard(project)
 
   function onMove(e) {
     const rect = ref.current.getBoundingClientRect()
@@ -44,13 +46,15 @@ function BentoCard({ project, index }) {
     <MotionLink
       ref={ref}
       to={projectPath(project)}
+      onClick={card.onClick}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
+      layoutId={card.layoutId}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.6, delay: Math.min(index * 0.05, 0.3), ease: [0.22, 1, 0.36, 1] }}
-      style={{ rotateX, rotateY, transformPerspective: 900 }}
+      style={{ rotateX, rotateY, transformPerspective: 900, ...card.style }}
       className={spanFor(project.size) + ' clip-fix group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02]'}
     >
       <img

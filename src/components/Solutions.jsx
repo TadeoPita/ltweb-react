@@ -77,12 +77,14 @@ export default function Solutions() {
         <motion.div {...blurUp(0.1)} className="mt-12 flex flex-wrap items-center justify-center gap-3">
           <span className="text-sheen text-xs font-semibold uppercase tracking-wide">También trabajamos</span>
           {EXTRA_CAPABILITIES.map((cap) => (
-            <span
+            <motion.span
               key={cap}
-              className="rounded-full bg-white border border-black/8 px-4 py-1.5 text-sm font-body text-ink/70"
+              whileHover={{ y: -3 }}
+              transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+              className="cursor-default rounded-full bg-white border border-black/8 px-4 py-1.5 text-sm font-body text-ink/70 transition-colors duration-300 hover:bg-ink hover:text-white hover:border-ink hover:shadow-[0_10px_24px_rgba(0,0,0,0.18)]"
             >
               {cap}
-            </span>
+            </motion.span>
           ))}
         </motion.div>
       </div>

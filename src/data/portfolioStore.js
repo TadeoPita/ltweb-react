@@ -8,7 +8,7 @@ import { supabase } from '../lib/supabase'
    configuradas en Supabase). El admin (/admin) edita este store y los
    cambios se reflejan para todos los visitantes en tiempo real. */
 
-let state = { variant: 'gallery', pageVariant: 'classic', items: [], loading: true, error: null }
+let state = { variant: 'gallery', pageVariant: 'classic', heroVariant: 'centered', items: [], loading: true, error: null }
 const listeners = new Set()
 
 function emit() {
@@ -70,6 +70,7 @@ async function loadInitial() {
   state = {
     variant: settingsRes.data?.variant ?? 'gallery',
     pageVariant: settingsRes.data?.page_variant ?? 'classic',
+    heroVariant: settingsRes.data?.hero_variant ?? 'centered',
     items: itemsFromRows(itemsRes.data),
     loading: false,
     error: null,
@@ -92,7 +93,9 @@ async function seedDefaults() {
     position: i,
   }))
   await supabase.from('portfolio_items').insert(rows)
-  await supabase.from('portfolio_settings').upsert({ id: 1, variant: 'gallery', page_variant: 'classic' })
+  await supabase
+    .from('portfolio_settings')
+    .upsert({ id: 1, variant: 'gallery', page_variant: 'classic', hero_variant: 'centered' })
   state = { ...state, seeding: false }
   await loadInitial()
 }
@@ -141,6 +144,12 @@ export const portfolioStore = {
   async setPageVariant(pageVariant) {
     must(await supabase.from('portfolio_settings').update({ page_variant: pageVariant }).eq('id', 1))
     state = { ...state, pageVariant }
+    emit()
+  },
+
+  async setHeroVariant(heroVariant) {
+    must(await supabase.from('portfolio_settings').update({ hero_variant: heroVariant }).eq('id', 1))
+    state = { ...state, heroVariant }
     emit()
   },
 
@@ -290,13 +299,23 @@ export const portfolioStore = {
         id: 1,
         variant: parsed.variant ?? 'gallery',
         page_variant: parsed.pageVariant ?? 'classic',
+        hero_variant: parsed.heroVariant ?? 'centered',
       }),
     )
     await loadInitial()
   },
 
   exportJSON() {
-    return JSON.stringify({ variant: state.variant, pageVariant: state.pageVariant, items: state.items }, null, 2)
+    return JSON.stringify(
+      {
+        variant: state.variant,
+        pageVariant: state.pageVariant,
+        heroVariant: state.heroVariant,
+        items: state.items,
+      },
+      null,
+      2,
+    )
   },
 
   async reset() {

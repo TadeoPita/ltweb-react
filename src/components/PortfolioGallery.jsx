@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 import { ArrowUpRight, Plus } from 'lucide-react'
 import MotionLink, { projectPath } from './MotionLink'
+import { useProjectCard } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
 
 /* Tercera versión del portfolio: galería horizontal cinemática.
@@ -10,9 +11,13 @@ import { WHATSAPP_URL } from '../data/content'
    En mobile cae a una grilla vertical simple con imágenes grandes. */
 
 function GalleryCard({ project, index }) {
+  const card = useProjectCard(project)
   return (
     <MotionLink
       to={projectPath(project)}
+      onClick={card.onClick}
+      layoutId={card.layoutId}
+      style={card.style}
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}

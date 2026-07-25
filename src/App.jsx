@@ -1,5 +1,6 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { ProjectLightboxProvider } from './components/ProjectLightbox'
 import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
 import BottomNav from './components/BottomNav'
@@ -72,7 +73,9 @@ function AppRoutes() {
 export default function App() {
   return (
     <AuthProvider>
-      <AppRoutes />
+      <ProjectLightboxProvider>
+        <AppRoutes />
+      </ProjectLightboxProvider>
     </AuthProvider>
   )
 }

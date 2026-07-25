@@ -15,7 +15,7 @@ function Chip({ text, delay }) {
       transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      className="inline-flex items-center gap-2.5 rounded-full bg-white border border-black/4 px-5 py-2.5 font-body font-medium text-[15px] text-ink cursor-default select-none shadow-none hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-300"
+      className="inline-flex items-center gap-2.5 rounded-full bg-paper border border-black/4 px-5 py-2.5 font-body font-medium text-[15px] text-ink cursor-default select-none shadow-none hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-300"
     >
       <motion.img
         layout

@@ -327,7 +327,14 @@ const VARIANTS = [
   { value: 'stack', label: 'Mazo interactivo' },
 ]
 
-function VariantPicker({ title, hint, value, onChange }) {
+const HERO_VARIANTS = [
+  { value: 'centered', label: 'Centrado' },
+  { value: 'split', label: 'Dividido con captura' },
+  { value: 'minimal', label: 'Minimal tipográfico' },
+  { value: 'showcase', label: 'Con proyectos abajo' },
+]
+
+function VariantPicker({ title, hint, value, onChange, options = VARIANTS }) {
   return (
     <div className="rounded-2xl bg-white border border-black/8 p-5 flex flex-wrap items-center justify-between gap-4">
       <div>
@@ -335,7 +342,7 @@ function VariantPicker({ title, hint, value, onChange }) {
         <p className="text-sm text-ink/50 font-body">{hint}</p>
       </div>
       <div className="flex flex-wrap rounded-full border border-black/10 p-1 bg-paper">
-        {VARIANTS.map((v) => (
+        {options.map((v) => (
           <button
             key={v.value}
             onClick={() => onChange(v.value)}
@@ -353,7 +360,7 @@ function VariantPicker({ title, hint, value, onChange }) {
 }
 
 export default function AdminPage() {
-  const { items, variant, pageVariant, loading, error } = usePortfolio()
+  const { items, variant, pageVariant, heroVariant, loading, error } = usePortfolio()
   const [importOpen, setImportOpen] = useState(false)
   const [importText, setImportText] = useState('')
 
@@ -439,6 +446,13 @@ export default function AdminPage() {
           </div>
         )}
 
+        <VariantPicker
+          title="Diseño del hero (lo primero que se ve)"
+          hint="Probá las cuatro y quedate con la que más te guste."
+          value={heroVariant}
+          onChange={portfolioStore.setHeroVariant}
+          options={HERO_VARIANTS}
+        />
         <VariantPicker
           title="Diseño del portfolio en el inicio"
           hint="Cómo se ve la sección de portfolio en la página principal."

@@ -1,12 +1,17 @@
 import { motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import MotionLink, { projectPath } from './MotionLink'
+import { useProjectCard } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
 
 export function ProjectCard({ project, className = '' }) {
+  const card = useProjectCard(project)
   return (
     <MotionLink
       to={projectPath(project)}
+      onClick={card.onClick}
+      layoutId={card.layoutId}
+      style={card.style}
       initial={{ opacity: 0, y: 36 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
