@@ -26,7 +26,7 @@ const item = {
 const HEADLINE = 'Tu negocio ya creció.'
 const HEADLINE_2 = 'Tu web también.'
 const SUBLINE =
-  'Diseño UX/UI, desarrollo web, tiendas online y sistemas personalizados para empresas que necesitan comunicar mejor y generar nuevas oportunidades.'
+  'Desarrollo web, tiendas online y sistemas personalizados para empresas que necesitan comunicar mejor y generar nuevas oportunidades.'
 
 function Sparkle({ className = 'w-9 h-9 sm:w-14 sm:h-14' }) {
   return (

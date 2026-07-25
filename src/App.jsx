@@ -9,6 +9,7 @@ import Capabilities from './components/Capabilities'
 import ClientsShowcase from './components/ClientsShowcase'
 import Portfolio from './components/Portfolio'
 import Solutions from './components/Solutions'
+import StartingPoint from './components/StartingPoint'
 import About from './components/About'
 import Steps from './components/Steps'
 import FAQ from './components/FAQ'
@@ -23,7 +24,10 @@ import NotFoundPage from './pages/NotFoundPage'
 
 /* Estructura de la home reordenada según el brief de comunicación:
    Hero → Capacidades (franja) → Casos destacados → Proyectos (bento) →
-   Servicios → Sobre LTWEB → Proceso → FAQ → Redes → CTA final → Footer */
+   Servicios → ¿Por dónde empezamos? → Sobre LTWEB → Proceso → FAQ →
+   Redes → CTA final → Footer
+
+   El ritmo claro/oscuro queda: B B B N B N B N B B N */
 function HomePage() {
   return (
     <main>
@@ -32,6 +36,7 @@ function HomePage() {
       <ClientsShowcase />
       <Portfolio />
       <Solutions />
+      <StartingPoint />
       <About />
       <Steps />
       <FAQ />

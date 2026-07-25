@@ -15,7 +15,7 @@ export default function ClientsShowcase() {
   }, [paused])
 
   return (
-    <section className="relative bg-white pt-20 sm:pt-28 pb-16">
+    <section className="relative bg-white py-24 sm:py-32">
       <div
         className="mx-auto max-w-[1140px] px-4 sm:px-6"
         onMouseEnter={() => setPaused(true)}
@@ -59,7 +59,7 @@ export default function ClientsShowcase() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1, transition: { delay: 0.25, duration: 0.5 } }}
                       exit={{ opacity: 0, transition: { duration: 0.15 } }}
-                      className="absolute inset-0 grid lg:grid-cols-2 gap-6 p-8 sm:p-14 items-center"
+                      className="absolute inset-0 grid lg:grid-cols-2 gap-6 p-8 sm:p-14 items-center text-center lg:text-left"
                     >
                       <div>
                         <motion.span
@@ -82,7 +82,7 @@ export default function ClientsShowcase() {
                         <motion.div
                           initial={{ y: 24, opacity: 0 }}
                           animate={{ y: 0, opacity: 1, transition: { delay: 0.45, duration: 0.6, ease: [0.22, 1, 0.36, 1] } }}
-                          className="mt-6 max-w-md space-y-4"
+                          className="mt-6 max-w-md mx-auto lg:mx-0 space-y-4"
                         >
                           <div>
                             <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/50">Problema</p>
@@ -96,7 +96,7 @@ export default function ClientsShowcase() {
                         <motion.div
                           initial={{ y: 20, opacity: 0 }}
                           animate={{ y: 0, opacity: 1, transition: { delay: 0.5, duration: 0.5 } }}
-                          className="mt-5 flex flex-wrap gap-2"
+                          className="mt-5 flex flex-wrap gap-2 justify-center lg:justify-start"
                         >
                           {client.tags.map((tag) => (
                             <span key={tag} className="rounded-full bg-white/60 backdrop-blur border border-black/8 px-3 py-1 text-xs font-body text-ink/70">

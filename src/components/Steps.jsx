@@ -24,15 +24,24 @@ export default function Steps() {
           Un proceso ordenado y transparente. Sabés en qué etapa está el proyecto y qué sigue en cada momento.
         </motion.p>
 
-        <motion.div {...blurStagger(0.13)} className="mt-20 grid md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-14">
+        <motion.div {...blurStagger(0.13)} className="mt-16 grid md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-14">
           {STEPS.map((step, i) => (
             <motion.div key={step.number} variants={blurChild}>
               <div className="flex items-center gap-4">
                 <span className="flex items-center justify-center w-9 h-9 shrink-0 rounded-full bg-white/8 border border-white/15 font-body font-semibold text-sm text-white cursor-default transition-colors duration-400 ease-out hover:bg-white hover:text-ink hover:border-white">
                   {step.number}
                 </span>
-                {/* El lazo se extiende a través del gap para unirse con el próximo número */}
-                <div className={'h-px flex-1 bg-white/10 ' + (i < STEPS.length - 1 ? 'lg:-mr-8' : '')} />
+                {/* El lazo cruza el gap para tocar el número siguiente, pero solo
+                    si ese número cae en la misma fila. Como la grilla cambia de
+                    1 a 2 y a 4 columnas, hay que resolverlo por breakpoint: si
+                    no, al final de cada fila quedaba una línea colgando. */}
+                <div
+                  className={
+                    'h-px flex-1 bg-white/10 ' +
+                    (i % 2 === 0 ? 'md:-mr-8 ' : 'md:mr-0 ') +
+                    (i < STEPS.length - 1 ? 'lg:-mr-8' : 'lg:mr-0')
+                  }
+                />
               </div>
               <h3 className="mt-9 font-display font-bold uppercase text-[19px] text-white">{step.title}</h3>
               <p className="mt-4 font-body text-[15.5px] leading-relaxed text-white/60 max-w-70">{step.text}</p>
@@ -40,7 +49,7 @@ export default function Steps() {
           ))}
         </motion.div>
 
-        <motion.div {...blurUp(0.1)} className="mt-20 text-center">
+        <motion.div {...blurUp(0.1)} className="mt-16 text-center">
           <span className="inline-block rounded-full bg-white/8 border border-white/12 px-6 py-2.5 text-[15px] font-body text-white/70">
             ¿Tenés dudas?{' '}
             <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="text-[#7db6e8] font-medium hover:underline">

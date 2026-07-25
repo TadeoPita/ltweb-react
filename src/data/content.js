@@ -16,13 +16,8 @@ export const NAV_LINKS = [
 ]
 
 /* Capacidades: la franja sobria debajo del hero.
-   Cuatro áreas concretas, sin adjetivos de venta. */
-export const CAPABILITIES = [
-  'Diseño UX/UI',
-  'Desarrollo web',
-  'E-commerce',
-  'Sistemas personalizados',
-]
+   Tres áreas concretas, sin adjetivos de venta. */
+export const CAPABILITIES = ['Desarrollo web', 'E-commerce', 'Sistemas personalizados']
 
 /* Casos destacados con formato problema/solución/servicios.
    Reemplaza el texto largo genérico anterior por información útil. */
@@ -101,16 +96,82 @@ export const SERVICES = [
 /* Servicios complementarios: se muestran como capacidades adicionales debajo del bloque principal. */
 export const EXTRA_CAPABILITIES = ['SEO', 'Mantenimiento', 'Rendimiento', 'Soporte']
 
-/* Diferenciales del estudio (sección Sobre LTWEB). */
+/* Diferenciales del estudio. Cada uno lleva un ícono de lucide y una línea
+   corta que se muestra al pasar el cursor: la lista sola quedaba muy vacía. */
 export const DIFFERENTIATORS = [
-  'Diseño personalizado',
-  'Contacto directo',
-  'Desarrollo responsive',
-  'Sitios autoadministrables',
-  'Acompañamiento después del lanzamiento',
-  'Soluciones adaptadas a cada proyecto',
-  'Sistemas personalizados',
-  'Plazos y presupuesto cerrados',
+  {
+    icon: 'palette',
+    title: 'Diseño personalizado',
+    text: 'Nada de plantillas: cada proyecto se diseña desde cero sobre tu identidad.',
+  },
+  {
+    icon: 'message',
+    title: 'Contacto directo',
+    text: 'Hablás siempre con quien diseña y programa tu web, sin intermediarios.',
+  },
+  {
+    icon: 'devices',
+    title: 'Desarrollo responsive',
+    text: 'Probamos el sitio en teléfono, tablet y escritorio antes de publicarlo.',
+  },
+  {
+    icon: 'sliders',
+    title: 'Sitios autoadministrables',
+    text: 'Editás textos, imágenes y publicaciones desde un panel, sin depender de nosotros.',
+  },
+  {
+    icon: 'lifebuoy',
+    title: 'Acompañamiento post lanzamiento',
+    text: 'Después de publicar seguimos disponibles para ajustes y consultas.',
+  },
+  {
+    icon: 'puzzle',
+    title: 'Soluciones a medida',
+    text: 'Si lo estándar no alcanza, desarrollamos la función que tu negocio necesita.',
+  },
+  {
+    icon: 'code',
+    title: 'Sistemas personalizados',
+    text: 'Reservas, automatizaciones e integraciones conectadas con tus herramientas.',
+  },
+  {
+    icon: 'receipt',
+    title: 'Plazos y presupuesto cerrados',
+    text: 'Sabés desde el principio cuánto sale y cuándo se entrega.',
+  },
+]
+
+/* Sección "¿Por dónde empezamos?": el visitante se identifica con un caso y
+   lee una respuesta corta. Ayuda a que cada uno se ubique sin leer todo. */
+export const STARTING_POINTS = [
+  {
+    id: 'primera',
+    label: 'Es mi primera web',
+    title: 'Arrancamos de cero, con orden.',
+    text: 'Definimos juntos qué tiene que mostrar tu web, armamos la estructura y la escribimos con vos. No hace falta que traigas nada resuelto: te guiamos en cada decisión.',
+    tags: ['Landing page', 'Web institucional', 'Dominio y hosting'],
+  },
+  {
+    id: 'rediseno',
+    label: 'Ya tengo una y quedó vieja',
+    title: 'Rediseñamos sin perder lo que funciona.',
+    text: 'Revisamos tu sitio actual, vemos qué contenido conviene mantener y qué hay que reordenar. Te decimos con franqueza si conviene rediseñar desde cero o intervenir sobre lo que ya está.',
+    tags: ['Rediseño', 'Migración', 'Mejora de velocidad'],
+  },
+  {
+    id: 'vender',
+    label: 'Quiero vender online',
+    title: 'Una tienda que la gente entienda.',
+    text: 'Armamos el catálogo, los filtros y el proceso de compra pensando en que sea corto y claro. Integramos los medios de pago y envío que uses, y te enseñamos a cargar productos.',
+    tags: ['WooCommerce', 'Medios de pago', 'Gestión de productos'],
+  },
+  {
+    id: 'medida',
+    label: 'Necesito algo a medida',
+    title: 'Desarrollamos lo que no viene hecho.',
+    text: 'Turnos, reservas, formularios con lógica propia, integraciones con sistemas que ya usás. Primero entendemos el circuito real de tu negocio y recién ahí proponemos cómo resolverlo.',
+    tags: ['Reservas', 'Automatizaciones', 'Integraciones'],
+  },
 ]
 
 /* Proceso: 4 pasos claros, sin promesas vacías. */
@@ -159,32 +220,36 @@ export const PORTFOLIO = [
 /* FAQ: preguntas del brief con respuestas concretas y sin promesas vacías. */
 export const FAQS = [
   {
-    q: '¿Cuánto tarda un proyecto?',
-    a: 'Depende del alcance. Una <strong>landing page</strong> suele estar lista en <strong>1 a 2 semanas</strong>; un sitio institucional entre <strong>3 y 5 semanas</strong>; una <strong>tienda online</strong> entre <strong>4 y 8 semanas</strong>. En el diagnóstico inicial te damos un plazo estimado real.',
+    q: '¿Cuánto tiempo tarda el desarrollo de una web?',
+    a: 'Depende del tipo de web. Una <strong>Landing Page</strong> puede estar lista en <strong>5-7 días hábiles</strong>, mientras que un <strong>E-Commerce</strong> o un sitio más complejo puede tardar <strong>2-4 semanas</strong>.',
   },
   {
-    q: '¿La web queda autoadministrable?',
-    a: 'Sí. Entregamos los sitios en <strong>WordPress</strong>, con un panel para que puedas editar textos, imágenes y publicaciones sin depender de nosotros. Te dejamos un instructivo breve al momento de la entrega.',
+    q: '¿Qué incluye el servicio de diseño web?',
+    a: 'Incluye <strong>diseño personalizado, desarrollo responsivo, optimización SEO básica y configuración inicial</strong>. También brindamos integración con formularios y redes sociales.',
   },
   {
-    q: '¿Trabajan sobre sitios existentes?',
-    a: 'Sí. Hacemos <strong>rediseños</strong> y ajustes puntuales sobre sitios que ya están online. Antes de arrancar revisamos la web actual y te decimos si conviene rediseñar desde cero o intervenir sobre lo existente.',
+    q: '¿Puedo modificar mi sitio después de la entrega?',
+    a: 'Sí, entregamos sitios <strong>autoadministrables</strong>. También ofrecemos <strong>planes de mantenimiento</strong> si preferís que nos encarguemos de las actualizaciones.',
   },
   {
-    q: '¿Ofrecen mantenimiento?',
-    a: 'Sí, ofrecemos <strong>planes de mantenimiento</strong> mensuales que incluyen actualizaciones, backups, monitoreo de rendimiento y cambios menores de contenido. Es opcional, no es requisito para trabajar con nosotros.',
+    q: '¿Hacen rediseño de sitios web?',
+    a: 'Sí, optimizamos y remodelamos sitios existentes para mejorar su <strong>diseño, velocidad y conversión</strong> sin perder contenido importante.',
   },
   {
-    q: '¿Cómo se define el presupuesto?',
-    a: 'Después de una charla inicial armamos una <strong>propuesta escrita</strong> con alcance, plazo y precio cerrado. No trabajamos por hora ni con costos abiertos: sabés desde el principio cuánto vas a pagar.',
+    q: '¿Cuánto cuesta hacer una web?',
+    a: 'Depende del tipo y funcionalidades. Escribinos y te enviamos un <strong>presupuesto personalizado</strong> sin compromiso.',
   },
   {
-    q: '¿La web se adapta a celulares?',
-    a: 'Sí, todos los sitios se diseñan <strong>responsive</strong> desde el primer boceto. Antes de publicar los probamos en teléfono, tablet y escritorio.',
+    q: '¿Mi sitio será visible en Google?',
+    a: 'Sí, optimizamos tu web con <strong>SEO básico</strong> para que aparezca en los buscadores. Para estrategias avanzadas, ofrecemos <strong>servicios adicionales de SEO y marketing digital</strong>.',
   },
   {
-    q: '¿Pueden integrar pagos, formularios o reservas?',
-    a: 'Sí. Integramos <strong>Mercado Pago, Stripe, PayPal, WhatsApp, formularios avanzados, sistemas de reservas</strong> y otras herramientas según lo que necesite tu negocio.',
+    q: '¿Qué métodos de pago aceptan?',
+    a: 'Aceptamos <strong>transferencias bancarias, Mercado Pago y PayPal</strong>. También ofrecemos <strong>facilidades de pago en cuotas</strong> según el proyecto.',
+  },
+  {
+    q: '¿Cómo contrato el servicio?',
+    a: 'Fácil y rápido: <strong>nos contactás, definimos el proyecto, desarrollamos tu web y la lanzamos</strong>.',
   },
 ]
 

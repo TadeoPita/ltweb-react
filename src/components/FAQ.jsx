@@ -75,7 +75,7 @@ export default function FAQ() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="mt-14"
+          className="mt-16"
         >
           {FAQS.map((faq, i) => (
             <FaqItem key={i} faq={faq} isOpen={open === i} onToggle={() => setOpen(open === i ? -1 : i)} />

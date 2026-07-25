@@ -39,7 +39,7 @@ const RIGHT_OFFSETS = [150, 0, 150, 20]
 
 export default function SocialSection() {
   return (
-    <section className="bg-paper pb-28 pt-4 overflow-hidden">
+    <section className="bg-paper py-24 sm:py-32 overflow-hidden">
       <div className="mx-auto max-w-[1440px] px-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.85, y: 12 }}
