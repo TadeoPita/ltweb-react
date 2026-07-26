@@ -169,7 +169,7 @@ export const STARTING_POINTS = [
     id: 'medida',
     label: 'Necesito algo a medida',
     title: 'Desarrollamos sistemas, no solo webs.',
-    text: 'Hacemos **sistemas de gestión a medida**: control de stock, administración interna, turnos y reservas. A HEY Institute le desarrollamos uno para **gestionar alumnos, cursos y pagos** desde un solo lugar. Primero entendemos el circuito real de tu negocio y recién ahí proponemos cómo resolverlo.',
+    text: 'Hacemos **todo tipo de sistemas personalizados**: control de stock, administración interna, gestión de clientes, turnos, reservas y automatizaciones, conectados con las herramientas que ya usás. Primero entendemos el circuito real de tu negocio y recién ahí proponemos cómo resolverlo.',
     tags: ['Gestión de stock', 'Administración interna', 'Reservas y turnos', 'Integraciones'],
   },
 ]

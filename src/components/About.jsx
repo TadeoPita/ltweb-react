@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   Palette,
@@ -10,7 +11,7 @@ import {
   ReceiptText,
 } from 'lucide-react'
 import TextReveal from './TextReveal'
-import ScrambleText from './ScrambleText'
+import RevealText from './RevealText'
 import { blurUp, blurStagger, blurChild } from '../lib/motion'
 import { DIFFERENTIATORS } from '../data/content'
 
@@ -41,9 +42,14 @@ const TINTS = [
 
 function Card({ item, index }) {
   const Icon = ICONS[item.icon] ?? Puzzle
+  const [hovered, setHovered] = useState(false)
+  const tint = TINTS[index % TINTS.length]
+
   return (
     <motion.li
       variants={blurChild}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
       whileHover={{ y: -5 }}
       transition={{ type: 'spring', stiffness: 300, damping: 24 }}
       className="group relative overflow-hidden rounded-2xl border border-black/8 bg-card p-5 cursor-default"
@@ -52,15 +58,33 @@ function Card({ item, index }) {
       <span
         aria-hidden
         className="pointer-events-none absolute -top-10 -right-8 w-32 h-32 rounded-full blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-500"
-        style={{ backgroundColor: TINTS[index % TINTS.length] }}
+        style={{ backgroundColor: tint }}
       />
 
-      <span
-        className="relative flex items-center justify-center w-10 h-10 rounded-xl text-ink transition-transform duration-500 ease-out group-hover:scale-110"
-        style={{ backgroundColor: TINTS[index % TINTS.length] }}
+      {/* La pastilla del ícono se dobla en 3D: gira sobre su eje vertical y
+          se inclina apenas, como si la ficha se levantara de la tarjeta.
+          El ícono gira un poco menos que la pastilla, así se despega y el
+          movimiento gana profundidad en vez de sentirse plano. */}
+      <motion.span
+        animate={
+          hovered
+            ? { rotateY: -26, rotateX: 12, scale: 1.12, y: -2 }
+            : { rotateY: 0, rotateX: 0, scale: 1, y: 0 }
+        }
+        transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+        style={{ transformPerspective: 600, transformStyle: 'preserve-3d' }}
+        className="relative flex items-center justify-center w-10 h-10 rounded-xl text-ink shadow-sm"
       >
-        <Icon className="w-5 h-5" strokeWidth={1.9} />
-      </span>
+        <span style={{ backgroundColor: tint }} className="absolute inset-0 rounded-xl" />
+        <motion.span
+          animate={hovered ? { rotateY: 14, z: 14 } : { rotateY: 0, z: 0 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+          style={{ transformPerspective: 600 }}
+          className="relative"
+        >
+          <Icon className="w-5 h-5" strokeWidth={1.9} />
+        </motion.span>
+      </motion.span>
 
       <p className="relative mt-4 font-display font-bold uppercase text-[15px] leading-tight text-[#101a3c]">
         {item.title}
@@ -97,7 +121,7 @@ export default function About() {
           <motion.div {...blurUp(0.15)}>
             {/* Las palabras clave se descifran al apuntarlas: da algo para
                 descubrir sin sumar un bloque más de contenido. */}
-            <ScrambleText
+            <RevealText
               text="LTWEB es un estudio de diseño y desarrollo web enfocado en crear soluciones digitales claras, funcionales y adaptadas a cada negocio. Trabajamos directamente con nuestros clientes para entender sus objetivos, ordenar su comunicación y construir una experiencia que realmente los represente."
               highlight={['claras', 'funcionales', 'objetivos', 'comunicación', 'represente']}
               className="mt-8 font-body text-ink/70 text-base sm:text-lg leading-relaxed"
