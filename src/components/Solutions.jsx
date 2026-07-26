@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import RichText from './RichText'
 import { blurUp, blurStagger, blurChild } from '../lib/motion'
 import { SERVICES, EXTRA_CAPABILITIES } from '../data/content'
 
@@ -61,7 +62,7 @@ export default function Solutions() {
             >
               <div className="text-ink">{icons[s.icon]}</div>
               <h3 className="mt-7 font-display font-bold uppercase text-[22px] text-[#101a3c]">{s.title}</h3>
-              <p className="mt-4 font-body text-[15px] leading-relaxed text-ink/75">{s.text}</p>
+              <RichText as="p" text={s.text} className="mt-4 font-body text-[15px] leading-relaxed text-ink/75" strongClassName="text-ink" />
               <ul className="mt-6 pt-6 border-t border-black/10 flex flex-wrap gap-2">
                 {s.items.map((item) => (
                   <li key={item} className="rounded-full bg-white/70 border border-black/8 px-3 py-1 text-xs font-body text-ink/75">

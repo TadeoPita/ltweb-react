@@ -10,6 +10,7 @@ import {
   ReceiptText,
 } from 'lucide-react'
 import TextReveal from './TextReveal'
+import ScrambleText from './ScrambleText'
 import { blurUp, blurStagger, blurChild } from '../lib/motion'
 import { DIFFERENTIATORS } from '../data/content'
 
@@ -80,17 +81,9 @@ function Card({ item, index }) {
 
 export default function About() {
   return (
-    <section className="relative bg-white py-24 sm:py-32 overflow-hidden">
-      {/* Halo lila muy suave, el mismo recurso que ya usan Servicios y FAQ */}
-      <img
-        src="/images/glow.png"
-        alt=""
-        aria-hidden
-        className="absolute -top-20 -left-32 w-[520px] pointer-events-none select-none opacity-60"
-      />
-
-      <div className="relative mx-auto max-w-[1280px] px-6">
-        <div className="max-w-2xl">
+    <section className="bg-white py-24 sm:py-32">
+      <div className="mx-auto max-w-[1280px] px-6">
+        <div className="max-w-3xl mx-auto text-center">
           <p className="font-display font-semibold uppercase tracking-wide text-[#7db6e8] text-sm">
             Sobre LTWEB
           </p>
@@ -101,12 +94,15 @@ export default function About() {
             stagger={0.12}
             className="mt-4 font-display font-bold uppercase text-ink leading-[0.95] text-4xl sm:text-6xl"
           />
-          <motion.p
-            {...blurUp(0.15)}
-            className="mt-8 font-body text-ink/70 text-base sm:text-lg leading-relaxed"
-          >
-            LTWEB es un estudio de diseño y desarrollo web enfocado en crear soluciones digitales claras, funcionales y adaptadas a cada negocio. Trabajamos directamente con nuestros clientes para entender sus objetivos, ordenar su comunicación y construir una experiencia que realmente los represente.
-          </motion.p>
+          <motion.div {...blurUp(0.15)}>
+            {/* Las palabras clave se descifran al apuntarlas: da algo para
+                descubrir sin sumar un bloque más de contenido. */}
+            <ScrambleText
+              text="LTWEB es un estudio de diseño y desarrollo web enfocado en crear soluciones digitales claras, funcionales y adaptadas a cada negocio. Trabajamos directamente con nuestros clientes para entender sus objetivos, ordenar su comunicación y construir una experiencia que realmente los represente."
+              highlight={['claras', 'funcionales', 'objetivos', 'comunicación', 'represente']}
+              className="mt-8 font-body text-ink/70 text-base sm:text-lg leading-relaxed"
+            />
+          </motion.div>
         </div>
 
         <motion.ul

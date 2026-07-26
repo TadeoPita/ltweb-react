@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import RichText from './RichText'
 import { CLIENTS } from '../data/content'
 
 /* Acordeón horizontal de clientes: el panel activo se expande,
@@ -86,11 +87,11 @@ export default function ClientsShowcase() {
                         >
                           <div>
                             <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/50">Problema</p>
-                            <p className="mt-1 text-ink/85 font-body text-[15px] leading-relaxed">{client.problem}</p>
+                            <RichText as="p" text={client.problem} className="mt-1 text-ink/85 font-body text-[15px] leading-relaxed" strongClassName="text-ink" />
                           </div>
                           <div>
                             <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/50">Solución</p>
-                            <p className="mt-1 text-ink/85 font-body text-[15px] leading-relaxed">{client.solution}</p>
+                            <RichText as="p" text={client.solution} className="mt-1 text-ink/85 font-body text-[15px] leading-relaxed" strongClassName="text-ink" />
                           </div>
                         </motion.div>
                         <motion.div

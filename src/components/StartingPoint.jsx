@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
+import RichText from './RichText'
 import { blurUp, EASE } from '../lib/motion'
 import { STARTING_POINTS, WHATSAPP_URL } from '../data/content'
 
@@ -94,9 +95,12 @@ export default function StartingPoint() {
               <h3 className="font-display font-bold uppercase text-white text-2xl sm:text-3xl leading-tight">
                 {current.title}
               </h3>
-              <p className="mt-5 font-body text-white/60 text-base sm:text-lg leading-relaxed">
-                {current.text}
-              </p>
+              <RichText
+                as="p"
+                text={current.text}
+                className="mt-5 font-body text-white/60 text-base sm:text-lg leading-relaxed"
+                strongClassName="text-white"
+              />
               <ul className="mt-7 flex flex-wrap gap-2">
                 {current.tags.map((t) => (
                   <li

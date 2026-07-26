@@ -23,8 +23,8 @@ const item = {
   },
 }
 
-const HEADLINE = 'Tu negocio ya creció.'
-const HEADLINE_2 = 'Tu web también.'
+const HEADLINE = 'Tu web tiene que'
+const HEADLINE_2 = 'laburar para vos.'
 const SUBLINE =
   'Desarrollo web, tiendas online y sistemas personalizados para empresas que necesitan comunicar mejor y generar nuevas oportunidades.'
 
