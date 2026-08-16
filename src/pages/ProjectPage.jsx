@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
 import { usePortfolio } from '../data/portfolioStore'
 import { useLightbox } from '../components/ProjectLightbox'
+import { useSeo } from '../lib/seo'
+import BeforeAfter from '../components/BeforeAfter'
 import { WHATSAPP_URL } from '../data/content'
 import NotFoundPage from './NotFoundPage'
 
@@ -37,13 +39,18 @@ export default function ProjectPage() {
     window.scrollTo(0, 0)
   }, [id])
 
-  useEffect(() => {
-    if (!project) return
-    document.title = `${project.name} - LTWEB`
-    return () => {
-      document.title = 'Diseño y Desarrollo Web En Argentina - LTWEB'
-    }
-  }, [project])
+  /* La ficha aporta su propio título, descripción e imagen: así cada
+     proyecto se comparte con su propia portada en vez de la genérica. */
+  useSeo({
+    title: project ? `${project.name} — Proyecto de LTWEB` : 'Proyecto — LTWEB',
+    description:
+      project?.solution?.replace(/\*\*/g, '') ||
+      project?.problem?.replace(/\*\*/g, '') ||
+      'Un proyecto diseñado y desarrollado por LTWEB.',
+    image: project?.image?.startsWith('http') ? project.image : undefined,
+    path: `/proyecto/${id}`,
+    type: 'article',
+  })
 
   if (loading) {
     return (
@@ -144,6 +151,24 @@ export default function ProjectPage() {
               <motion.p {...fadeUp(0.25)} className="font-body text-white/40 text-base">
                 Estamos preparando el detalle de este proyecto.
               </motion.p>
+            )}
+
+            {/* Antes / después: solo si se cargó la captura del sitio viejo */}
+            {project.beforeImage && (
+              <div>
+                <p className="font-display font-semibold uppercase tracking-wide text-[#7db6e8] text-xs">
+                  Antes y después
+                </p>
+                <p className="mt-2 font-body text-white/50 text-sm">
+                  Arrastrá el divisor para comparar el sitio anterior con el nuevo.
+                </p>
+                <BeforeAfter
+                  before={project.beforeImage}
+                  after={project.image}
+                  alt={project.name}
+                  className="mt-4"
+                />
+              </div>
             )}
 
             {/* Galería de fotos extra cargadas desde /admin */}

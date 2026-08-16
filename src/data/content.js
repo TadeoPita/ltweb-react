@@ -28,7 +28,7 @@ export const CLIENTS = [
     problem: 'Necesitaban una web que reflejara la seriedad de una clínica y mostrara con claridad sus tratamientos.',
     solution: 'Diseñamos una landing institucional con foco en tratamientos, equipo y **contacto directo por WhatsApp**.',
     tags: ['UX/UI', 'WordPress', 'Responsive'],
-    image: '/images/76.png',
+    image: '/images/76.webp',
     url: 'https://mchodontolaser.com.ar',
   },
   {
@@ -54,7 +54,7 @@ export const CLIENTS = [
     problem: 'Una empresa de tecnología en salud sin presencia digital que representara su nivel.',
     solution: 'Diseñamos un sitio claro que explica productos, casos de uso y **facilita el contacto comercial**.',
     tags: ['UX/UI', 'WordPress', 'Responsive'],
-    image: '/images/34-1.png',
+    image: '/images/34-1.webp',
     url: 'https://fgmtech.com.ar',
   },
 ]
@@ -196,21 +196,21 @@ export const STEPS = [
 
 /* Portfolio: se mantiene la data actual, solo con etiquetas más precisas. */
 export const PORTFOLIO = [
-  { id: 'auralys', name: 'AURALYS', type: 'LANDING PAGE PRO', image: '/images/pf-auralys.png', url: 'https://auralys.com.ar', size: 'wide', home: true },
-  { id: 'hey', name: 'HEY INSTITUTE', type: 'LANDING PAGE PRO', image: '/images/pf-heyinstitute.png', url: 'https://heyinstitute.com.ar', size: 'tall', home: true },
+  { id: 'auralys', name: 'AURALYS', type: 'LANDING PAGE PRO', image: '/images/pf-auralys.webp', url: 'https://auralys.com.ar', size: 'wide', home: true },
+  { id: 'hey', name: 'HEY INSTITUTE', type: 'LANDING PAGE PRO', image: '/images/pf-heyinstitute.webp', url: 'https://heyinstitute.com.ar', size: 'tall', home: true },
   { id: 'mch', name: 'MCH ODONTOLOGÍA LÁSER', type: 'LANDING PAGE PRO', image: 'https://ltweb.com.ar/wp-content/uploads/2025/03/mchodontolaser.com_.ar_.png', url: 'https://mchodontolaser.com.ar', size: 'tall', home: true },
-  { id: 'acevedo', name: 'ACEVEDO PERFORACIONES', type: 'LANDING PAGE PRO', image: '/images/pf-acevedo.png', url: 'https://perforacionesacevedo.com.ar', size: 'normal', home: true },
-  { id: 'corteza', name: 'CORTEZA', type: 'E-COMMERCE', image: '/images/pf-corteza.png', url: 'https://corteza.com.ar', size: 'tall', home: true },
-  { id: 'biovitality', name: 'BIOVITALITY', type: 'LANDING PAGE', image: '/images/pf-biovitality.png', url: 'https://biovitalitywc.com', size: 'normal', label: 'Modificada por terceros actualmente', home: true },
-  { id: 'fgmtech', name: 'FGM TECH', type: 'LANDING PAGE', image: '/images/pf-fgmtech.png', url: 'https://fgmtech.com.ar', size: 'full', home: true },
-  { id: 'piccoli', name: 'PICCOLI QUESTION', type: 'E-COMMERCE', image: '/images/pf-piccoli.png', url: 'https://piccoliquestion.com.ar', size: 'wide', home: true },
+  { id: 'acevedo', name: 'ACEVEDO PERFORACIONES', type: 'LANDING PAGE PRO', image: '/images/pf-acevedo.webp', url: 'https://perforacionesacevedo.com.ar', size: 'normal', home: true },
+  { id: 'corteza', name: 'CORTEZA', type: 'E-COMMERCE', image: '/images/pf-corteza.webp', url: 'https://corteza.com.ar', size: 'tall', home: true },
+  { id: 'biovitality', name: 'BIOVITALITY', type: 'LANDING PAGE', image: '/images/pf-biovitality.webp', url: 'https://biovitalitywc.com', size: 'normal', label: 'Modificada por terceros actualmente', home: true },
+  { id: 'fgmtech', name: 'FGM TECH', type: 'LANDING PAGE', image: '/images/pf-fgmtech.webp', url: 'https://fgmtech.com.ar', size: 'full', home: true },
+  { id: 'piccoli', name: 'PICCOLI QUESTION', type: 'E-COMMERCE', image: '/images/pf-piccoli.webp', url: 'https://piccoliquestion.com.ar', size: 'wide', home: true },
   { id: 'mostudio', name: 'MO STUDIO', type: 'LANDING PAGE', image: 'https://ltweb.com.ar/wp-content/uploads/2025/03/FireShot-Capture-021-mostudiomedia.com-mostudiomedia.com_.png', url: 'https://mostudiomedia.com', size: 'tall', home: true },
-  { id: 'mundalma', name: 'MUNDALMA', type: 'LANDING PAGE PRO', image: '/images/pf-mundalma.png', url: 'https://mundalma.com.ar', size: 'tall', home: true },
-  { id: 'baldomero', name: 'CENTRO BALDOMERO', type: 'LANDING PAGE', image: '/images/pf-baldomero.jpg', url: 'https://centrobaldomero.com.ar', size: 'normal', label: 'En actualización', home: true },
-  { id: 'glamhair', name: 'GLAM HAIR', type: 'LANDING PAGE', image: '/images/pf-glamhair.png', url: 'https://glamhair.com.ar', size: 'tall', home: true },
-  { id: 'turnera', name: 'PROXIMAMENTE', type: 'LANDING TURNERA', image: '/images/pf-turnera.png', url: '#', size: 'normal', blurred: true, home: true },
-  { id: 'modolaser', name: 'MODO LÁSER', type: 'LANDING PAGE', image: '/images/pf-modolaser.jpg', url: 'https://estancialaser.com', size: 'normal', home: true },
-  { id: 'crucero', name: 'CRUCERO LÁSER', type: 'LANDING PAGE', image: '/images/pf-crucero.png', url: '#', size: 'normal', home: true },
+  { id: 'mundalma', name: 'MUNDALMA', type: 'LANDING PAGE PRO', image: '/images/pf-mundalma.webp', url: 'https://mundalma.com.ar', size: 'tall', home: true },
+  { id: 'baldomero', name: 'CENTRO BALDOMERO', type: 'LANDING PAGE', image: '/images/pf-baldomero.webp', url: 'https://centrobaldomero.com.ar', size: 'normal', label: 'En actualización', home: true },
+  { id: 'glamhair', name: 'GLAM HAIR', type: 'LANDING PAGE', image: '/images/pf-glamhair.webp', url: 'https://glamhair.com.ar', size: 'tall', home: true },
+  { id: 'turnera', name: 'PROXIMAMENTE', type: 'LANDING TURNERA', image: '/images/pf-turnera.webp', url: '#', size: 'normal', blurred: true, home: true },
+  { id: 'modolaser', name: 'MODO LÁSER', type: 'LANDING PAGE', image: '/images/pf-modolaser.webp', url: 'https://estancialaser.com', size: 'normal', home: true },
+  { id: 'crucero', name: 'CRUCERO LÁSER', type: 'LANDING PAGE', image: '/images/pf-crucero.webp', url: '#', size: 'normal', home: true },
 ]
 
 /* FAQ: preguntas del brief con respuestas concretas y sin promesas vacías. */

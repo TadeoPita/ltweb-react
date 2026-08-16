@@ -64,8 +64,10 @@ const MAX_UPLOAD_BYTES = 8 * 1024 * 1024
 function ItemEditor({ item, index, total }) {
   const fileRef = useRef(null)
   const galleryRef = useRef(null)
+  const beforeRef = useRef(null)
   const [uploading, setUploading] = useState(false)
   const [galleryBusy, setGalleryBusy] = useState(false)
+  const [beforeBusy, setBeforeBusy] = useState(false)
 
   const update = (patch) => portfolioStore.updateItem(item.id, patch)
 
@@ -138,6 +140,37 @@ function ItemEditor({ item, index, total }) {
       alert('No se pudo eliminar la foto: ' + err.message)
     } finally {
       setGalleryBusy(false)
+    }
+  }
+
+  /* Captura del sitio anterior, para el comparador antes/después. */
+  async function onBeforeFile(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > MAX_UPLOAD_BYTES) {
+      alert('La imagen pesa más de 8 MB. Subí una versión más liviana.')
+      e.target.value = ''
+      return
+    }
+    setBeforeBusy(true)
+    try {
+      await portfolioStore.uploadBeforeImage(file, item.id)
+    } catch (err) {
+      alert('No se pudo subir la imagen: ' + err.message)
+    } finally {
+      setBeforeBusy(false)
+      e.target.value = ''
+    }
+  }
+
+  async function clearBefore() {
+    setBeforeBusy(true)
+    try {
+      await portfolioStore.removeBeforeImage(item.id)
+    } catch (err) {
+      alert('No se pudo quitar la imagen: ' + err.message)
+    } finally {
+      setBeforeBusy(false)
     }
   }
 
@@ -254,6 +287,41 @@ function ItemEditor({ item, index, total }) {
           <Field label="Qué hicimos (detalle largo — un párrafo por línea)">
             <textarea className={inputCls} rows={5} value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Explicación completa del trabajo. Cada salto de línea es un párrafo nuevo." />
           </Field>
+          {/* Antes / después: captura del sitio anterior */}
+          <div className="border-t border-black/8 pt-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="block text-[11px] font-semibold uppercase tracking-wide text-ink/50">
+                Antes / después {item.beforeImage ? '· cargada' : ''}
+              </span>
+              <div className="flex items-center gap-2">
+                {item.beforeImage && (
+                  <button
+                    onClick={clearBefore}
+                    disabled={beforeBusy}
+                    className="rounded-lg border border-red-200 text-red-500 px-3 py-1.5 text-xs font-semibold hover:bg-red-50 cursor-pointer disabled:opacity-50"
+                  >
+                    Quitar
+                  </button>
+                )}
+                <button
+                  onClick={() => beforeRef.current.click()}
+                  disabled={beforeBusy}
+                  className="rounded-lg border border-black/10 px-3 py-1.5 text-xs font-semibold hover:bg-black/5 cursor-pointer disabled:opacity-50"
+                >
+                  {beforeBusy ? 'Subiendo...' : item.beforeImage ? 'Reemplazar' : 'Subir captura del sitio viejo'}
+                </button>
+              </div>
+              <input ref={beforeRef} type="file" accept="image/*" className="hidden" onChange={onBeforeFile} disabled={beforeBusy} />
+            </div>
+            {item.beforeImage ? (
+              <img src={item.beforeImage} alt="" className="mt-3 w-40 h-24 object-cover object-top rounded-md border border-black/10" />
+            ) : (
+              <p className="mt-2 text-xs text-ink/40 font-body">
+                Si es un rediseño, subí acá la captura del sitio anterior y en la ficha aparece un comparador deslizable.
+              </p>
+            )}
+          </div>
+
           {/* Galería: fotos extra que se muestran en la ficha */}
           <div className="border-t border-black/8 pt-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -367,7 +435,6 @@ export default function AdminPage() {
   useEffect(() => {
     window.scrollTo(0, 0)
     document.title = 'Admin Portfolio - LTWEB'
-    return () => { document.title = 'Diseño y Desarrollo Web En Argentina - LTWEB' }
   }, [])
 
   function exportJSON() {
@@ -471,7 +538,7 @@ export default function AdminPage() {
             {items.length} proyectos · {items.filter((i) => i.home).length} visibles en el inicio · todos aparecen en /portfolio
           </p>
           <button
-            onClick={() => portfolioStore.addItem({ name: 'NUEVO PROYECTO', type: 'LANDING PAGE', image: '/images/pf-auralys.png' })}
+            onClick={() => portfolioStore.addItem({ name: 'NUEVO PROYECTO', type: 'LANDING PAGE', image: '/images/pf-auralys.webp' })}
             className="flex items-center gap-2 rounded-lg bg-ink text-white px-4 py-2 text-sm font-semibold hover:bg-black cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Agregar proyecto

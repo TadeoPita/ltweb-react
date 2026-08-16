@@ -87,7 +87,7 @@ export default function SocialSection() {
             
             className="block mx-auto w-full max-w-md border-0 border-ink rounded-[22px] overflow-hidden"
           >
-            <img src="/images/instagram-phone.png" alt="Instagram de LT WEB" loading="lazy" className="w-full h-auto rounded-[22px]" />
+            <img src="/images/instagram-phone.webp" alt="Instagram de LT WEB" loading="lazy" className="w-full h-auto rounded-[22px]" />
           </motion.a>
 
           {/* Chips derecha */}

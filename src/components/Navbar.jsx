@@ -17,7 +17,7 @@ export default function Navbar() {
       <div className="mx-auto max-w-[1440px] flex items-center justify-between px-6 sm:px-12 py-8">
         <a href="/#inicio" className="select-none" aria-label="LT WEB">
           <img
-            src={onDark ? '/images/logo-blanco.png' : '/images/logo-negro.png'}
+            src={onDark ? '/images/logo-blanco.webp' : '/images/logo-negro.webp'}
             alt="LT WEB"
             className="h-14 sm:h-18 w-auto"
           />

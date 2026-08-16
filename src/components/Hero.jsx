@@ -305,7 +305,7 @@ export default function Hero() {
         'relative overflow-hidden bg-white bg-top bg-no-repeat bg-cover ' +
         (variant === 'minimal' ? 'pt-44 sm:pt-52 pb-24' : 'pt-40 sm:pt-48 pb-24')
       }
-      style={{ backgroundImage: "url('/images/bg-6.png')" }}
+      style={{ backgroundImage: "url('/images/bg-6.webp')" }}
     >
       {variant === 'split' ? (
         <HeroSplit featured={featured} />

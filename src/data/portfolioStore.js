@@ -49,6 +49,8 @@ function itemsFromRows(rows) {
       description: r.description ?? '',
       services: r.services ?? '',
       gallery: parseGallery(r.gallery),
+      beforeImage: r.before_image ?? '',
+      beforeImagePath: r.before_image_path ?? '',
     }))
 }
 
@@ -170,6 +172,8 @@ export const portfolioStore = {
     if ('description' in patch) row.description = patch.description ?? ''
     if ('services' in patch) row.services = patch.services ?? ''
     if ('gallery' in patch) row.gallery = JSON.stringify(patch.gallery ?? [])
+    if ('beforeImage' in patch) row.before_image = patch.beforeImage ?? ''
+    if ('beforeImagePath' in patch) row.before_image_path = patch.beforeImagePath ?? ''
     must(await supabase.from('portfolio_items').update(row).eq('id', id))
     state = { ...state, items: state.items.map((it) => (it.id === id ? { ...it, ...patch } : it)) }
     emit()
@@ -206,7 +210,7 @@ export const portfolioStore = {
     const item = state.items.find((it) => it.id === id)
     must(await supabase.from('portfolio_items').delete().eq('id', id))
     // Limpiamos del Storage tanto la portada como las fotos de la galería.
-    const paths = [item?.imagePath, ...(item?.gallery ?? []).map((g) => g.path)].filter(Boolean)
+    const paths = [item?.imagePath, item?.beforeImagePath, ...(item?.gallery ?? []).map((g) => g.path)].filter(Boolean)
     if (paths.length) {
       supabase.storage.from('portfolio-images').remove(paths).catch(() => {})
     }
@@ -244,6 +248,23 @@ export const portfolioStore = {
     if (prev) {
       supabase.storage.from('portfolio-images').remove([prev]).catch(() => {})
     }
+  },
+
+  /* Sube la captura del sitio anterior, para el comparador antes/después. */
+  async uploadBeforeImage(file, itemId) {
+    const path = `${itemId}/antes/${Date.now()}-${file.name}`
+    const { error: uploadError } = await supabase.storage.from('portfolio-images').upload(path, file)
+    if (uploadError) throw uploadError
+    const { data } = supabase.storage.from('portfolio-images').getPublicUrl(path)
+    const prev = state.items.find((it) => it.id === itemId)?.beforeImagePath
+    await portfolioStore.updateItem(itemId, { beforeImage: data.publicUrl, beforeImagePath: path })
+    if (prev) supabase.storage.from('portfolio-images').remove([prev]).catch(() => {})
+  },
+
+  async removeBeforeImage(itemId) {
+    const prev = state.items.find((it) => it.id === itemId)?.beforeImagePath
+    await portfolioStore.updateItem(itemId, { beforeImage: '', beforeImagePath: '' })
+    if (prev) supabase.storage.from('portfolio-images').remove([prev]).catch(() => {})
   },
 
   /* Sube una foto extra a la galería del proyecto y la agrega al final. */

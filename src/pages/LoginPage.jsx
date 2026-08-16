@@ -53,7 +53,7 @@ export default function LoginPage() {
           {/* Header */}
           <div className="mb-8">
             <a href="/" className="inline-block mb-6">
-              <img src="/images/logo-negro.png" alt="LT WEB" className="h-8 w-auto" />
+              <img src="/images/logo-negro.webp" alt="LT WEB" className="h-8 w-auto" />
             </a>
             <h1 className="font-display font-bold text-2xl text-ink mb-2">Acceder al Panel</h1>
             <p className="text-sm text-ink/60 font-body">Ingresa tus credenciales de administrador</p>

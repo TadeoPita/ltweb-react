@@ -61,12 +61,17 @@ function Card({ item, index }) {
         style={{ backgroundColor: tint }}
       />
 
-      {/* El ícono da una vuelta completa sobre sí mismo, sin perspectiva 3D:
-          es un giro plano, que se lee mucho mejor en una pastilla chica. */}
+      {/* La pastilla se dobla apenas y se levanta: ángulos chicos y una
+          perspectiva lejana, para que se lea como una inclinación suave y no
+          como una deformación. */}
       <motion.span
-        animate={{ rotate: hovered ? 360 : 0, scale: hovered ? 1.08 : 1 }}
-        transition={{ rotate: { duration: 0.7, ease: EASE }, scale: { type: 'spring', stiffness: 300, damping: 18 } }}
-        style={{ backgroundColor: tint }}
+        animate={
+          hovered
+            ? { rotateX: -12, rotateY: 10, y: -4, scale: 1.04 }
+            : { rotateX: 0, rotateY: 0, y: 0, scale: 1 }
+        }
+        transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+        style={{ backgroundColor: tint, transformPerspective: 900 }}
         className="relative flex items-center justify-center w-10 h-10 rounded-xl text-ink"
       >
         <Icon className="w-5 h-5" strokeWidth={1.9} />
