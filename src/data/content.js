@@ -15,10 +15,6 @@ export const NAV_LINKS = [
   { label: 'Contacto', href: '#contacto' },
 ]
 
-/* Capacidades: la franja sobria debajo del hero.
-   Tres áreas concretas, sin adjetivos de venta. */
-export const CAPABILITIES = ['Desarrollo web', 'E-commerce', 'Sistemas personalizados']
-
 /* Casos destacados con formato problema/solución/servicios.
    Reemplaza el texto largo genérico anterior por información útil. */
 export const CLIENTS = [

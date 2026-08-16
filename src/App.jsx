@@ -5,7 +5,6 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
 import BottomNav from './components/BottomNav'
 import Hero from './components/Hero'
-import Capabilities from './components/Capabilities'
 import ClientsShowcase from './components/ClientsShowcase'
 import Portfolio from './components/Portfolio'
 import Solutions from './components/Solutions'
@@ -23,7 +22,7 @@ import AdminPage from './pages/AdminPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 /* Estructura de la home reordenada según el brief de comunicación:
-   Hero → Capacidades (franja) → Casos destacados → Proyectos (bento) →
+   Hero → Casos destacados → Proyectos (bento) →
    Servicios → ¿Por dónde empezamos? → Sobre LTWEB → Proceso → FAQ →
    Redes → CTA final → Footer
 
@@ -32,7 +31,6 @@ function HomePage() {
   return (
     <main>
       <Hero />
-      <Capabilities />
       <ClientsShowcase />
       <Portfolio />
       <Solutions />

@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import TextReveal from './TextReveal'
 import RevealText from './RevealText'
-import { blurUp, blurStagger, blurChild } from '../lib/motion'
+import { blurUp, blurStagger, blurChild, EASE } from '../lib/motion'
 import { DIFFERENTIATORS } from '../data/content'
 
 const ICONS = {
@@ -54,51 +54,32 @@ function Card({ item, index }) {
       transition={{ type: 'spring', stiffness: 300, damping: 24 }}
       className="group relative overflow-hidden rounded-2xl border border-black/8 bg-card p-5 cursor-default"
     >
-      {/* Mancha de color difuminada: aparece al pasar el cursor */}
+      {/* Iluminación lateral: entra desde el costado derecho al pasar el cursor */}
       <span
         aria-hidden
-        className="pointer-events-none absolute -top-10 -right-8 w-32 h-32 rounded-full blur-2xl opacity-0 group-hover:opacity-70 transition-opacity duration-500"
+        className="pointer-events-none absolute -right-12 top-1/2 -translate-y-1/2 w-36 h-36 rounded-full blur-2xl opacity-0 group-hover:opacity-80 transition-opacity duration-500"
         style={{ backgroundColor: tint }}
       />
 
-      {/* La pastilla del ícono se dobla en 3D: gira sobre su eje vertical y
-          se inclina apenas, como si la ficha se levantara de la tarjeta.
-          El ícono gira un poco menos que la pastilla, así se despega y el
-          movimiento gana profundidad en vez de sentirse plano. */}
+      {/* El ícono da una vuelta completa sobre sí mismo, sin perspectiva 3D:
+          es un giro plano, que se lee mucho mejor en una pastilla chica. */}
       <motion.span
-        animate={
-          hovered
-            ? { rotateY: -26, rotateX: 12, scale: 1.12, y: -2 }
-            : { rotateY: 0, rotateX: 0, scale: 1, y: 0 }
-        }
-        transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-        style={{ transformPerspective: 600, transformStyle: 'preserve-3d' }}
-        className="relative flex items-center justify-center w-10 h-10 rounded-xl text-ink shadow-sm"
+        animate={{ rotate: hovered ? 360 : 0, scale: hovered ? 1.08 : 1 }}
+        transition={{ rotate: { duration: 0.7, ease: EASE }, scale: { type: 'spring', stiffness: 300, damping: 18 } }}
+        style={{ backgroundColor: tint }}
+        className="relative flex items-center justify-center w-10 h-10 rounded-xl text-ink"
       >
-        <span style={{ backgroundColor: tint }} className="absolute inset-0 rounded-xl" />
-        <motion.span
-          animate={hovered ? { rotateY: 14, z: 14 } : { rotateY: 0, z: 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-          style={{ transformPerspective: 600 }}
-          className="relative"
-        >
-          <Icon className="w-5 h-5" strokeWidth={1.9} />
-        </motion.span>
+        <Icon className="w-5 h-5" strokeWidth={1.9} />
       </motion.span>
 
       <p className="relative mt-4 font-display font-bold uppercase text-[15px] leading-tight text-[#101a3c]">
         {item.title}
       </p>
 
-      {/* El detalle se despliega en hover: mantiene la grilla corta y da algo
-          para descubrir sin cargar la sección de texto. */}
-      <span className="relative grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-out">
-        <span className="overflow-hidden">
-          <span className="block pt-2 font-body text-[13.5px] leading-relaxed text-ink/60">
-            {item.text}
-          </span>
-        </span>
-      </span>
+      {/* El detalle queda siempre visible */}
+      <p className="relative mt-2 font-body text-[13.5px] leading-relaxed text-ink/60">
+        {item.text}
+      </p>
     </motion.li>
   )
 }
