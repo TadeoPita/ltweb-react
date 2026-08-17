@@ -104,7 +104,7 @@ export default function About() {
             {/* Las palabras clave se descifran al apuntarlas: da algo para
                 descubrir sin sumar un bloque más de contenido. */}
             <RevealText
-              text="Somos un equipo chico que diseña y programa webs, sin vueltas. Te escuchamos, entendemos tu negocio y armamos algo que te represente de verdad."
+              text="Diseñamos y programamos webs, sin vueltas. Te escuchamos, entendemos tu negocio y armamos algo que te represente de verdad."
               highlight={['escuchamos', 'negocio', 'represente']}
               className="mt-8 font-body text-ink/70 text-base sm:text-lg leading-relaxed"
             />
