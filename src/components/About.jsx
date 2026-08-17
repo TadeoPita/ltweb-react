@@ -61,17 +61,13 @@ function Card({ item, index }) {
         style={{ backgroundColor: tint }}
       />
 
-      {/* La pastilla se dobla apenas y se levanta: ángulos chicos y una
-          perspectiva lejana, para que se lea como una inclinación suave y no
-          como una deformación. */}
+      {/* La pastilla se inclina unos grados hacia el costado y se levanta:
+          rotación 2D pura sobre el eje Z (rotate), sin rotateX/rotateY ni
+          perspectiva — eso era 3D y deformaba el ícono en vez de inclinarlo. */}
       <motion.span
-        animate={
-          hovered
-            ? { rotateX: -12, rotateY: 10, y: -4, scale: 1.04 }
-            : { rotateX: 0, rotateY: 0, y: 0, scale: 1 }
-        }
-        transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-        style={{ backgroundColor: tint, transformPerspective: 900 }}
+        animate={hovered ? { rotate: -8, y: -4, scale: 1.04 } : { rotate: 0, y: 0, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 16 }}
+        style={{ backgroundColor: tint }}
         className="relative flex items-center justify-center w-10 h-10 rounded-xl text-ink"
       >
         <Icon className="w-5 h-5" strokeWidth={1.9} />
