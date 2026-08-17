@@ -104,8 +104,8 @@ export default function About() {
             {/* Las palabras clave se descifran al apuntarlas: da algo para
                 descubrir sin sumar un bloque más de contenido. */}
             <RevealText
-              text="LTWEB es un estudio de diseño y desarrollo web enfocado en crear soluciones digitales claras, funcionales y adaptadas a cada negocio. Trabajamos directamente con nuestros clientes para entender sus objetivos, ordenar su comunicación y construir una experiencia que realmente los represente."
-              highlight={['claras', 'funcionales', 'objetivos', 'comunicación', 'represente']}
+              text="Somos un equipo chico que diseña y programa webs, sin vueltas. Te escuchamos, entendemos tu negocio y armamos algo que te represente de verdad."
+              highlight={['escuchamos', 'negocio', 'represente']}
               className="mt-8 font-body text-ink/70 text-base sm:text-lg leading-relaxed"
             />
           </motion.div>
