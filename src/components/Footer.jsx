@@ -3,12 +3,14 @@ import { NAV_LINKS, INSTAGRAM_URL, TIKTOK_URL, WHATSAPP_URL, CONTACT_PHONE, CONT
 export default function Footer() {
   return (
     <footer className="bg-[#111113] text-white pt-20 pb-28">
-      <div className="mx-auto max-w-[1280px] px-6">
+      {/* En mobile todo el footer va centrado; desde md vuelve a alinearse
+          a la izquierda como una grilla de columnas. */}
+      <div className="mx-auto max-w-[1280px] px-6 text-center md:text-left">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1.4fr]">
           {/* Marca */}
           <div>
-            <img src="/images/logo-blanco.webp" alt="LT WEB" className="h-24 sm:h-28 w-auto" />
-            <p className="mt-5 font-body text-white/60 text-[15px] leading-relaxed max-w-xs">
+            <img src="/images/logo-blanco.webp" alt="LT WEB" className="h-24 sm:h-28 w-auto mx-auto md:mx-0" />
+            <p className="mt-5 font-body text-white/60 text-[15px] leading-relaxed max-w-xs mx-auto md:mx-0">
               Estudio de diseño y desarrollo web. Trabajamos con empresas que quieren comunicar mejor y generar nuevas oportunidades.
             </p>
             <p className="mt-5 text-[11px] font-semibold tracking-[0.15em] uppercase text-white/45">Ubicación</p>

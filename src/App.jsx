@@ -25,14 +25,10 @@ import NotFoundPage from './pages/NotFoundPage'
 /* Orden de la home, pensado por lo que el visitante necesita en cada momento:
    quién sos (Hero) → probá que sabés (Casos + Proyectos) → qué vendés
    (Servicios) → ¿esto aplica a mí? (¿Por dónde empezamos?) → puedo confiar
-   (Sobre LTWEB) → cómo se trabaja (Proceso) → dudas (FAQ) → contacto (CTA).
+   (Sobre LTWEB) → cómo se trabaja (Proceso) → dudas (FAQ) → redes → cierre.
 
-   Las redes van DESPUÉS del CTA a propósito: antes quedaban justo entre el
-   FAQ y el cierre, es decir mandaban a Instagram exactamente en el momento
-   en que la persona estaba lista para escribir. Ahora el CTA se lleva ese
-   lugar y las redes quedan como salida secundaria.
-
-   El ritmo claro/oscuro resultante: B B N B N B N C N C */
+   El CTA final va último, pegado al footer: es el remate de la página y
+   comparte el mismo negro, así el cierre se lee como un solo bloque. */
 function HomePage() {
   useSeo({
     title: 'LTWEB — Diseño y desarrollo web en Buenos Aires',
@@ -51,8 +47,8 @@ function HomePage() {
       <About />
       <Steps />
       <FAQ />
-      <FinalCTA />
       <SocialSection />
+      <FinalCTA />
     </main>
   )
 }

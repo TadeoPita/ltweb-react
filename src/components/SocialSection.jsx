@@ -100,12 +100,8 @@ export default function SocialSection() {
           </div>
         </div>
 
-        {/* Chips en mobile */}
-        <div className="mt-10 flex flex-wrap justify-center gap-3 lg:hidden">
-          {[...SOCIAL_CHIPS_LEFT, ...SOCIAL_CHIPS_RIGHT].map((c, i) => (
-            <Chip key={c} text={c} delay={i * 0.06} />
-          ))}
-        </div>
+        {/* En mobile no van las chips: quedan solo el teléfono y el texto de
+            abajo. Amontonadas ocupaban media pantalla sin aportar nada. */}
 
         <TextReveal
           as="p"
