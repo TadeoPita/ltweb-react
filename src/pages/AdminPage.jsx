@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowUp, ArrowDown, Trash2, Plus, Download, Upload, RotateCcw, Home, Eye, EyeOff } from 'lucide-react'
-import { portfolioStore, usePortfolio } from '../data/portfolioStore'
+import { portfolioStore, usePortfolio, startRealtime } from '../data/portfolioStore'
 
 /* Panel de administración del portfolio.
    Los cambios se guardan en Supabase y se reflejan al instante para
@@ -435,6 +435,10 @@ export default function AdminPage() {
   useEffect(() => {
     window.scrollTo(0, 0)
     document.title = 'Admin Portfolio - LTWEB'
+    // La escucha de cambios en vivo se levanta solo acá: el sitio público no
+    // necesita mantener un WebSocket abierto. Sirve para ver los cambios
+    // hechos desde otra pestaña o desde el celular.
+    startRealtime()
   }, [])
 
   function exportJSON() {

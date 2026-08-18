@@ -1,12 +1,21 @@
 import { useSyncExternalStore } from 'react'
 import { PORTFOLIO } from './content'
-import { supabase } from '../lib/supabase'
+import { restSelect } from '../lib/supabaseRest'
 
 /* Store del portfolio respaldado por Supabase (tablas portfolio_items y
    portfolio_settings, bucket portfolio-images). Lectura pública; escritura
    requiere sesión válida de Firebase (Third-Party Auth + políticas RLS
-   configuradas en Supabase). El admin (/admin) edita este store y los
-   cambios se reflejan para todos los visitantes en tiempo real. */
+   configuradas en Supabase).
+
+   La lectura va por HTTP contra la API REST (ver lib/supabaseRest.js) para no
+   cargar el SDK en el sitio público. El SDK completo —escrituras, Storage y
+   tiempo real— se importa recién cuando hace falta, o sea en /admin. */
+
+let clientPromise
+function sb() {
+  clientPromise ??= import('../lib/supabase').then((m) => m.supabase)
+  return clientPromise
+}
 
 let state = { variant: 'gallery', pageVariant: 'classic', heroVariant: 'centered', items: [], loading: true, error: null }
 const listeners = new Set()
@@ -55,25 +64,27 @@ function itemsFromRows(rows) {
 }
 
 async function loadInitial() {
-  const [itemsRes, settingsRes] = await Promise.all([
-    supabase.from('portfolio_items').select('*').order('position'),
-    supabase.from('portfolio_settings').select('*').eq('id', 1).maybeSingle(),
-  ])
-  const err = itemsRes.error || settingsRes.error
-  if (err) {
+  let items, settingsRows
+  try {
+    ;[items, settingsRows] = await Promise.all([
+      restSelect('portfolio_items', '&order=position'),
+      restSelect('portfolio_settings', '&id=eq.1'),
+    ])
+  } catch (err) {
     state = { ...state, loading: false, error: err.message }
     emit()
     return
   }
-  if (itemsRes.data.length === 0 && !state.seeding) {
+  if (items.length === 0 && !state.seeding) {
     await seedDefaults()
     return
   }
+  const settings = settingsRows[0]
   state = {
-    variant: settingsRes.data?.variant ?? 'gallery',
-    pageVariant: settingsRes.data?.page_variant ?? 'classic',
-    heroVariant: settingsRes.data?.hero_variant ?? 'centered',
-    items: itemsFromRows(itemsRes.data),
+    variant: settings?.variant ?? 'gallery',
+    pageVariant: settings?.page_variant ?? 'classic',
+    heroVariant: settings?.hero_variant ?? 'centered',
+    items: itemsFromRows(items),
     loading: false,
     error: null,
   }
@@ -94,8 +105,9 @@ async function seedDefaults() {
     blurred: p.blurred ?? false,
     position: i,
   }))
-  await supabase.from('portfolio_items').insert(rows)
-  await supabase
+  const client = await sb()
+  await client.from('portfolio_items').insert(rows)
+  await client
     .from('portfolio_settings')
     .upsert({ id: 1, variant: 'gallery', page_variant: 'classic', hero_variant: 'centered' })
   state = { ...state, seeding: false }
@@ -112,16 +124,28 @@ function scheduleReload() {
   reloadTimer = setTimeout(loadInitial, 150)
 }
 
-supabase
-  .channel('portfolio-changes')
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'portfolio_items' }, scheduleReload)
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'portfolio_settings' }, scheduleReload)
-  .subscribe()
+/* Suscripción a cambios en vivo. Antes se abría sola al importar el store, o
+   sea que cada visitante del sitio público mantenía un WebSocket abierto solo
+   para que nosotros viéramos los cambios mientras editábamos. Ahora la levanta
+   /admin explícitamente: el visitante ve el contenido de cuando cargó la
+   página, que es exactamente lo que necesita. */
+let realtimeStarted = false
+export function startRealtime() {
+  if (realtimeStarted) return
+  realtimeStarted = true
+  sb().then((client) => {
+    client
+      .channel('portfolio-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'portfolio_items' }, scheduleReload)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'portfolio_settings' }, scheduleReload)
+      .subscribe()
+  })
+}
 
 if (import.meta.hot) {
   import.meta.hot.dispose(() => {
     clearTimeout(reloadTimer)
-    supabase.removeAllChannels()
+    if (realtimeStarted) sb().then((client) => client.removeAllChannels())
   })
 }
 
@@ -138,24 +162,28 @@ export const portfolioStore = {
   },
 
   async setVariant(variant) {
+    const supabase = await sb()
     must(await supabase.from('portfolio_settings').update({ variant }).eq('id', 1))
     state = { ...state, variant }
     emit()
   },
 
   async setPageVariant(pageVariant) {
+    const supabase = await sb()
     must(await supabase.from('portfolio_settings').update({ page_variant: pageVariant }).eq('id', 1))
     state = { ...state, pageVariant }
     emit()
   },
 
   async setHeroVariant(heroVariant) {
+    const supabase = await sb()
     must(await supabase.from('portfolio_settings').update({ hero_variant: heroVariant }).eq('id', 1))
     state = { ...state, heroVariant }
     emit()
   },
 
   async updateItem(id, patch) {
+    const supabase = await sb()
     const row = {}
     if ('name' in patch) row.name = patch.name
     if ('type' in patch) row.type = patch.type
@@ -180,6 +208,7 @@ export const portfolioStore = {
   },
 
   async addItem(item) {
+    const supabase = await sb()
     const id = 'p' + Date.now().toString(36)
     const row = {
       name: item.name ?? '',
@@ -207,6 +236,7 @@ export const portfolioStore = {
   },
 
   async removeItem(id) {
+    const supabase = await sb()
     const item = state.items.find((it) => it.id === id)
     must(await supabase.from('portfolio_items').delete().eq('id', id))
     // Limpiamos del Storage tanto la portada como las fotos de la galería.
@@ -224,6 +254,7 @@ export const portfolioStore = {
   },
 
   async moveItem(id, dir) {
+    const supabase = await sb()
     const items = state.items
     const i = items.findIndex((it) => it.id === id)
     const j = i + dir
@@ -239,6 +270,7 @@ export const portfolioStore = {
   },
 
   async uploadImage(file, itemId) {
+    const supabase = await sb()
     const path = `${itemId}/${Date.now()}-${file.name}`
     const { error: uploadError } = await supabase.storage.from('portfolio-images').upload(path, file)
     if (uploadError) throw uploadError
@@ -252,6 +284,7 @@ export const portfolioStore = {
 
   /* Sube la captura del sitio anterior, para el comparador antes/después. */
   async uploadBeforeImage(file, itemId) {
+    const supabase = await sb()
     const path = `${itemId}/antes/${Date.now()}-${file.name}`
     const { error: uploadError } = await supabase.storage.from('portfolio-images').upload(path, file)
     if (uploadError) throw uploadError
@@ -262,6 +295,7 @@ export const portfolioStore = {
   },
 
   async removeBeforeImage(itemId) {
+    const supabase = await sb()
     const prev = state.items.find((it) => it.id === itemId)?.beforeImagePath
     await portfolioStore.updateItem(itemId, { beforeImage: '', beforeImagePath: '' })
     if (prev) supabase.storage.from('portfolio-images').remove([prev]).catch(() => {})
@@ -269,6 +303,7 @@ export const portfolioStore = {
 
   /* Sube una foto extra a la galería del proyecto y la agrega al final. */
   async addGalleryImage(file, itemId) {
+    const supabase = await sb()
     const path = `${itemId}/galeria/${Date.now()}-${file.name}`
     const { error: uploadError } = await supabase.storage.from('portfolio-images').upload(path, file)
     if (uploadError) throw uploadError
@@ -281,6 +316,7 @@ export const portfolioStore = {
 
   /* Saca una foto de la galería y borra el archivo del Storage si era nuestro. */
   async removeGalleryImage(itemId, index) {
+    const supabase = await sb()
     const current = state.items.find((it) => it.id === itemId)?.gallery ?? []
     const removed = current[index]
     await portfolioStore.updateItem(itemId, {
@@ -292,6 +328,7 @@ export const portfolioStore = {
   },
 
   async importJSON(json) {
+    const supabase = await sb()
     const parsed = JSON.parse(json)
     if (!Array.isArray(parsed.items)) throw new Error('JSON inválido: falta "items"')
     must(await supabase.from('portfolio_items').delete().neq('id', ''))
@@ -340,6 +377,7 @@ export const portfolioStore = {
   },
 
   async reset() {
+    const supabase = await sb()
     must(await supabase.from('portfolio_items').delete().neq('id', ''))
     await seedDefaults()
   },
