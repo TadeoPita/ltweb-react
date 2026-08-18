@@ -39,7 +39,10 @@ export function useSeo({ title, description, image, path = '', type = 'website' 
   useEffect(() => {
     const fullTitle = title ?? DEFAULT_TITLE
     const url = SITE + path
-    const img = image ?? DEFAULT_IMAGE
+    /* og:image tiene que ser absoluta. Las portadas del portfolio guardadas
+       como /images/... son relativas, y sin esto WhatsApp mostraba la imagen
+       genérica del sitio en vez de la del proyecto compartido. */
+    const img = !image ? DEFAULT_IMAGE : image.startsWith('http') ? image : SITE + image
 
     document.title = fullTitle
     upsertMeta('name', 'description', description)
@@ -59,4 +62,23 @@ export function useSeo({ title, description, image, path = '', type = 'website' 
     upsertMeta('name', 'twitter:description', description)
     upsertMeta('name', 'twitter:image', img)
   }, [title, description, image, path, type])
+}
+
+/* Datos estructurados que dependen de la página (las preguntas del FAQ, la
+   ficha de cada proyecto). Los de la empresa están fijos en el index.html;
+   estos se arman desde el contenido para que no haya que mantener el mismo
+   texto en dos lugares. Se limpian al desmontar así una ruta no arrastra el
+   schema de la anterior. */
+export function useJsonLd(data) {
+  const json = data ? JSON.stringify(data) : null
+
+  useEffect(() => {
+    if (!json) return
+    const tag = document.createElement('script')
+    tag.type = 'application/ld+json'
+    tag.dataset.dynamic = 'true'
+    tag.textContent = json
+    document.head.appendChild(tag)
+    return () => tag.remove()
+  }, [json])
 }

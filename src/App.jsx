@@ -2,7 +2,8 @@ import { Suspense, lazy } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ProjectLightboxProvider } from './components/ProjectLightbox'
-import { useSeo } from './lib/seo'
+import { useSeo, useJsonLd } from './lib/seo'
+import { FAQS } from './data/content'
 import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
 import BottomNav from './components/BottomNav'
@@ -42,6 +43,20 @@ function HomePage() {
     description:
       'Estudio de diseño y desarrollo web. Hacemos sitios institucionales, landing pages, tiendas online y sistemas de gestión a medida para empresas.',
     path: '/',
+  })
+
+  /* Las preguntas frecuentes en formato FAQPage: es lo que habilita a Google a
+     mostrarlas desplegables directamente en el resultado de búsqueda. Se
+     arman desde el mismo FAQS que pinta la sección, sin las etiquetas <strong>
+     que usa el texto en pantalla. */
+  useJsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/<[^>]+>/g, '') },
+    })),
   })
 
   return (
