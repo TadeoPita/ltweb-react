@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react'
 import { PORTFOLIO } from './content'
 import { restSelect } from '../lib/supabaseRest'
+import { comprimirImagen } from '../lib/comprimirImagen'
 
 /* Store del portfolio respaldado por Supabase (tablas portfolio_items y
    portfolio_settings, bucket portfolio-images). Lectura pública; escritura
@@ -271,6 +272,7 @@ export const portfolioStore = {
 
   async uploadImage(file, itemId) {
     const supabase = await sb()
+    file = await comprimirImagen(file)
     const path = `${itemId}/${Date.now()}-${file.name}`
     const { error: uploadError } = await supabase.storage.from('portfolio-images').upload(path, file)
     if (uploadError) throw uploadError
@@ -285,6 +287,7 @@ export const portfolioStore = {
   /* Sube la captura del sitio anterior, para el comparador antes/después. */
   async uploadBeforeImage(file, itemId) {
     const supabase = await sb()
+    file = await comprimirImagen(file)
     const path = `${itemId}/antes/${Date.now()}-${file.name}`
     const { error: uploadError } = await supabase.storage.from('portfolio-images').upload(path, file)
     if (uploadError) throw uploadError
@@ -304,6 +307,7 @@ export const portfolioStore = {
   /* Sube una foto extra a la galería del proyecto y la agrega al final. */
   async addGalleryImage(file, itemId) {
     const supabase = await sb()
+    file = await comprimirImagen(file)
     const path = `${itemId}/galeria/${Date.now()}-${file.name}`
     const { error: uploadError } = await supabase.storage.from('portfolio-images').upload(path, file)
     if (uploadError) throw uploadError
