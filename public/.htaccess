@@ -1,3 +1,12 @@
+# Configuración de Apache para Hostinger.
+# Cada bloque va dentro de <IfModule> para que, si el hosting no tiene ese
+# módulo, se ignore en vez de tumbar el sitio con un error 500.
+
+# ---------------------------------------------------------------------------
+# Ruteo del SPA: cualquier URL que no sea un archivo real la resuelve React.
+# Sin esto, entrar directo a /portfolio o recargar una ficha de proyecto
+# devuelve 404 de Apache (y Google no las puede indexar).
+# ---------------------------------------------------------------------------
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
@@ -5,4 +14,68 @@
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Cabeceras de seguridad
+# ---------------------------------------------------------------------------
+<IfModule mod_headers.c>
+  # Nadie puede meter el sitio en un <iframe> ajeno (clickjacking).
+  Header always set X-Frame-Options "DENY"
+
+  # El navegador respeta el Content-Type declarado y no "adivina" que un
+  # archivo subido es un script.
+  Header always set X-Content-Type-Options "nosniff"
+
+  # Al salir del sitio solo se manda el dominio, no la URL completa.
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # No usamos ninguna de estas APIs; se niegan de entrada.
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+  # Obliga HTTPS por dos años. Ojo: activarlo con el certificado ya funcionando.
+  Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"
+
+  # Content-Security-Policy: lista blanca de dónde puede cargar cosas la página.
+  # 'unsafe-inline' en script-src es necesario por el onload= del link de
+  # fuentes; en style-src, porque Framer Motion escribe estilos inline al
+  # animar. Los origenes de connect-src son Supabase (datos e imágenes) y
+  # Firebase (login del panel). img-src admite https: porque algunas portadas
+  # de proyecto todavía apuntan al WordPress viejo.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.firebaseapp.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Compresión: el JS y el CSS viajan a un tercio de su tamaño.
+# ---------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE image/svg+xml application/manifest+json
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Caché. Los assets de dist llevan un hash en el nombre: si cambia el
+# contenido cambia la URL, así que se pueden cachear un año sin riesgo de
+# servir una versión vieja. El index.html no se cachea nunca, porque es el
+# que apunta a los assets nuevos en cada deploy.
+# ---------------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|webp|png|jpg|jpeg|svg|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(html|json|xml|webmanifest)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
 </IfModule>
