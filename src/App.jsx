@@ -30,13 +30,19 @@ const ProjectPage = lazy(() => import('./pages/ProjectPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 
-/* Orden de la home, pensado por lo que el visitante necesita en cada momento:
-   quién sos (Hero) → probá que sabés (Casos + Proyectos) → qué vendés
-   (Servicios) → ¿esto aplica a mí? (¿Por dónde empezamos?) → puedo confiar
-   (Sobre LTWEB) → cómo se trabaja (Proceso) → dudas (FAQ) → redes → cierre.
+/* Orden de la home: qué hacés (Servicios) → mostralo (Proyectos) → quiénes
+   somos (Sobre LTWEB) → ¿esto aplica a mí? (¿Por dónde empezamos?) → la
+   prueba (Casos) → cómo se trabaja (Proceso) → dudas (FAQ) → redes → cierre.
+
+   Los Casos bajaron hasta acá a propósito: apoyan al bloque de "¿Por dónde
+   empezamos?" mostrando esos mismos planteos ya resueltos con clientes
+   reales, en vez de aparecer arriba antes de que se sepa qué ofrecemos.
 
    El CTA final va último, pegado al footer: es el remate de la página y
-   comparte el mismo negro, así el cierre se lee como un solo bloque. */
+   comparte el mismo negro, así el cierre se lee como un solo bloque.
+
+   La alternancia claro/oscuro se mantiene intacta con este orden, porque las
+   tres secciones que se movieron son todas de fondo blanco. */
 function HomePage() {
   useSeo({
     title: 'LTWEB — Diseño y desarrollo web en Buenos Aires',
@@ -62,11 +68,11 @@ function HomePage() {
   return (
     <main>
       <Hero />
-      <ClientsShowcase />
-      <Portfolio />
       <Solutions />
-      <StartingPoint />
+      <Portfolio />
       <About />
+      <StartingPoint />
+      <ClientsShowcase />
       <Steps />
       <FAQ />
       <SocialSection />

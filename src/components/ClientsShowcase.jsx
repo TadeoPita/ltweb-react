@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import RichText from './RichText'
+import TextReveal from './TextReveal'
+import { blurUp } from '../lib/motion'
 import { CLIENTS } from '../data/content'
 
 /* Acordeón horizontal de clientes: el panel activo se expande,
@@ -22,7 +24,33 @@ export default function ClientsShowcase() {
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        <div className="flex flex-col lg:flex-row gap-4 lg:h-[640px]">
+        {/* La sección venía sin encabezado: arrancaba directo con el acordeón
+            y no quedaba claro qué se estaba mirando. El texto además avisa que
+            las tarjetas se tocan, porque el acordeón no lo deja ver solo. */}
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.p
+            {...blurUp(0)}
+            className="font-display font-semibold uppercase tracking-wide text-[#7db6e8] text-sm"
+          >
+            Casos
+          </motion.p>
+          <TextReveal
+            as="h2"
+            text="El problema detrás de cada web"
+            dim={0.14}
+            stagger={0.12}
+            className="mt-4 font-display font-bold uppercase text-ink leading-[0.95] text-4xl sm:text-6xl"
+          />
+          <motion.p
+            {...blurUp(0.15)}
+            className="mt-6 font-body text-ink/60 text-base sm:text-lg leading-relaxed"
+          >
+            Tres clientes de rubros distintos, cada uno con un problema propio. Tocá cada tarjeta
+            para ver qué había que resolver y cómo lo encaramos.
+          </motion.p>
+        </div>
+
+        <div className="mt-16 flex flex-col lg:flex-row gap-4 lg:h-[640px]">
           {CLIENTS.map((client, i) => {
             const isActive = i === active
             return (
