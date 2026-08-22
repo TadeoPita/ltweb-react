@@ -7,11 +7,15 @@ export const CONTACT_PHONE = '(+54) 11 5953-2487'
 export const CONTACT_EMAIL = 'ltwebs.studio@gmail.com'
 export const LOCATION = 'Buenos Aires, Argentina'
 
+/* El orden sigue al de la home: Servicios está antes que Proyectos en la
+   página, así que también va antes en el menú. "Proceso" apunta a
+   "¿Por dónde empezamos?", que es donde el visitante elige su caso; desde ahí
+   la página sigue sola hasta "Cómo trabajamos". */
 export const NAV_LINKS = [
   { label: 'Inicio', href: '#inicio' },
-  { label: 'Proyectos', href: '#proyectos' },
   { label: 'Servicios', href: '#servicios' },
-  { label: 'Proceso', href: '#proceso' },
+  { label: 'Proyectos', href: '#proyectos' },
+  { label: 'Proceso', href: '#empecemos' },
   { label: 'Contacto', href: '#contacto' },
 ]
 

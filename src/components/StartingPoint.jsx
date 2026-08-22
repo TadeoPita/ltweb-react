@@ -19,7 +19,7 @@ export default function StartingPoint() {
   const current = STARTING_POINTS.find((p) => p.id === active) ?? STARTING_POINTS[0]
 
   return (
-    <section className="relative bg-ink-2 py-24 sm:py-32 overflow-hidden">
+    <section id="empecemos" className="relative bg-ink-2 py-24 sm:py-32 overflow-hidden">
       <img
         src="/images/glow.png"
         alt=""
@@ -61,9 +61,15 @@ export default function StartingPoint() {
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActive(p.id)}
+                /* Los inactivos llevan borde y fondo propios: antes eran solo
+                   texto sobre el fondo oscuro y no se leían como botones, así
+                   que nadie tocaba las otras tres opciones y se perdía medio
+                   contenido de la sección. */
                 className={
-                  'relative rounded-full px-5 py-2.5 font-body font-semibold text-sm transition-colors duration-300 cursor-pointer ' +
-                  (isActive ? 'text-ink' : 'text-white/60 hover:text-white')
+                  'relative rounded-full border px-5 py-2.5 font-body font-semibold text-sm transition-all duration-300 cursor-pointer ' +
+                  (isActive
+                    ? 'text-ink border-transparent'
+                    : 'text-white/75 border-white/20 bg-white/[0.06] hover:bg-white/12 hover:border-white/45 hover:text-white')
                 }
               >
                 {isActive && (

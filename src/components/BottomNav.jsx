@@ -13,7 +13,7 @@ const ICONS = {
   '#inicio': Home,
   '#proyectos': LayoutGrid,
   '#servicios': Sparkles,
-  '#proceso': Route,
+  '#empecemos': Route,
   '#contacto': MessageCircle,
 }
 
