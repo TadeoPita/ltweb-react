@@ -10,12 +10,33 @@ import { CLIENTS } from '../data/content'
 export default function ClientsShowcase() {
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
+  const [esEscritorio, setEsEscritorio] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches,
+  )
 
   useEffect(() => {
-    if (paused) return
+    const mq = window.matchMedia('(min-width: 1024px)')
+    const alCambiar = () => setEsEscritorio(mq.matches)
+    mq.addEventListener('change', alCambiar)
+    return () => mq.removeEventListener('change', alCambiar)
+  }, [])
+
+  /* La rotación automática va solo en escritorio.
+
+     En mobile el acordeón es vertical: la tarjeta abierta mide 520px y las
+     cerradas 80px, así que cada cambio automático empujaba el contenido unos
+     440px de golpe, sin que el visitante hubiera tocado nada. Medido, eso solo
+     daba un CLS de 0,90 (lo aceptable es menos de 0,10) y se sentía como si la
+     página se trabara mientras uno leía.
+
+     En escritorio el contenedor tiene alto fijo y lo único que cambia es el
+     ancho de cada columna, así que no mueve nada de lugar. */
+  useEffect(() => {
+    if (paused || !esEscritorio) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const id = setInterval(() => setActive((a) => (a + 1) % CLIENTS.length), 6000)
     return () => clearInterval(id)
-  }, [paused])
+  }, [paused, esEscritorio])
 
   return (
     <section className="relative bg-white py-24 sm:py-32">
