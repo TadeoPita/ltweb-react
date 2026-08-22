@@ -39,7 +39,7 @@ const RIGHT_OFFSETS = [150, 0, 150, 20]
 
 export default function SocialSection() {
   return (
-    <section id="contacto" className="bg-paper pb-28 pt-4 overflow-hidden">
+    <section className="bg-paper py-24 sm:py-32 overflow-hidden">
       <div className="mx-auto max-w-[1440px] px-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.85, y: 12 }}
@@ -87,7 +87,7 @@ export default function SocialSection() {
             
             className="block mx-auto w-full max-w-md border-0 border-ink rounded-[22px] overflow-hidden"
           >
-            <img src="/images/instagram-phone.png" alt="Instagram de LT WEB" loading="lazy" className="w-full h-auto rounded-[22px]" />
+            <img src="/images/instagram-phone.webp" alt="Instagram de LT WEB" loading="lazy" className="w-full h-auto rounded-[22px]" />
           </motion.a>
 
           {/* Chips derecha */}
@@ -100,16 +100,12 @@ export default function SocialSection() {
           </div>
         </div>
 
-        {/* Chips en mobile */}
-        <div className="mt-10 flex flex-wrap justify-center gap-3 lg:hidden">
-          {[...SOCIAL_CHIPS_LEFT, ...SOCIAL_CHIPS_RIGHT].map((c, i) => (
-            <Chip key={c} text={c} delay={i * 0.06} />
-          ))}
-        </div>
+        {/* En mobile no van las chips: quedan solo el teléfono y el texto de
+            abajo. Amontonadas ocupaban media pantalla sin aportar nada. */}
 
         <TextReveal
           as="p"
-          text="Conéctate con LT WEB y descubre las últimas tendencias en diseño web, estrategias digitales y optimización online. ¡No te pierdas nuestras novedades! 🚀"
+          text="Compartimos proyectos nuevos, procesos de diseño y detrás de escena del estudio."
           dim={0.14}
           stagger={0.06}
           className="mt-14 text-center font-body text-ink/70 max-w-md mx-auto leading-relaxed"

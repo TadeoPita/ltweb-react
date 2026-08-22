@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# El panel y el login no aportan nada a la búsqueda.
+Disallow: /admin
+Disallow: /login
+
+Sitemap: https://ltweb.com.ar/sitemap.xml

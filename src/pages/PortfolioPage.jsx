@@ -7,16 +7,20 @@ import PortfolioGallery from '../components/PortfolioGallery'
 import PortfolioBento from '../components/PortfolioBento'
 import PortfolioStack from '../components/PortfolioStack'
 import { usePortfolio } from '../data/portfolioStore'
+import { useSeo } from '../lib/seo'
 
 export default function PortfolioPage() {
   const { items, pageVariant, loading } = usePortfolio()
 
+  useSeo({
+    title: 'Proyectos — LTWEB',
+    description:
+      'Todos los proyectos que diseñamos y desarrollamos: landing pages, tiendas online y sistemas a medida para empresas de Buenos Aires.',
+    path: '/portfolio',
+  })
+
   useEffect(() => {
     window.scrollTo(0, 0)
-    document.title = 'Portfolio - LTWEB'
-    return () => {
-      document.title = 'Diseño y Desarrollo Web En Argentina - LTWEB'
-    }
   }, [])
 
   return (

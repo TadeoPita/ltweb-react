@@ -4,8 +4,9 @@ import { InstagramIcon, WhatsAppIcon } from './Icons'
 import { INSTAGRAM_URL, WHATSAPP_URL } from '../data/content'
 
 export default function Navbar() {
-  // En /portfolio el fondo es oscuro: usamos el logo blanco
-  const onDark = useLocation().pathname.startsWith('/portfolio')
+  // En /portfolio y en las fichas de proyecto el fondo es oscuro: logo blanco
+  const { pathname } = useLocation()
+  const onDark = pathname.startsWith('/portfolio') || pathname.startsWith('/proyecto')
   return (
     <motion.header
       initial={{ y: -24, opacity: 0 }}
@@ -13,15 +14,21 @@ export default function Navbar() {
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className="absolute top-0 left-0 right-0 z-40"
     >
-      <div className="mx-auto max-w-450 flex items-center justify-between px-6 sm:px-12 py-8">
+      <div className="mx-auto max-w-[1440px] flex items-center justify-between px-6 sm:px-12 py-8">
         <a href="/#inicio" className="select-none" aria-label="LT WEB">
           <img
-            src={onDark ? '/images/logo-blanco.png' : '/images/logo-negro.png'}
+            src={onDark ? '/images/logo-blanco.webp' : '/images/logo-negro.webp'}
             alt="LT WEB"
-            className="h-10 sm:h-12 w-auto"
+            /* Los archivos venían con márgenes transparentes enormes y además
+               distintos entre sí (el negro ocupaba el 37% del alto del lienzo
+               y el blanco apenas el 11%), así que con la misma clase el logo
+               se achicaba a un tercio al pasar sobre una sección oscura. Los
+               archivos ahora están recortados al contenido, con la misma
+               proporción, y esta altura es la del logo de verdad. */
+            className="h-8 sm:h-10 w-auto"
           />
         </a>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <motion.a
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.94 }}

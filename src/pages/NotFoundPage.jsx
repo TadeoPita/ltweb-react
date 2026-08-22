@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { useSeo } from '../lib/seo'
 
 const ease = [0.22, 1, 0.36, 1]
 
@@ -32,12 +33,10 @@ export default function NotFoundPage() {
     my.set(e.clientY - rect.top - rect.height / 2)
   }
 
+  useSeo({ title: '404 — LTWEB', description: 'La página que buscás no existe o fue movida.' })
+
   useEffect(() => {
     window.scrollTo(0, 0)
-    document.title = '404 — LTWEB'
-    return () => {
-      document.title = 'Diseño y Desarrollo Web En Argentina - LTWEB'
-    }
   }, [])
 
   return (

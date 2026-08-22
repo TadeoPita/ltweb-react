@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, ArrowUpRight } from 'lucide-react'
 import { usePortfolio } from '../data/portfolioStore'
 import { useLightbox } from '../components/ProjectLightbox'
+import { useSeo, useJsonLd } from '../lib/seo'
+import BeforeAfter from '../components/BeforeAfter'
 import { WHATSAPP_URL } from '../data/content'
 import NotFoundPage from './NotFoundPage'
 
@@ -37,13 +39,47 @@ export default function ProjectPage() {
     window.scrollTo(0, 0)
   }, [id])
 
-  useEffect(() => {
-    if (!project) return
-    document.title = `${project.name} - LTWEB`
-    return () => {
-      document.title = 'Diseño y Desarrollo Web En Argentina - LTWEB'
-    }
-  }, [project])
+  /* La ficha aporta su propio título, descripción e imagen: así cada
+     proyecto se comparte con su propia portada en vez de la genérica. */
+  useSeo({
+    title: project ? `${project.name} — Proyecto de LTWEB` : 'Proyecto — LTWEB',
+    description:
+      project?.solution?.replace(/\*\*/g, '') ||
+      project?.problem?.replace(/\*\*/g, '') ||
+      'Un proyecto diseñado y desarrollado por LTWEB.',
+    image: project?.image,
+    path: `/proyecto/${id}`,
+    type: 'article',
+  })
+
+  /* El breadcrumb le dice a Google dónde vive esta página, y aparece como
+     "ltweb.com.ar › Proyectos › Nombre" en vez de la URL cruda. El CreativeWork
+     describe el proyecto y nos atribuye la autoría. */
+  useJsonLd(
+    project && {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://ltweb.com.ar/' },
+            { '@type': 'ListItem', position: 2, name: 'Proyectos', item: 'https://ltweb.com.ar/portfolio' },
+            { '@type': 'ListItem', position: 3, name: project.name },
+          ],
+        },
+        {
+          '@type': 'CreativeWork',
+          name: project.name,
+          url: `https://ltweb.com.ar/proyecto/${id}`,
+          image: project.image,
+          inLanguage: 'es-AR',
+          creator: { '@type': 'Organization', name: 'LTWEB', url: 'https://ltweb.com.ar' },
+          ...(project.category && { genre: project.category }),
+          ...(project.solution && { description: project.solution.replace(/\*\*/g, '') }),
+        },
+      ],
+    },
+  )
 
   if (loading) {
     return (
@@ -144,6 +180,24 @@ export default function ProjectPage() {
               <motion.p {...fadeUp(0.25)} className="font-body text-white/40 text-base">
                 Estamos preparando el detalle de este proyecto.
               </motion.p>
+            )}
+
+            {/* Antes / después: solo si se cargó la captura del sitio viejo */}
+            {project.beforeImage && (
+              <div>
+                <p className="font-display font-semibold uppercase tracking-wide text-[#7db6e8] text-xs">
+                  Antes y después
+                </p>
+                <p className="mt-2 font-body text-white/50 text-sm">
+                  Arrastrá el divisor para comparar el sitio anterior con el nuevo.
+                </p>
+                <BeforeAfter
+                  before={project.beforeImage}
+                  after={project.image}
+                  alt={project.name}
+                  className="mt-4"
+                />
+              </div>
             )}
 
             {/* Galería de fotos extra cargadas desde /admin */}

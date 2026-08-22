@@ -3,18 +3,144 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Diseño y Desarrollo Web En Argentina - LTWEB</title>
-    <meta name="description" content="LT WEB — Agencia de diseño y desarrollo web en Argentina. Hacemos la web que soñas: landing pages, e-commerce y estrategias digitales sin rellenos." />
-    <meta property="og:title" content="Diseño y Desarrollo Web En Argentina - LTWEB" />
-    <meta property="og:description" content="Diseñamos tu página web sin rellenos. Landing pages, e-commerce y comunicación digital." />
+
+    <!-- Íconos: el cohete del logo sobre el negro de la marca. El sitio no
+         tenía ninguno, así que la pestaña mostraba el ícono genérico. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <title>LTWEB — Diseño y desarrollo web en Buenos Aires</title>
+    <meta
+      name="description"
+      content="Estudio de diseño y desarrollo web. Hacemos sitios institucionales, landing pages, tiendas online y sistemas de gestión a medida para empresas."
+    />
+    <link rel="canonical" href="https://ltweb.com.ar" />
+
+    <!-- Estas son las etiquetas por defecto; cada ruta las reescribe con las
+         suyas desde src/lib/seo.js. La imagen es la que ven WhatsApp,
+         Instagram y demás al compartir un link. -->
+    <meta property="og:site_name" content="LTWEB" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:title" content="LTWEB — Diseño y desarrollo web en Buenos Aires" />
+    <meta
+      property="og:description"
+      content="Estudio de diseño y desarrollo web. Sitios institucionales, tiendas online y sistemas de gestión a medida."
+    />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://ltweb.com.ar" />
+    <meta property="og:image" content="https://ltweb.com.ar/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://ltweb.com.ar/og-image.jpg" />
+    <meta name="theme-color" content="#111113" />
+
+    <!-- El fondo del hero es el elemento más grande de la primera pantalla, o
+         sea el que define el LCP. Al ser un background de CSS el navegador
+         recién se entera de que existe cuando terminó de bajar y parsear la
+         hoja de estilos; precargarlo le permite pedirlo desde el arranque. -->
+    <link rel="preload" as="image" href="/images/bg-6.webp" fetchpriority="high" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Solo los pesos que el sitio realmente usa. Antes se pedían 14 (Phudu
+         hasta 900, y 700 de las otras dos) y ninguno de esos cuatro aparece en
+         el código.
+
+         La hoja se carga sin bloquear el render: el truco de media="print" +
+         onload hace que el navegador la baje en paralelo y la aplique al
+         terminar, en vez de frenar la primera pintura esperando a un dominio
+         de terceros. Con display=swap el texto ya aparecía primero en la
+         tipografía de sistema, así que no se agrega ningún parpadeo nuevo. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Phudu:wght@400;500;600;700;800;900&family=Be+Vietnam+Pro:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Phudu:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Phudu:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Phudu:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@400;500;600&display=swap"
+      />
+    </noscript>
+    <!-- Datos estructurados de la empresa. Van en el HTML y no inyectados por
+         React a propósito: es la información que identifica al negocio ante
+         Google y así está presente aunque el buscador no ejecute el JS. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://ltweb.com.ar/#estudio",
+            "name": "LTWEB",
+            "description": "Estudio de diseño y desarrollo web. Sitios institucionales, landing pages, tiendas online y sistemas de gestión a medida.",
+            "url": "https://ltweb.com.ar",
+            "image": "https://ltweb.com.ar/og-image.jpg",
+            "logo": "https://ltweb.com.ar/icon-512.png",
+            "email": "ltwebs.studio@gmail.com",
+            "telephone": "+541159532487",
+            "priceRange": "$$",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Buenos Aires",
+              "addressCountry": "AR"
+            },
+            "areaServed": { "@type": "Country", "name": "Argentina" },
+            "knowsLanguage": "es-AR",
+            "sameAs": [
+              "https://www.instagram.com/ltweb__/",
+              "https://www.tiktok.com/@ltweb__"
+            ],
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Servicios",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Diseño y rediseño web",
+                    "description": "Sitios institucionales, landing pages y experiencias responsive."
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "E-commerce",
+                    "description": "Tiendas online preparadas para facilitar cada etapa de la compra."
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Desarrollo y soluciones personalizadas",
+                    "description": "Sistemas a medida, integraciones y automatizaciones."
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://ltweb.com.ar/#sitio",
+            "url": "https://ltweb.com.ar",
+            "name": "LTWEB",
+            "inLanguage": "es-AR",
+            "publisher": { "@id": "https://ltweb.com.ar/#estudio" }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

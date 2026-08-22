@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import RichText from './RichText'
 import TextReveal from './TextReveal'
+import { blurUp } from '../lib/motion'
 import { CLIENTS } from '../data/content'
 
 /* Acordeón horizontal de clientes: el panel activo se expande,
@@ -16,13 +18,39 @@ export default function ClientsShowcase() {
   }, [paused])
 
   return (
-    <section className="relative bg-white pb-16">
+    <section className="relative bg-white py-24 sm:py-32">
       <div
         className="mx-auto max-w-[1140px] px-4 sm:px-6"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        <div className="flex flex-col lg:flex-row gap-4 lg:h-[640px]">
+        {/* La sección venía sin encabezado: arrancaba directo con el acordeón
+            y no quedaba claro qué se estaba mirando. El texto además avisa que
+            las tarjetas se tocan, porque el acordeón no lo deja ver solo. */}
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.p
+            {...blurUp(0)}
+            className="font-display font-semibold uppercase tracking-wide text-[#7db6e8] text-sm"
+          >
+            Casos
+          </motion.p>
+          <TextReveal
+            as="h2"
+            text="El problema detrás de cada web"
+            dim={0.14}
+            stagger={0.12}
+            className="mt-4 font-display font-bold uppercase text-ink leading-[0.95] text-4xl sm:text-6xl"
+          />
+          <motion.p
+            {...blurUp(0.15)}
+            className="mt-6 font-body text-ink/60 text-base sm:text-lg leading-relaxed"
+          >
+            Tres clientes de rubros distintos, cada uno con un problema propio. Tocá cada tarjeta
+            para ver qué había que resolver y cómo lo encaramos.
+          </motion.p>
+        </div>
+
+        <div className="mt-16 flex flex-col lg:flex-row gap-4 lg:h-[640px]">
           {CLIENTS.map((client, i) => {
             const isActive = i === active
             return (
@@ -60,26 +88,51 @@ export default function ClientsShowcase() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1, transition: { delay: 0.25, duration: 0.5 } }}
                       exit={{ opacity: 0, transition: { duration: 0.15 } }}
-                      className="absolute inset-0 grid lg:grid-cols-2 gap-6 p-8 sm:p-14 items-center"
+                      className="absolute inset-0 grid lg:grid-cols-2 gap-6 p-8 sm:p-14 items-center text-center lg:text-left"
                     >
                       <div>
+                        <motion.span
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1, transition: { delay: 0.3, duration: 0.5 } }}
+                          className="inline-block rounded-full bg-white/60 backdrop-blur border border-black/8 px-3 py-1 text-[11px] font-semibold font-body uppercase tracking-wide text-ink/70"
+                        >
+                          {client.category}
+                        </motion.span>
                         <motion.h3
                           initial={{ y: 30, opacity: 0 }}
                           animate={{ y: 0, opacity: 1, transition: { delay: 0.35, duration: 0.6, ease: [0.22, 1, 0.36, 1] } }}
                           style={{
                             backgroundImage: `linear-gradient(100deg, ${client.titleGradient[0]} 20%, ${client.titleGradient[1]} 100%)`,
                           }}
-                          className="font-display font-bold uppercase leading-[1.02] text-4xl sm:text-6xl whitespace-pre-line text-gradient"
+                          className="mt-4 font-display font-bold uppercase leading-[1.02] text-3xl sm:text-5xl whitespace-pre-line text-gradient"
                         >
                           {client.title}
                         </motion.h3>
-                        <motion.p
+                        <motion.div
                           initial={{ y: 24, opacity: 0 }}
                           animate={{ y: 0, opacity: 1, transition: { delay: 0.45, duration: 0.6, ease: [0.22, 1, 0.36, 1] } }}
-                          className="mt-6 max-w-md text-ink/85 font-body text-[15px] sm:text-[17px] leading-relaxed"
+                          className="mt-6 max-w-md mx-auto lg:mx-0 space-y-4"
                         >
-                          {client.text}
-                        </motion.p>
+                          <div>
+                            <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/50">Problema</p>
+                            <RichText as="p" text={client.problem} className="mt-1 text-ink/85 font-body text-[15px] leading-relaxed" strongClassName="text-ink" />
+                          </div>
+                          <div>
+                            <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/50">Solución</p>
+                            <RichText as="p" text={client.solution} className="mt-1 text-ink/85 font-body text-[15px] leading-relaxed" strongClassName="text-ink" />
+                          </div>
+                        </motion.div>
+                        <motion.div
+                          initial={{ y: 20, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1, transition: { delay: 0.5, duration: 0.5 } }}
+                          className="mt-5 flex flex-wrap gap-2 justify-center lg:justify-start"
+                        >
+                          {client.tags.map((tag) => (
+                            <span key={tag} className="rounded-full bg-white/60 backdrop-blur border border-black/8 px-3 py-1 text-xs font-body text-ink/70">
+                              {tag}
+                            </span>
+                          ))}
+                        </motion.div>
                         <motion.a
                           initial={{ y: 20, opacity: 0 }}
                           animate={{ y: 0, opacity: 1, transition: { delay: 0.55, duration: 0.5 } }}
@@ -89,9 +142,9 @@ export default function ClientsShowcase() {
                           target="_blank"
                           rel="noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="mt-8 inline-block rounded-lg bg-[#2b2b2b] text-white font-body font-semibold px-7 py-3.5 hover:bg-[#060606] transition-colors"
+                          className="mt-7 inline-block rounded-lg bg-[#2b2b2b] text-white font-body font-semibold px-7 py-3.5 hover:bg-[#060606] transition-colors"
                         >
-                          Visitar Web
+                          Visitar proyecto
                         </motion.a>
                       </div>
                       <motion.div
@@ -109,23 +162,6 @@ export default function ClientsShowcase() {
           })}
         </div>
 
-        <div className="mt-10 text-center">
-          <TextReveal
-            as="p"
-            text="Clientes que confiaron en nosotros"
-            dim={0.15}
-            stagger={0.09}
-            className="font-alt font-semibold text-lg text-ink"
-          />
-          <motion.a
-            href="#portfolio"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.96 }}
-            className="mt-4 inline-block rounded-full bg-[#2b2b2b] text-white text-sm font-semibold px-6 py-2.5 hover:bg-black transition-colors"
-          >
-            Ver mas
-          </motion.a>
-        </div>
       </div>
     </section>
   )
