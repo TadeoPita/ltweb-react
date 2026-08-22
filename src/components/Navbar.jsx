@@ -19,7 +19,13 @@ export default function Navbar() {
           <img
             src={onDark ? '/images/logo-blanco.webp' : '/images/logo-negro.webp'}
             alt="LT WEB"
-            className="h-14 sm:h-18 w-auto"
+            /* Los archivos venían con márgenes transparentes enormes y además
+               distintos entre sí (el negro ocupaba el 37% del alto del lienzo
+               y el blanco apenas el 11%), así que con la misma clase el logo
+               se achicaba a un tercio al pasar sobre una sección oscura. Los
+               archivos ahora están recortados al contenido, con la misma
+               proporción, y esta altura es la del logo de verdad. */
+            className="h-8 sm:h-10 w-auto"
           />
         </a>
         <div className="flex items-center gap-2 sm:gap-3">

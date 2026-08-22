@@ -9,7 +9,10 @@ export default function Footer() {
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr_1.4fr]">
           {/* Marca */}
           <div>
-            <img src="/images/logo-blanco.webp" alt="LT WEB" className="h-24 sm:h-28 w-auto mx-auto md:mx-0" />
+            {/* Antes tenía h-24, pero con el margen transparente del archivo el
+                logo se veía de solo 10px. Recortado el archivo, esta altura es
+                la real. */}
+            <img src="/images/logo-blanco.webp" alt="LT WEB" className="h-12 w-auto mx-auto md:mx-0" />
             <p className="mt-5 font-body text-white/60 text-[15px] leading-relaxed max-w-xs mx-auto md:mx-0">
               Estudio de diseño y desarrollo web. Trabajamos con empresas que quieren comunicar mejor y generar nuevas oportunidades.
             </p>
