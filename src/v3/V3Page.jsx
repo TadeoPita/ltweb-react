@@ -5,7 +5,8 @@ import { ArrowRight } from 'lucide-react'
 import AuroraBackground from './AuroraBackground'
 import Process from './Process'
 import Faq from './Faq'
-import ClosingCta from './ClosingCta'
+import Marquee from './Marquee'
+import Ending from './Ending'
 import { SwapyLayout, SwapySlot, SwapyItem, DragHandle } from './Swapy'
 import {
   CardMarca,
@@ -108,7 +109,7 @@ export default function V3Page() {
   return (
     <main className="bg-white">
       {/* Hero con el fondo Aurora */}
-      <AuroraBackground className="sticky top-0 z-0 min-h-screen pt-32 pb-20">
+      <AuroraBackground id="inicio-v3" className="sticky top-0 z-0 min-h-screen pt-32 pb-20">
         <div className="mx-auto max-w-4xl px-6 text-center">
           <motion.p
             initial={{ opacity: 0, y: 14 }}
@@ -198,11 +199,13 @@ export default function V3Page() {
         </div>
       </section>
 
+      <Marquee />
+
       <Process />
 
       <Faq />
 
-      <ClosingCta />
+      <Ending />
       </div>
     </main>
   )

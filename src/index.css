@@ -193,3 +193,30 @@ h3.font-display {
 @media (prefers-reduced-motion: reduce) {
   .aurora { animation: none; }
 }
+
+/* ---------------------------------------------------------------------------
+   Marquesina (v3)
+
+   La cinta se duplica en el markup y se desplaza exactamente el 50% de su
+   ancho: el reinicio cae justo donde empieza la copia, asi que el bucle no
+   tiene salto. Se frena al pasar el cursor, porque una cinta que no para
+   molesta cuando alguien quiere leerla.
+--------------------------------------------------------------------------- */
+@keyframes marquesina {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquesina {
+  animation: marquesina 38s linear infinite;
+  will-change: transform;
+  /* Los bordes se desvanecen para que las palabras no aparezcan de golpe
+     contra el filo de la pantalla. */
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquesina:hover { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquesina { animation: none; }
+}

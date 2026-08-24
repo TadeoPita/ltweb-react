@@ -94,10 +94,13 @@ function AppRoutes() {
   const { pathname } = useLocation()
   const isAuth = pathname.startsWith('/login')
   const isAdmin = pathname.startsWith('/admin')
+  /* La v3 trae navbar y pie propios: los del sitio actual hablan otro idioma
+     visual y el footer viejo dejaba un corte contra el cierre. */
+  const isV3 = pathname.startsWith('/v3')
 
   return (
     <>
-      {!isAuth && !isAdmin && <Navbar />}
+      {!isAuth && !isAdmin && !isV3 && <Navbar />}
       {/* El fallback ocupa el alto de la pantalla para que el footer no salte
           hacia arriba mientras se descarga el chunk de la ruta. */}
       <Suspense fallback={<div className="min-h-screen" />}>
@@ -118,8 +121,8 @@ function AppRoutes() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
-      {!isAuth && !isAdmin && <Footer />}
-      {!isAuth && !isAdmin && <BottomNav />}
+      {!isAuth && !isAdmin && !isV3 && <Footer />}
+      {!isAuth && !isAdmin && !isV3 && <BottomNav />}
     </>
   )
 }
