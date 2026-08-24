@@ -143,6 +143,21 @@ export const DIFFERENTIATORS = [
 
 /* Sección "¿Por dónde empezamos?": el visitante se identifica con un caso y
    lee una respuesta corta. Ayuda a que cada uno se ubique sin leer todo. */
+/* Testimonios de clientes.
+
+   Vacío a propósito: la sección no se muestra hasta que haya frases reales.
+   Tienen que ser textuales, dichas por el cliente. Poner texto inventado acá
+   sería falsear una reseña, así que preferimos que la sección no aparezca.
+
+   Formato de cada uno:
+     quote     - la frase, tal cual la dijo
+     name      - quién la dijo
+     role      - cargo y empresa (opcional). Ej: 'Directora, HEY Institute'
+     projectId - id del proyecto en el portfolio (opcional). Si está, la
+                 tarjeta enlaza a /proyecto/<id>. Los ids actuales son los que
+                 se ven en /admin: hey, mch, fgmtech, corteza, etc. */
+export const TESTIMONIALS = []
+
 export const STARTING_POINTS = [
   {
     id: 'primera',

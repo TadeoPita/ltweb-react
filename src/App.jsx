@@ -9,6 +9,7 @@ import Navbar from './components/Navbar'
 import BottomNav from './components/BottomNav'
 import Hero from './components/Hero'
 import ClientsShowcase from './components/ClientsShowcase'
+import Testimonials from './components/Testimonials'
 import Portfolio from './components/Portfolio'
 import Solutions from './components/Solutions'
 import StartingPoint from './components/StartingPoint'
@@ -72,6 +73,9 @@ function HomePage() {
       <Portfolio />
       <About />
       <StartingPoint />
+      {/* Testimonios va a ocupar el lugar de Casos. Mientras no haya frases
+          reales cargadas no se renderiza, así que hoy la home no cambia. */}
+      <Testimonials />
       <ClientsShowcase />
       <Steps />
       <FAQ />
