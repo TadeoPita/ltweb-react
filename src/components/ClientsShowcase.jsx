@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import RichText from './RichText'
 import TextReveal from './TextReveal'
+import Label from './Label'
 import { blurUp } from '../lib/motion'
 import { CLIENTS } from '../data/content'
 
@@ -49,12 +50,9 @@ export default function ClientsShowcase() {
             y no quedaba claro qué se estaba mirando. El texto además avisa que
             las tarjetas se tocan, porque el acordeón no lo deja ver solo. */}
         <div className="max-w-3xl mx-auto text-center">
-          <motion.p
-            {...blurUp(0)}
-            className="font-display font-semibold uppercase tracking-wide text-[#7db6e8] text-sm"
-          >
-            Casos
-          </motion.p>
+          <motion.div {...blurUp(0)}>
+            <Label>Casos</Label>
+          </motion.div>
           <TextReveal
             as="h2"
             text="El problema detrás de cada web"

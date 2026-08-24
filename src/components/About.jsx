@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import TextReveal from './TextReveal'
 import RevealText from './RevealText'
+import Label from './Label'
 import { blurUp, blurStagger, blurChild, EASE } from '../lib/motion'
 import { DIFFERENTIATORS } from '../data/content'
 
@@ -46,20 +47,17 @@ function Card({ item, index }) {
   const tint = TINTS[index % TINTS.length]
 
   return (
+    /* Mismo sistema que las tarjetas de Servicios: fondo blanco y una línea de
+       1px como única separación, en vez de ocho tarjetas sueltas con borde
+       propio. Se quitó también el globo de color difuminado que entraba por el
+       costado al pasar el cursor: era un efecto puesto para llamar la atención
+       que no comunicaba nada y ensuciaba la retícula. */
     <motion.li
       variants={blurChild}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      whileHover={{ y: -5 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-      className="group relative overflow-hidden rounded-2xl border border-black/8 bg-card p-5 cursor-default"
+      className="group relative bg-white p-6 cursor-default transition-colors duration-300 hover:bg-black/[0.015]"
     >
-      {/* Iluminación lateral: entra desde el costado derecho al pasar el cursor */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute -right-12 top-1/2 -translate-y-1/2 w-36 h-36 rounded-full blur-2xl opacity-0 group-hover:opacity-80 transition-opacity duration-500"
-        style={{ backgroundColor: tint }}
-      />
 
       {/* La pastilla se inclina unos grados hacia el costado y se levanta:
           rotación 2D pura sobre el eje Z (rotate), sin rotateX/rotateY ni
@@ -73,7 +71,7 @@ function Card({ item, index }) {
         <Icon className="w-5 h-5" strokeWidth={1.9} />
       </motion.span>
 
-      <p className="relative mt-4 font-display font-bold uppercase text-[15px] leading-tight text-[#101a3c]">
+      <p className="relative mt-5 font-display font-bold uppercase text-[15px] leading-tight text-ink">
         {item.title}
       </p>
 
@@ -90,9 +88,7 @@ export default function About() {
     <section className="bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-[1280px] px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="font-display font-semibold uppercase tracking-wide text-[#7db6e8] text-sm">
-            Sobre LTWEB
-          </p>
+          <Label>Sobre LTWEB</Label>
           <TextReveal
             as="h2"
             text="Diseño claro. Desarrollo sólido."
@@ -113,7 +109,7 @@ export default function About() {
 
         <motion.ul
           {...blurStagger(0.06, 0.1)}
-          className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-4"
+          className="mt-16 grid sm:grid-cols-2 lg:grid-cols-4 gap-px bg-black/[0.07] border border-black/[0.07] rounded-2xl overflow-hidden"
         >
           {DIFFERENTIATORS.map((item, i) => (
             <Card key={item.title} item={item} index={i} />

@@ -3,6 +3,7 @@ import { ArrowUpRight } from 'lucide-react'
 import { WhatsAppIcon } from './Icons'
 import { blurUp } from '../lib/motion'
 import { WHATSAPP_URL, CONTACT_EMAIL } from '../data/content'
+import Label from './Label'
 
 /* Bloque de cierre: es el CTA principal antes del footer.
    Se ancla como #contacto para que el link del nav caiga acá. */
@@ -12,9 +13,8 @@ export default function FinalCTA() {
       <div className="mx-auto max-w-[1140px] px-6 text-center">
         <motion.p
           {...blurUp(0)}
-          className="font-display font-semibold uppercase tracking-wide text-[#7db6e8] text-sm"
-        >
-          Hablemos
+          >
+          <Label tone="light">Hablemos</Label>
         </motion.p>
 
         <motion.h2
@@ -37,7 +37,7 @@ export default function FinalCTA() {
             whileHover={{ scale: 1.04, y: -2 }}
             whileTap={{ scale: 0.97 }}
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-            className="inline-flex items-center gap-2 rounded-xl bg-white text-ink font-body font-semibold text-base sm:text-lg px-8 py-4 shadow-[0_18px_40px_rgba(0,0,0,0.35)] hover:bg-white/90 transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl bg-white text-ink font-body font-semibold text-base sm:text-lg px-8 py-4 shadow-[0_1px_2px_rgba(0,0,0,0.10),0_10px_30px_-12px_rgba(0,0,0,0.30)] hover:bg-white/90 transition-colors"
           >
             Solicitar una propuesta
             <ArrowUpRight className="w-4 h-4" />

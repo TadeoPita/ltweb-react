@@ -1,18 +1,19 @@
 import { motion } from 'framer-motion'
 import RichText from './RichText'
+import Label from './Label'
 import { blurUp, blurStagger, blurChild } from '../lib/motion'
 import { SERVICES, EXTRA_CAPABILITIES } from '../data/content'
 
 const icons = {
   check: (
-    <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
       <circle cx="12" cy="12" r="9.5" />
       <path d="M8 12.2l2.7 2.7L16.2 9.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
-  rocket: <img src="/images/vector-20.svg" alt="" aria-hidden className="w-8 h-8" />,
+  rocket: <img src="/images/vector-20.svg" alt="" aria-hidden className="w-5 h-5" />,
   chat: (
-    <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
       <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h8A2.5 2.5 0 0 1 17 6.5v4a2.5 2.5 0 0 1-2.5 2.5H9l-4 3.5v-10z" />
       <path d="M20 9.5v5a2.5 2.5 0 0 1-2.5 2.5H16l2.5 3v-3" />
     </svg>
@@ -41,9 +42,7 @@ export default function Solutions() {
         <div className="grid lg:grid-cols-[1.1fr_1fr] gap-6 lg:gap-16 lg:items-end">
           <div>
             <motion.div {...blurUp(0)}>
-              <span className="inline-block rounded-full bg-white border border-black/6 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_8px_24px_-12px_rgba(0,0,0,0.25)] px-5 py-2 text-sm font-semibold font-body">
-                Servicios
-              </span>
+              <Label>Servicios</Label>
             </motion.div>
 
             <motion.h2
@@ -62,21 +61,39 @@ export default function Solutions() {
           </motion.p>
         </div>
 
-        <motion.div {...blurStagger(0.12)} className="mt-16 grid md:grid-cols-3 gap-4">
-          {SERVICES.map((s) => (
+        {/* Las tarjetas venían rellenas de pastel de punta a punta. Tres
+            bloques grandes de color plano, uno al lado del otro, es de las
+            cosas que más hacen que un sitio se lea genérico: el color termina
+            ocupando el lugar de la jerarquía.
+
+            Ahora el fondo es blanco y lo que separa cada tarjeta es una línea
+            de 1px. El pastel se conserva pero reducido a la pastilla del
+            ícono, que es donde suma identidad sin gobernar el bloque. El
+            número ordena la lectura y le da un aire editorial. */}
+        <motion.div {...blurStagger(0.12)} className="mt-16 grid md:grid-cols-3 gap-px bg-black/[0.07] border border-black/[0.07] rounded-2xl overflow-hidden">
+          {SERVICES.map((s, i) => (
             <motion.div
               key={s.id}
               variants={blurChild}
-              whileHover={{ y: -6 }}
-              style={{ backgroundColor: s.tint }}
-              className="rounded-2xl border border-black/5 p-8 flex flex-col"
+              className="group bg-white p-8 flex flex-col transition-colors duration-300 hover:bg-black/[0.015]"
             >
-              <div className="text-ink">{icons[s.icon]}</div>
-              <h3 className="mt-7 font-display font-bold uppercase text-[22px] text-[#101a3c]">{s.title}</h3>
-              <RichText as="p" text={s.text} className="mt-4 font-body text-[15px] leading-relaxed text-ink/75" strongClassName="text-ink" />
-              <ul className="mt-6 pt-6 border-t border-black/10 flex flex-wrap gap-2">
+              <div className="flex items-center justify-between">
+                <span
+                  className="flex items-center justify-center w-11 h-11 rounded-xl text-ink transition-transform duration-500 ease-out group-hover:-rotate-6"
+                  style={{ backgroundColor: s.tint }}
+                >
+                  {icons[s.icon]}
+                </span>
+                <span className="font-body text-[11px] font-semibold tracking-[0.18em] text-ink/25">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+              </div>
+
+              <h3 className="mt-7 font-display font-bold uppercase text-[22px] leading-tight text-ink">{s.title}</h3>
+              <RichText as="p" text={s.text} className="mt-4 font-body text-[15px] leading-relaxed text-ink/65" strongClassName="text-ink" />
+              <ul className="mt-6 pt-6 border-t border-black/[0.07] flex flex-wrap gap-x-4 gap-y-2">
                 {s.items.map((item) => (
-                  <li key={item} className="rounded-full bg-white/70 border border-black/8 px-3 py-1 text-xs font-body text-ink/75">
+                  <li key={item} className="font-body text-[13px] text-ink/50">
                     {item}
                   </li>
                 ))}
@@ -93,7 +110,7 @@ export default function Solutions() {
               key={cap}
               whileHover={{ y: -3 }}
               transition={{ type: 'spring', stiffness: 320, damping: 22 }}
-              className="cursor-default rounded-full bg-white border border-black/8 px-4 py-1.5 text-sm font-body text-ink/70 transition-colors duration-300 hover:bg-ink hover:text-white hover:border-ink hover:shadow-[0_10px_24px_rgba(0,0,0,0.18)]"
+              className="cursor-default rounded-full bg-white border border-black/8 px-4 py-1.5 text-sm font-body text-ink/70 transition-colors duration-300 hover:bg-ink hover:text-white hover:border-ink hover:shadow-[0_1px_2px_rgba(0,0,0,0.08),0_8px_20px_-12px_rgba(0,0,0,0.28)]"
             >
               {cap}
             </motion.span>

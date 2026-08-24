@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ArrowUpRight, Quote } from 'lucide-react'
 import TextReveal from './TextReveal'
+import Label from './Label'
 import { blurUp, blurStagger, blurChild } from '../lib/motion'
 import { TESTIMONIALS } from '../data/content'
 
@@ -14,32 +15,22 @@ import { TESTIMONIALS } from '../data/content'
    Cada tarjeta puede enlazar a la ficha del proyecto de ese cliente
    (`projectId`), lo que ademas conecta esta sección con el portfolio. */
 
-const TINTS = [
-  'var(--color-pastel-blue)',
-  'var(--color-pastel-pink)',
-  'var(--color-pastel-green)',
-  'var(--color-pastel-orange)',
-  'var(--color-pastel-purple)',
-]
-
-function Card({ item, index }) {
-  const tint = TINTS[index % TINTS.length]
-
+function Card({ item }) {
   return (
+    /* Fondo blanco y una línea de 1px, igual que en Servicios. La cita ya
+       tiene bastante peso propia; rellenar la tarjeta de color le sacaba
+       protagonismo al texto, que es lo único que importa acá. */
     <motion.li
       variants={blurChild}
-      whileHover={{ y: -6 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-      className="flex flex-col rounded-2xl border border-black/5 p-8"
-      style={{ backgroundColor: tint }}
+      className="group flex flex-col bg-white p-8 transition-colors duration-300 hover:bg-black/[0.015]"
     >
-      <Quote className="w-7 h-7 text-ink/25 shrink-0" strokeWidth={1.8} aria-hidden />
+      <Quote className="w-6 h-6 text-ink/20 shrink-0" strokeWidth={1.8} aria-hidden />
 
-      <blockquote className="mt-5 grow font-body text-[15px] sm:text-base leading-relaxed text-ink/85">
+      <blockquote className="mt-5 grow font-body text-[15px] sm:text-base leading-relaxed text-ink/80">
         {item.quote}
       </blockquote>
 
-      <footer className="mt-7 pt-6 border-t border-black/10">
+      <footer className="mt-7 pt-6 border-t border-black/[0.07]">
         <p className="font-display font-bold uppercase text-[15px] leading-tight text-[#101a3c]">
           {item.name}
         </p>
@@ -65,28 +56,25 @@ export default function Testimonials() {
   return (
     <section className="bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-[1280px] px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.p
-            {...blurUp(0)}
-            className="font-display font-semibold uppercase tracking-wide text-[#7db6e8] text-sm"
-          >
-            Testimonios
-          </motion.p>
+        <div className="max-w-3xl">
+          <motion.div {...blurUp(0)}>
+            <Label>Testimonios</Label>
+          </motion.div>
           <TextReveal
             as="h2"
             text="Lo que dicen los que ya trabajaron con nosotros"
             dim={0.14}
             stagger={0.1}
-            className="mt-4 font-display font-bold uppercase text-ink leading-[0.95] text-4xl sm:text-6xl"
+            className="mt-7 font-display font-bold uppercase text-ink leading-[0.9] text-5xl sm:text-7xl"
           />
         </div>
 
         <motion.ul
           {...blurStagger(0.08, 0.1)}
-          className="mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          className="mt-16 grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-black/[0.07] border border-black/[0.07] rounded-2xl overflow-hidden"
         >
-          {TESTIMONIALS.map((item, i) => (
-            <Card key={item.name} item={item} index={i} />
+          {TESTIMONIALS.map((item) => (
+            <Card key={item.name} item={item} />
           ))}
         </motion.ul>
       </div>

@@ -7,6 +7,7 @@ import PortfolioGallery from './PortfolioGallery'
 import PortfolioBento from './PortfolioBento'
 import PortfolioStack from './PortfolioStack'
 import { usePortfolio } from '../data/portfolioStore'
+import Label from './Label'
 
 export function PortfolioHeader() {
   return (
@@ -16,9 +17,9 @@ export function PortfolioHeader() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-80px' }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="text-center font-display font-semibold uppercase tracking-wide text-[#7db6e8]"
+        className="text-center"
       >
-        Nuestro trabajo
+        <Label tone="light">Nuestro trabajo</Label>
       </motion.p>
 
       <TextReveal

@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react'
 import RichText from './RichText'
 import { blurUp, EASE } from '../lib/motion'
 import { STARTING_POINTS, WHATSAPP_URL } from '../data/content'
+import Label from './Label'
 
 /* "¿Por dónde empezamos?"
 
@@ -30,9 +31,9 @@ export default function StartingPoint() {
       <div className="relative mx-auto max-w-[1280px] px-6">
         <motion.p
           {...blurUp(0)}
-          className="text-center font-display font-semibold uppercase tracking-wide text-[#7db6e8] text-sm"
+          className="text-center"
         >
-          Empecemos
+          <Label tone="light">Empecemos</Label>
         </motion.p>
         <motion.h2
           {...blurUp(0.08)}

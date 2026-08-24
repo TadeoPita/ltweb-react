@@ -79,7 +79,7 @@ function SecondaryCta({ size = 'lg' }) {
 
 function Badge() {
   return (
-    <span className="inline-flex items-center gap-3 rounded-full bg-white/80 backdrop-blur border border-black/5 shadow-[0_10px_30px_rgba(0,0,0,0.08)] pl-1.5 pr-6 py-1.5">
+    <span className="inline-flex items-center gap-3 rounded-full bg-white/80 backdrop-blur border border-black/5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-14px_rgba(0,0,0,0.20)] pl-1.5 pr-6 py-1.5">
       <span className="rounded-full bg-white border border-black/8 shadow-sm px-4 py-1.5 text-[13px] font-semibold font-body">
         Estudio
       </span>
@@ -280,7 +280,7 @@ function HeroShowcase({ thumbs }) {
           <div
             key={p.id}
             className={
-              'clip-fix rounded-xl overflow-hidden border border-black/8 bg-white shadow-[0_16px_40px_rgba(0,0,0,0.10)] ' +
+              'clip-fix rounded-xl overflow-hidden border border-black/8 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05),0_10px_30px_-14px_rgba(0,0,0,0.22)] ' +
               (i % 2 === 1 ? 'sm:translate-y-5' : '')
             }
           >
