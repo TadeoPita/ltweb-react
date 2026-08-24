@@ -141,7 +141,11 @@ export function CardRubros({ rubros }) {
         {rubros.map((r) => (
           <li
             key={r}
-            className="cursor-default rounded-full border border-black/[0.09] px-3 py-1 font-body text-[13px] text-ink/65 transition-all duration-300 hover:-translate-y-0.5 hover:border-black/25 hover:text-ink/90"
+            /* Al pasar el cursor la pastilla se invierte a negro, el mismo
+               gesto que usan las chips de "También trabajamos" en el sitio
+               actual. Antes solo se levantaba y oscurecía el borde, y el
+               cambio era tan sutil que no se leía como respuesta. */
+            className="cursor-default rounded-full border border-black/[0.09] px-3 py-1 font-body text-[13px] text-ink/65 transition-all duration-300 hover:-translate-y-0.5 hover:border-ink hover:bg-ink hover:text-white"
           >
             {r}
           </li>
