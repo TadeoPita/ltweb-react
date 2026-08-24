@@ -1,181 +1,135 @@
-import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
-import { ArrowUpRight } from 'lucide-react'
 import {
-  WHATSAPP_URL,
   INSTAGRAM_URL,
   TIKTOK_URL,
-  CONTACT_EMAIL,
+  WHATSAPP_URL,
   CONTACT_PHONE,
-  LOCATION,
+  CONTACT_EMAIL,
 } from '../data/content'
-import { EASE } from '../lib/motion'
 
-/* Cierre y pie, en un solo bloque.
+/* Pie de la v3.
 
-   Antes eran dos cosas separadas: una sección clara de contacto y, debajo, el
-   footer negro del sitio viejo. Entre una y otra quedaba un corte horizontal
-   seco, y encima el pie hablaba otro idioma visual que el resto de la página.
+   Vuelve a la composición del sitio original: tres columnas —secciones, redes
+   y contacto— y a la derecha la tarjeta con el llamado a la acción, después
+   una línea y el copyright.
 
-   Acá es un único bloque oscuro. La transición desde lo claro se resuelve con
-   un degradado en el borde de arriba, así no hay línea: la página se va
-   apagando hasta el negro. El aurora vuelve a aparecer pero atenuado y por
-   detrás, para que el cierre tenga algo de la luz del encabezado sin
-   competirle al texto.
+   La versión anterior de este bloque era un cierre grande con el correo y el
+   teléfono como titulares a todo el ancho. Quedaba pesado justo después de
+   "Seguinos en nuestras redes", que ya empuja al contacto, y encima repetía
+   los mismos datos dos veces seguidas.
 
-   El correo es el elemento más grande de la sección a propósito: si alguien
-   llegó hasta acá, lo que tiene que encontrar es cómo escribirnos. */
+   Los enlaces de secciones apuntan a las anclas de esta página y no a las del
+   sitio actual: acá no existen #servicios ni #proceso. */
 
 const SECCIONES = [
   { label: 'Inicio', href: '#inicio-v3' },
   { label: 'El estudio', href: '#bento-v3' },
   { label: 'Proyectos', href: '#proyectos' },
-  { label: 'Preguntas', href: '#faq' },
-]
-
-const REDES = [
-  { label: 'Instagram', href: INSTAGRAM_URL },
-  { label: 'TikTok', href: TIKTOK_URL },
-  { label: 'WhatsApp', href: WHATSAPP_URL },
+  { label: 'FAQ', href: '#faq' },
 ]
 
 export default function Ending() {
   return (
-    <section id="contacto-v3" className="relative overflow-hidden bg-[#08080a]">
-      <div className="relative mx-auto max-w-[1280px] px-6 pt-32 pb-14 sm:pt-44">
-        <motion.p
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.7, ease: EASE }}
-          className="font-body text-[11px] font-semibold uppercase tracking-[0.2em] text-white/40"
-        >
-          Hablemos
-        </motion.p>
-
-        <motion.h2
-          initial={{ opacity: 0, y: 26, filter: 'blur(10px)' }}
-          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.9, delay: 0.08, ease: EASE }}
-          className="mt-6 max-w-4xl font-display font-bold uppercase leading-[0.88] text-white text-5xl sm:text-7xl lg:text-[88px]"
-        >
-          Contanos qué necesitás
-        </motion.h2>
-
-        {/* El correo, en grande: es la acción de la sección. */}
-        <motion.a
-          href={`mailto:${CONTACT_EMAIL}`}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.8, delay: 0.18, ease: EASE }}
-          className="group mt-14 flex w-full items-center justify-between gap-6 border-y border-white/12 py-7 transition-colors duration-300 hover:border-white/35"
-        >
-          <span className="font-display font-bold uppercase text-white/85 text-xl sm:text-4xl leading-none transition-transform duration-500 ease-out group-hover:translate-x-2">
-            {CONTACT_EMAIL}
-          </span>
-          <ArrowUpRight className="h-7 w-7 shrink-0 text-white/40 transition-all duration-300 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1" />
-        </motion.a>
-
-        <motion.a
-          href={WHATSAPP_URL}
-          target="_blank"
-          rel="noreferrer"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.8, delay: 0.24, ease: EASE }}
-          className="group flex w-full items-center justify-between gap-6 border-b border-white/12 py-7 transition-colors duration-300 hover:border-white/35"
-        >
-          <span className="font-display font-bold uppercase text-white/85 text-xl sm:text-4xl leading-none transition-transform duration-500 ease-out group-hover:translate-x-2">
-            {CONTACT_PHONE}
-          </span>
-          <ArrowUpRight className="h-7 w-7 shrink-0 text-white/40 transition-all duration-300 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1" />
-        </motion.a>
-
-        {/* Pie, dentro del mismo bloque */}
-        <div className="mt-20 grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
+    <footer id="contacto-v3" className="bg-[#08080a] pt-20 pb-16 text-white">
+      <div className="mx-auto max-w-[1140px] px-6">
+        <div className="grid gap-12 md:grid-cols-[1fr_1fr_1.2fr_1.6fr]">
+          {/* Secciones */}
           <div>
-            <img
-              draggable={false}
-              src="/images/logo-blanco.webp"
-              alt="LT WEB"
-              className="h-8 w-auto"
-            />
-            <p className="mt-5 max-w-xs font-body text-[14px] leading-relaxed text-white/45">
-              Estudio de diseño y desarrollo web. Webs, tiendas online y sistemas a la medida de
-              cada negocio.
-            </p>
-            <p className="mt-5 font-body text-[13px] text-white/35">{LOCATION}</p>
-          </div>
-
-          <div>
-            <p className="font-body text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">
-              Secciones
-            </p>
-            <ul className="mt-5 flex flex-col gap-3">
-              {SECCIONES.map((s) => (
-                <li key={s.href}>
+            <h3 className="font-alt font-semibold text-xl">Secciones</h3>
+            <ul className="mt-6 flex flex-col gap-3.5">
+              {SECCIONES.map((l) => (
+                <li key={l.href}>
                   <a
-                    href={s.href}
-                    className="font-body text-[14px] text-white/60 transition-colors hover:text-white"
+                    href={l.href}
+                    className="font-body text-white/70 transition-colors duration-300 hover:text-white"
                   >
-                    {s.label}
+                    {l.label}
                   </a>
                 </li>
               ))}
+            </ul>
+          </div>
+
+          {/* Redes Sociales */}
+          <div>
+            <h3 className="font-alt font-semibold text-xl">Redes Sociales</h3>
+            <ul className="mt-6 flex flex-col gap-3.5">
               <li>
-                <Link
-                  to="/portfolio"
-                  className="font-body text-[14px] text-white/60 transition-colors hover:text-white"
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-body text-white/70 transition-colors duration-300 hover:text-white"
                 >
-                  Portfolio
-                </Link>
+                  Instagram
+                </a>
+              </li>
+              <li>
+                <a
+                  href={TIKTOK_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-body text-white/70 transition-colors duration-300 hover:text-white"
+                >
+                  Tiktok
+                </a>
               </li>
             </ul>
           </div>
 
+          {/* Contacto */}
           <div>
-            <p className="font-body text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">
-              Seguinos
-            </p>
-            <ul className="mt-5 flex flex-col gap-3">
-              {REDES.map((r) => (
-                <li key={r.label}>
-                  <a
-                    href={r.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-body text-[14px] text-white/60 transition-colors hover:text-white"
-                  >
-                    {r.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <h3 className="font-alt font-semibold text-xl">Contacto</h3>
+            <div className="mt-6">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/45">
+                Teléfono
+              </p>
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-1.5 block font-alt font-semibold text-lg transition-colors hover:text-white/80"
+              >
+                {CONTACT_PHONE}
+              </a>
+            </div>
+            <div className="mt-6">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/45">
+                Correo electrónico
+              </p>
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="mt-1.5 block font-alt font-semibold text-lg transition-colors hover:text-white/80"
+              >
+                {CONTACT_EMAIL}
+              </a>
+            </div>
           </div>
 
-          <div>
-            <p className="font-body text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">
-              Escribinos
+          {/* Tarjeta con el llamado a la acción */}
+          <div className="self-start rounded-2xl border border-white/12 p-8 text-center sm:p-10">
+            <h3 className="font-alt font-semibold text-xl">Transformá tu web hoy</h3>
+            <p className="mt-4 font-body leading-relaxed text-white/60">
+              Potenciá tu negocio con un diseño profesional y estratégico.
             </p>
             <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="mt-5 block font-body text-[14px] text-white/60 transition-colors hover:text-white"
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-7 inline-block rounded-xl border border-white/15 bg-white/8 px-7 py-3.5 font-alt font-semibold transition-colors duration-300 hover:bg-white/15"
             >
-              {CONTACT_EMAIL}
+              ¡Contactanos ahora!
             </a>
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-7 sm:flex-row sm:items-center">
-          <p className="font-body text-[13px] text-white/30">
-            © {new Date().getFullYear()} LTWEB. Todos los derechos reservados.
+        <div className="mt-16 h-px bg-white/15" />
+
+        <div className="mt-8 flex justify-center sm:justify-end">
+          <p className="font-body text-white/70">
+            © Copyright {new Date().getFullYear()} by LT WEB 🚀
           </p>
-          <p className="font-body text-[13px] text-white/30">Diseño y desarrollo por LTWEB</p>
         </div>
       </div>
-    </section>
+    </footer>
   )
 }

@@ -10,7 +10,7 @@ import Ending from './Ending'
 import Portfolio from '../components/Portfolio'
 import FAQ from '../components/FAQ'
 import SocialSection from '../components/SocialSection'
-import { SwapyLayout, SwapySlot, SwapyItem, DragHandle } from './Swapy'
+import { SwapyLayout, SwapySlot, SwapyItem } from './Swapy'
 import {
   CardMarca,
   CardProyecto,
@@ -138,8 +138,14 @@ export default function V3Page() {
                 if (!tarjeta) return null
                 return (
                   <SwapySlot key={slotId} id={slotId} className={ANCHOS[i % ANCHOS.length]}>
-                    <SwapyItem id={itemId} className="group relative">
-                      <DragHandle className="text-white/70 mix-blend-difference" />
+                    {/* Sin manija: la tarjeta entera se arrastra. Con la
+                        manija chica de antes, agarrarla del cuerpo no movia
+                        nada y encima seleccionaba el texto. select-none corta
+                        esa seleccion, que es lo que dejaba todo marcado. */}
+                    <SwapyItem
+                      id={itemId}
+                      className="group relative cursor-grab select-none active:cursor-grabbing"
+                    >
                       {tarjeta.nodo}
                     </SwapyItem>
                   </SwapySlot>

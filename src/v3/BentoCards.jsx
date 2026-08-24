@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { usarClicSinArrastre } from './usarClicSinArrastre'
 import { ArrowUpRight, MessageCircle, SlidersHorizontal, Zap } from 'lucide-react'
 import { WHATSAPP_URL, INSTAGRAM_URL } from '../data/content'
 
@@ -47,8 +48,11 @@ export function CardMarca() {
 
 /* Proyecto con la captura de fondo. */
 export function CardProyecto({ id, nombre, tipo, imagen }) {
+  const navegar = useNavigate()
+  const clic = usarClicSinArrastre(() => navegar(`/proyecto/${id}`))
+
   return (
-    <Link draggable={false} to={`/proyecto/${id}`} className={`${BASE} group block bg-black`}>
+    <Link draggable={false} to={`/proyecto/${id}`} {...clic} className={`${BASE} group block bg-black`}>
       <img
         draggable={false}
         src={imagen}
@@ -75,9 +79,13 @@ export function CardProyecto({ id, nombre, tipo, imagen }) {
    El número sale de la base, no está escrito a mano: cada proyecto que se
    carga desde /admin lo actualiza solo en el próximo ingreso a la página. */
 export function CardPortfolio({ cantidad }) {
+  const navegar = useNavigate()
+  const clic = usarClicSinArrastre(() => navegar('/portfolio'))
+
   return (
     <Link
       draggable={false}
+      {...clic}
       to="/portfolio"
       className={`${BASE} group block p-6 flex flex-col justify-center`}
       style={{ backgroundColor: 'var(--color-pastel-blue)' }}
@@ -187,9 +195,12 @@ export function CardDirecto() {
 
 /* Redes, como salida secundaria. */
 export function CardRedes() {
+  const clic = usarClicSinArrastre(() => window.open(INSTAGRAM_URL, '_blank', 'noopener'))
+
   return (
     <a
       draggable={false}
+      {...clic}
       href={INSTAGRAM_URL}
       target="_blank"
       rel="noreferrer"
@@ -236,9 +247,12 @@ export function CardPlazo() {
 
 /* Cierre: la acción. */
 export function CardContacto() {
+  const clic = usarClicSinArrastre(() => window.open(WHATSAPP_URL, '_blank', 'noopener'))
+
   return (
     <a
       draggable={false}
+      {...clic}
       href={WHATSAPP_URL}
       target="_blank"
       rel="noreferrer"
