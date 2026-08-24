@@ -25,7 +25,7 @@ const BASE = `relative h-full overflow-hidden rounded-2xl ${SOMBRA}`
 export function CardMarca() {
   return (
     <div className={`${BASE} group bg-[#1c1c20] p-6 flex flex-col justify-between`}>
-      <img src="/images/logo-blanco.webp" alt="LT WEB" className="h-7 w-auto self-start" />
+      <img draggable={false} src="/images/logo-blanco.webp" alt="LT WEB" className="h-7 w-auto self-start" />
       <div>
         <p className="font-display font-bold uppercase text-white/95 leading-[0.95] text-2xl">
           Estudio de
@@ -35,6 +35,7 @@ export function CardMarca() {
         <p className="mt-2 font-body text-[13px] text-white/45">Buenos Aires, Argentina</p>
       </div>
       <img
+        draggable={false}
         src="/images/sparkle.svg"
         alt=""
         aria-hidden
@@ -47,8 +48,9 @@ export function CardMarca() {
 /* Proyecto con la captura de fondo. */
 export function CardProyecto({ id, nombre, tipo, imagen }) {
   return (
-    <Link to={`/proyecto/${id}`} className={`${BASE} group block bg-black`}>
+    <Link draggable={false} to={`/proyecto/${id}`} className={`${BASE} group block bg-black`}>
       <img
+        draggable={false}
         src={imagen}
         alt={nombre}
         loading="lazy"
@@ -75,6 +77,7 @@ export function CardProyecto({ id, nombre, tipo, imagen }) {
 export function CardPortfolio({ cantidad }) {
   return (
     <Link
+      draggable={false}
       to="/portfolio"
       className={`${BASE} group block p-6 flex flex-col justify-center`}
       style={{ backgroundColor: 'var(--color-pastel-blue)' }}
@@ -186,6 +189,7 @@ export function CardDirecto() {
 export function CardRedes() {
   return (
     <a
+      draggable={false}
       href={INSTAGRAM_URL}
       target="_blank"
       rel="noreferrer"
@@ -207,10 +211,34 @@ export function CardRedes() {
   )
 }
 
+/* Plazo de entrega.
+
+   El dato sale de la respuesta del FAQ, así que no es un número inventado
+   para llenar la tarjeta: es el mismo que damos cuando nos preguntan. */
+export function CardPlazo() {
+  return (
+    <div className={`${BASE} group border border-black/[0.07] bg-white p-6 flex flex-col justify-center`}>
+      <div className="flex items-baseline gap-1.5">
+        <span className="font-display font-bold text-[#26262b] leading-none text-5xl transition-transform duration-500 ease-out group-hover:-translate-y-1">
+          5-7
+        </span>
+        <span className="font-display font-bold uppercase text-ink/45 leading-none text-lg">días</span>
+      </div>
+      <p className="mt-3 font-display font-bold uppercase text-ink/85 text-[15px] leading-tight">
+        Una landing lista
+      </p>
+      <p className="mt-1.5 font-body text-[13px] leading-relaxed text-ink/55">
+        Un e-commerce o un sitio más grande, entre dos y cuatro semanas.
+      </p>
+    </div>
+  )
+}
+
 /* Cierre: la acción. */
 export function CardContacto() {
   return (
     <a
+      draggable={false}
       href={WHATSAPP_URL}
       target="_blank"
       rel="noreferrer"

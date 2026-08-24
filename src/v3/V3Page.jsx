@@ -14,6 +14,7 @@ import {
   CardAreas,
   CardRubros,
   CardPanel,
+  CardPlazo,
   CardDirecto,
   CardRedes,
   CardContacto,
@@ -37,10 +38,10 @@ import { EASE } from '../lib/motion'
    demasiado y se come la pantalla; TITULO_COLOR es un carbón algo más suave
    que se lee igual de firme sin gritar. */
 
-const TITULO = 'Tu negocio online,'
-const TITULO_2 = 'hecho como corresponde.'
+const TITULO = 'Tu mejor vendedor'
+const TITULO_2 = 'trabaja online.'
 const TITULO_COLOR = 'text-[#26262b]'
-const TITULO_COLOR_2 = 'text-[#26262b]/55'
+const TITULO_COLOR_2 = 'text-[#5b5b66]'
 
 const BAJADA =
   'Diseñamos y programamos webs, tiendas online y sistemas a la medida de cada negocio. Vos contás qué necesitás y nosotros lo resolvemos de punta a punta.'
@@ -90,6 +91,7 @@ export default function V3Page() {
       { id: 'rubros', nodo: <CardRubros rubros={RUBROS} /> },
       { id: 'p3', nodo: proyecto(2) },
       { id: 'panel', nodo: <CardPanel /> },
+      { id: 'plazo', nodo: <CardPlazo /> },
       { id: 'directo', nodo: <CardDirecto /> },
       { id: 'redes', nodo: <CardRedes /> },
       { id: 'contacto', nodo: <CardContacto /> },
