@@ -1,0 +1,97 @@
+import { useEffect, useRef } from 'react'
+import { createSwapy } from 'swapy'
+import { cn } from '../lib/utils'
+
+/* Grilla con tarjetas que se pueden arrastrar e intercambiar.
+
+   Port a JSX del componente original, que venía en TypeScript y para Next.
+   Además del tipado, se corrigió un problema real que traía: el efecto que
+   crea la instancia declaraba `[config, onSwap]` como dependencias, y como
+   ambas se pasan casi siempre como literales, cambian de identidad en cada
+   render. Eso destruía y volvía a crear Swapy continuamente, lo que corta un
+   arrastre en curso. Acá la instancia se crea una sola vez al montar y las
+   opciones y el callback viven en refs, que se actualizan sin recrear nada. */
+
+export function SwapyLayout({ id, onSwap, config = {}, className, children }) {
+  const contenedor = useRef(null)
+  const swapy = useRef(null)
+  const configRef = useRef(config)
+  const onSwapRef = useRef(onSwap)
+
+  configRef.current = config
+  onSwapRef.current = onSwap
+
+  useEffect(() => {
+    if (!contenedor.current) return
+
+    swapy.current = createSwapy(contenedor.current, configRef.current)
+    swapy.current.onSwap((evento) => onSwapRef.current?.(evento))
+
+    return () => swapy.current?.destroy()
+  }, [])
+
+  return (
+    <div id={id} ref={contenedor} className={className}>
+      {children}
+    </div>
+  )
+}
+
+/* El hueco fijo de la grilla: no se mueve, recibe a la tarjeta que se suelta. */
+export function SwapySlot({ id, className, children }) {
+  return (
+    <div
+      data-swapy-slot={id}
+      className={cn('rounded-2xl data-[swapy-highlighted]:bg-black/[0.04]', className)}
+    >
+      {children}
+    </div>
+  )
+}
+
+/* La tarjeta que efectivamente se arrastra. */
+export function SwapyItem({ id, className, children }) {
+  return (
+    <div
+      data-swapy-item={id}
+      className={cn('h-full w-full data-[swapy-dragging]:opacity-60', className)}
+    >
+      {children}
+    </div>
+  )
+}
+
+/* Manija de arrastre. Aparece al pasar el cursor por la tarjeta: si estuviera
+   siempre visible, ocho manijas repartidas por la grilla ensucian la lectura. */
+export function DragHandle({ className }) {
+  return (
+    <div
+      data-swapy-handle
+      aria-hidden
+      className={cn(
+        'absolute top-3 right-3 z-10 cursor-grab active:cursor-grabbing rounded-lg p-1',
+        'opacity-0 transition-opacity duration-200 group-hover:opacity-100',
+        className,
+      )}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="9" cy="12" r="1" />
+        <circle cx="9" cy="5" r="1" />
+        <circle cx="9" cy="19" r="1" />
+        <circle cx="15" cy="12" r="1" />
+        <circle cx="15" cy="5" r="1" />
+        <circle cx="15" cy="19" r="1" />
+      </svg>
+    </div>
+  )
+}

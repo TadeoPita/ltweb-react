@@ -31,6 +31,11 @@ const ProjectPage = lazy(() => import('./pages/ProjectPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const AdminPage = lazy(() => import('./pages/AdminPage'))
 
+/* Propuesta de rediseño completo, en su propia ruta para poder compararla con
+   la publicada sin tocarla. Va aparte del bundle: no la carga nadie que entre
+   a la home. */
+const V3Page = lazy(() => import('./v3/V3Page'))
+
 /* Orden de la home: qué hacés (Servicios) → mostralo (Proyectos) → quiénes
    somos (Sobre LTWEB) → ¿esto aplica a mí? (¿Por dónde empezamos?) → la
    prueba (Casos) → cómo se trabaja (Proceso) → dudas (FAQ) → redes → cierre.
@@ -98,6 +103,7 @@ function AppRoutes() {
       <Suspense fallback={<div className="min-h-screen" />}>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/v3" element={<V3Page />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="/proyecto/:id" element={<ProjectPage />} />
           <Route path="/login" element={<LoginPage />} />

@@ -148,3 +148,43 @@ h3.font-display {
   96% { transform: translate(2px, -1px); opacity: 0.3; }
   98% { transform: translate(0, 0); opacity: 0; }
 }
+
+/* ---------------------------------------------------------------------------
+   Fondo Aurora (v3)
+
+   El componente original apilaba dos capas iguales y las combinaba con
+   mix-blend-mode: difference, apoyandose en un filtro invert del contenedor.
+   Ese armado depende de que el fondo sea exactamente el que la libreria
+   supone: sobre blanco y sin el invert, difference devuelve gris y el color
+   desaparece, que es justo lo que pasaba aca.
+
+   Se resuelve de forma directa: una sola capa de bandas de color, muy
+   desenfocada y desplazandose. Menos artificio, resultado estable, y con los
+   colores de la marca en vez de la escala azul por defecto de Tailwind.
+--------------------------------------------------------------------------- */
+@keyframes aurora {
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+
+.aurora {
+  background-image: repeating-linear-gradient(
+    100deg,
+    var(--color-lilac) 0%,
+    var(--color-pastel-blue) 12%,
+    #ffffff 20%,
+    var(--color-pastel-purple) 30%,
+    var(--color-pastel-pink) 40%,
+    #ffffff 48%,
+    var(--color-lilac) 60%
+  );
+  background-size: 200% 200%;
+  filter: blur(56px);
+  animation: aurora 28s linear infinite;
+}
+
+/* Quien pidio menos movimiento no ve la tela desplazarse: queda el degradado
+   quieto, que igual cumple como fondo. */
+@media (prefers-reduced-motion: reduce) {
+  .aurora { animation: none; }
+}
