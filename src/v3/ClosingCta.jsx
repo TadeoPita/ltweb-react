@@ -21,7 +21,7 @@ export default function ClosingCta() {
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.85, ease: EASE }}
-          className="font-display font-bold uppercase text-ink leading-[0.9] text-4xl sm:text-6xl lg:text-7xl"
+          className="font-display font-bold uppercase text-[#26262b] leading-[0.9] text-4xl sm:text-6xl lg:text-7xl"
         >
           Contanos qué necesitás
         </motion.h2>

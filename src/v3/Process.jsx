@@ -14,7 +14,7 @@ import { EASE } from '../lib/motion'
    para dos columnas y fijar el título solo comería la pantalla. */
 export default function Process() {
   return (
-    <section id="proceso-v3" className="bg-[#111113] py-20 sm:py-28">
+    <section id="proceso-v3" className="bg-[#1c1c20] py-20 sm:py-28">
       <div className="mx-auto max-w-[1280px] px-6">
         <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-20">
           <div className="lg:sticky lg:top-32 lg:self-start">
@@ -25,7 +25,7 @@ export default function Process() {
               </span>
             </span>
 
-            <h2 className="mt-7 font-display font-bold uppercase text-white leading-[0.9] text-4xl sm:text-6xl">
+            <h2 className="mt-7 font-display font-bold uppercase text-white/95 leading-[0.9] text-4xl sm:text-6xl">
               De la primera charla al lanzamiento
             </h2>
 
@@ -50,7 +50,7 @@ export default function Process() {
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <div>
-                    <h3 className="font-display font-bold uppercase text-white text-xl sm:text-2xl leading-tight">
+                    <h3 className="font-display font-bold uppercase text-white/90 text-xl sm:text-2xl leading-tight">
                       {paso.title}
                     </h3>
                     <p className="mt-3 font-body text-white/50 text-[15px] leading-relaxed max-w-md">
