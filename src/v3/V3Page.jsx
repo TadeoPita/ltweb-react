@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { utils } from 'swapy'
 import { ArrowRight } from 'lucide-react'
-import HeroBold from './HeroBold'
+import HeroWall from './HeroWall'
 import Process from './Process'
 import Faq from './Faq'
 import Marquee from './Marquee'
@@ -108,7 +108,7 @@ export default function V3Page() {
 
   return (
     <main className="bg-white">
-      <HeroBold />
+      <HeroWall />
 
       {/* Todo lo que sigue sube por encima del hero fijo.
 

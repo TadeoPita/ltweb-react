@@ -4,6 +4,9 @@
   --font-display: "Phudu", sans-serif;
   --font-body: "Be Vietnam Pro", sans-serif;
   --font-alt: "Poppins", sans-serif;
+  /* Tipografia de la v3: una serif de display, deliberadamente distinta a la
+     condensada en mayusculas del sitio actual. */
+  --font-serif: "Instrument Serif", Georgia, serif;
 
   --color-ink: #161616;
   --color-ink-2: #141414;
@@ -219,4 +222,55 @@ h3.font-display {
 
 @media (prefers-reduced-motion: reduce) {
   .marquesina { animation: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Muro de proyectos del hero (v3)
+
+   Cada fila se duplica en el markup y se desplaza la mitad de su ancho: el
+   reinicio cae justo donde arranca la copia, asi que el bucle no salta. La
+   duracion y el sentido los define cada fila por estilo en linea.
+
+   Se frena al pasar el cursor por el hero entero, no por fila: si se frenara
+   solo la de abajo del cursor, las otras dos seguirian y quedaria raro.
+--------------------------------------------------------------------------- */
+@keyframes muro-desplazar {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.muro-fila {
+  animation-name: muro-desplazar;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.muro:hover .muro-fila { animation-play-state: paused; }
+
+/* La tarjeta se levanta y sube su brillo al pasarle el cursor.
+
+   Va con transform en una regla propia y no con las utilidades
+   hover:-translate-y de Tailwind: en la v4 esas escriben la propiedad
+   translate, que es distinta de transform, y acá no terminaba de aplicarse.
+   Con una regla nuestra el resultado es el mismo y no depende de eso. */
+.muro-tarjeta {
+  transform: translateY(0);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease;
+}
+
+.muro-tarjeta img {
+  opacity: 0.8;
+  transition: opacity 0.45s ease;
+}
+
+.muro-tarjeta:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.85);
+}
+
+.muro-tarjeta:hover img { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .muro-fila { animation: none; }
 }
