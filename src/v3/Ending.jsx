@@ -42,17 +42,6 @@ const REDES = [
 export default function Ending() {
   return (
     <section id="contacto-v3" className="relative overflow-hidden bg-[#08080a]">
-      {/* Puente desde la sección clara de arriba: sin esto queda una línea. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-white/[0.04] to-transparent"
-      />
-
-      {/* Aurora atenuada, por detrás del contenido. */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="aurora absolute -inset-x-40 -bottom-60 h-[560px] opacity-25 [mask-image:radial-gradient(ellipse_at_50%_100%,black_20%,transparent_75%)]" />
-      </div>
-
       <div className="relative mx-auto max-w-[1280px] px-6 pt-32 pb-14 sm:pt-44">
         <motion.p
           initial={{ opacity: 0, y: 14 }}

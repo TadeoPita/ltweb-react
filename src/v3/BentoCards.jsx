@@ -146,18 +146,18 @@ export function CardRubros({ rubros }) {
 /* Autoadministrable: el panel es parte del producto, no un extra. */
 export function CardPanel() {
   return (
-    <div className={`${BASE} group border border-black/[0.07] bg-white p-6 flex flex-col justify-between`}>
-      <span
-        className="flex h-11 w-11 items-center justify-center rounded-xl text-ink/80 transition-transform duration-500 ease-out group-hover:-rotate-6"
-        style={{ backgroundColor: 'var(--color-pastel-green)' }}
-      >
+    <div
+      className={`${BASE} group p-6 flex flex-col justify-between`}
+      style={{ backgroundColor: 'var(--color-pastel-green)' }}
+    >
+      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/60 text-ink/80 transition-transform duration-500 ease-out group-hover:-rotate-6">
         <SlidersHorizontal className="h-5 w-5" strokeWidth={1.9} />
       </span>
       <div>
         <p className="font-display font-bold uppercase text-ink/90 text-[15px] leading-tight">
           Lo editás vos
         </p>
-        <p className="mt-2 font-body text-[13.5px] leading-relaxed text-ink/55">
+        <p className="mt-2 font-body text-[13.5px] leading-relaxed text-ink/60">
           Textos, fotos y publicaciones desde un panel, sin depender de nosotros ni pagar por cada
           cambio.
         </p>
