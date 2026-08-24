@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { utils } from 'swapy'
 import { ArrowRight } from 'lucide-react'
-import AuroraBackground from './AuroraBackground'
+import HeroBold from './HeroBold'
 import Process from './Process'
 import Faq from './Faq'
 import Marquee from './Marquee'
@@ -108,55 +108,7 @@ export default function V3Page() {
 
   return (
     <main className="bg-white">
-      {/* Hero con el fondo Aurora */}
-      <AuroraBackground id="inicio-v3" className="sticky top-0 z-0 min-h-screen pt-32 pb-20">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="font-body text-[11px] font-semibold uppercase tracking-[0.2em] text-ink/45"
-          >
-            Diseño y desarrollo web · Buenos Aires
-          </motion.p>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 26, filter: 'blur(10px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            transition={{ duration: 0.9, delay: 0.1, ease: EASE }}
-            className={`mt-8 font-display font-bold uppercase leading-[0.88] text-5xl sm:text-7xl lg:text-[104px] ${TITULO_COLOR}`}
-          >
-            {TITULO}
-            <span className={`block ${TITULO_COLOR_2}`}>{TITULO_2}</span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.25, ease: EASE }}
-            className="mx-auto mt-8 max-w-xl font-body text-base sm:text-lg leading-relaxed text-ink/65"
-          >
-            {BAJADA}
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.35, ease: EASE }}
-            className="mt-10 flex justify-center"
-          >
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="group inline-flex items-center gap-2 rounded-full bg-[#1c1c20] px-6 py-3 font-body text-[15px] font-semibold text-white shadow-[0_1px_2px_rgba(0,0,0,0.14),0_8px_24px_-10px_rgba(0,0,0,0.30)] transition-colors hover:bg-[#101014]"
-            >
-              Contanos tu proyecto
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-x-1" />
-            </a>
-          </motion.div>
-        </div>
-      </AuroraBackground>
+      <HeroBold />
 
       {/* Todo lo que sigue sube por encima del hero fijo.
 
