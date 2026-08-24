@@ -12,7 +12,15 @@ import { cn } from '../lib/utils'
    arrastre en curso. Acá la instancia se crea una sola vez al montar y las
    opciones y el callback viven en refs, que se actualizan sin recrear nada. */
 
-export function SwapyLayout({ id, onSwap, config = {}, className, children }) {
+/* `clave` tiene que cambiar cuando cambia el juego de tarjetas.
+
+   Swapy escanea el DOM una sola vez, al crearse. Las tarjetas de proyecto no
+   existen en ese momento: salen del portfolio, que llega por red unos
+   instantes después. Cuando aparecen, Swapy sigue apuntando a los huecos que
+   habia al montar y el arrastre deja de funcionar por completo.
+
+   Por eso, cada vez que cambia `clave`, se le avisa que vuelva a escanear. */
+export function SwapyLayout({ id, onSwap, config = {}, className, clave, children }) {
   const contenedor = useRef(null)
   const swapy = useRef(null)
   const configRef = useRef(config)
@@ -29,6 +37,14 @@ export function SwapyLayout({ id, onSwap, config = {}, className, children }) {
 
     return () => swapy.current?.destroy()
   }, [])
+
+  useEffect(() => {
+    if (!swapy.current) return
+    /* update() vuelve a leer los huecos y las tarjetas del DOM. Se llama en un
+       microtask para que corra después de que React haya pintado las nuevas. */
+    const t = setTimeout(() => swapy.current?.update(), 0)
+    return () => clearTimeout(t)
+  }, [clave])
 
   return (
     <div id={id} ref={contenedor} className={className}>

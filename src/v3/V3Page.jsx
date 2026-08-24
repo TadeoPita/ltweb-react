@@ -55,6 +55,8 @@ const RUBROS = ['Salud', 'Educación', 'Tecnología', 'Gastronomía', 'Servicios
 
 /* Anchos sobre una grilla de 12 columnas. El bento no es una grilla pareja:
    la irregularidad es lo que lo hace legible de un vistazo. */
+/* Once tarjetas en filas de doce columnas: 4+5+3, 3+4+5, 5+4+3 y una ultima
+   de 12 que cierra a lo ancho, asi no queda ningun hueco. */
 const ANCHOS = [
   'lg:col-span-4 sm:col-span-6 col-span-12 h-64',
   'lg:col-span-5 sm:col-span-6 col-span-12 h-64',
@@ -65,15 +67,18 @@ const ANCHOS = [
   'lg:col-span-5 sm:col-span-6 col-span-12 h-64',
   'lg:col-span-4 sm:col-span-6 col-span-12 h-64',
   'lg:col-span-3 sm:col-span-6 col-span-12 h-64',
-  'lg:col-span-4 sm:col-span-6 col-span-12 h-64',
-  'lg:col-span-4 sm:col-span-6 col-span-12 h-64',
-  'lg:col-span-4 sm:col-span-6 col-span-12 h-64',
+  'lg:col-span-6 sm:col-span-6 col-span-12 h-64',
+  'lg:col-span-6 sm:col-span-6 col-span-12 h-64',
 ]
 
 export default function V3Page() {
   const { items } = usePortfolio()
 
-  const destacados = useMemo(() => items.filter((p) => p.home && p.image).slice(0, 3), [items])
+  /* Dos proyectos en el bento, no tres: con tres, la grilla quedaba muy cargada
+     de capturas y las tarjetas de contenido perdian peso. Cuales aparecen sale
+     del interruptor "Mostrar en la home" de /admin, asi que se eligen desde el
+     panel sin tocar codigo. */
+  const destacados = useMemo(() => items.filter((p) => p.home && p.image).slice(0, 2), [items])
 
   const tarjetas = useMemo(() => {
     const proyecto = (i) =>
@@ -93,7 +98,6 @@ export default function V3Page() {
       { id: 'areas', nodo: <CardAreas areas={AREAS} /> },
       { id: 'p2', nodo: proyecto(1) },
       { id: 'rubros', nodo: <CardRubros rubros={RUBROS} /> },
-      { id: 'p3', nodo: proyecto(2) },
       { id: 'panel', nodo: <CardPanel /> },
       { id: 'plazo', nodo: <CardPlazo /> },
       { id: 'directo', nodo: <CardDirecto /> },
@@ -130,6 +134,7 @@ export default function V3Page() {
           <SwapyLayout
             id="bento-v3"
             className="mt-12"
+            clave={tarjetas.map((t) => t.id).join(',')}
             config={{ swapMode: 'hover', autoScrollOnDrag: true }}
           >
             <div className="grid grid-cols-12 gap-3 md:gap-4">
