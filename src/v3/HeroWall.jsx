@@ -83,7 +83,7 @@ export default function HeroWall() {
       className="muro relative flex min-h-screen items-center justify-center overflow-hidden bg-[#08080a]"
     >
       {/* El muro de proyectos */}
-      <div className="absolute inset-0 flex flex-col justify-center gap-4 opacity-45">
+      <div className="absolute inset-0 flex flex-col justify-center gap-4 opacity-70">
         <Fila proyectos={filas[0]} duracion={64} />
         <Fila proyectos={filas[1]} duracion={82} invertida />
         <Fila proyectos={filas[2]} duracion={72} />
@@ -92,7 +92,7 @@ export default function HeroWall() {
       {/* Velo. No intercepta el cursor: las tarjetas de atrás siguen vivas. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(8,8,10,0.82)_0%,rgba(8,8,10,0.94)_55%,#08080a_100%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(8,8,10,0.62)_0%,rgba(8,8,10,0.86)_58%,#08080a_100%)]"
       />
 
       {/* Contenido, centrado */}
@@ -113,11 +113,11 @@ export default function HeroWall() {
           initial={{ opacity: 0, y: 24, filter: 'blur(12px)' }}
           animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           transition={{ duration: 1, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-9 font-serif text-white leading-[0.95] text-[13vw] sm:text-[9vw] lg:text-[86px]"
+          className="mt-9 font-display font-bold uppercase text-white leading-[0.9] text-[12vw] sm:text-[9vw] lg:text-[88px]"
         >
           Webs que tu negocio
           <br />
-          <em className="italic text-white/70">se merece.</em>
+          <span className="text-white/55">se merece.</span>
         </motion.h1>
 
         <motion.p

@@ -14,7 +14,7 @@ import { EASE } from '../lib/motion'
    para dos columnas y fijar el título solo comería la pantalla. */
 export default function Process() {
   return (
-    <section id="proceso-v3" className="bg-[#1c1c20] py-20 sm:py-28">
+    <section id="proceso-v3" className="bg-[#08080a] py-20 sm:py-28">
       <div className="mx-auto max-w-[1280px] px-6">
         <div className="grid lg:grid-cols-[0.9fr_1.1fr] gap-12 lg:gap-20">
           <div className="lg:sticky lg:top-32 lg:self-start">

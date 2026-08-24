@@ -246,7 +246,10 @@ h3.font-display {
   will-change: transform;
 }
 
-.muro:hover .muro-fila { animation-play-state: paused; }
+/* No se frena el muro al entrar al hero: cortar las tres filas de golpe cada
+   vez que el cursor pasa por la seccion se sentia como si la pagina se
+   trabara. Solo se detiene la fila de la tarjeta que se esta mirando. */
+.muro-fila:hover { animation-play-state: paused; }
 
 /* La tarjeta se levanta y sube su brillo al pasarle el cursor.
 

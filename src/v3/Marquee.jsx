@@ -28,7 +28,7 @@ function Cinta({ oculta }) {
     <div className="flex shrink-0 items-center" aria-hidden={oculta || undefined}>
       {PALABRAS.map((p) => (
         <Fragment key={p}>
-          <span className="px-8 font-display font-bold uppercase text-[#26262b] text-4xl sm:text-6xl leading-none">
+          <span className="px-8 font-display font-bold uppercase text-white/85 text-4xl sm:text-6xl leading-none">
             {p}
           </span>
           <img
@@ -46,7 +46,7 @@ function Cinta({ oculta }) {
 
 export default function Marquee() {
   return (
-    <section className="relative overflow-hidden border-y border-black/[0.07] bg-white py-10 sm:py-14">
+    <section className="relative overflow-hidden border-y border-white/10 bg-[#08080a] py-10 sm:py-14">
       {/* Los bordes se desvanecen para que las palabras no aparezcan y
           desaparezcan de golpe contra el filo de la pantalla. */}
       <div className="marquesina flex w-max">

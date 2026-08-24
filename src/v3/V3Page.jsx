@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { utils } from 'swapy'
 import { ArrowRight } from 'lucide-react'
+import V3Nav from './V3Nav'
 import HeroWall from './HeroWall'
 import Process from './Process'
 import Faq from './Faq'
@@ -107,23 +108,21 @@ export default function V3Page() {
   )
 
   return (
-    <main className="bg-white">
+    <main className="bg-[#08080a]">
+      <V3Nav />
+
       <HeroWall />
 
-      {/* Todo lo que sigue sube por encima del hero fijo.
-
-          Es el recurso que da la sensación de que la página se despliega
-          sobre la portada en vez de simplemente correrla hacia arriba: el
-          hero queda clavado y esta hoja lo va tapando. La esquina redondeada
-          y la sombra de canto marcan el borde de la hoja mientras avanza. */}
-      <div className="relative z-10 rounded-t-[28px] bg-white shadow-[0_-24px_60px_-30px_rgba(0,0,0,0.35)]">
-      <section className="py-20 sm:py-28">
+      {/* El bento ahora vive sobre el mismo negro que el resto: las tarjetas
+          claras y de color recortan contra el fondo en lugar de fundirse con
+          él, que es lo que pasaba cuando la sección era blanca. */}
+      <section className="py-24 sm:py-32">
         <div className="mx-auto max-w-[1280px] px-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className={`font-display font-bold uppercase leading-[0.9] text-4xl sm:text-6xl max-w-xl ${TITULO_COLOR}`}>
+            <h2 className="font-display font-bold uppercase leading-[0.9] text-4xl sm:text-6xl max-w-xl text-white">
               Todo el estudio en una pantalla
             </h2>
-            <p className="max-w-xs font-body text-[13.5px] text-ink/45">
+            <p className="max-w-xs font-body text-[13.5px] text-white/45">
               Arrastrá las tarjetas para acomodarlas como quieras. Sí, se puede.
             </p>
           </div>
@@ -158,7 +157,6 @@ export default function V3Page() {
       <Faq />
 
       <Ending />
-      </div>
     </main>
   )
 }

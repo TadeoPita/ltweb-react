@@ -41,11 +41,11 @@ const REDES = [
 
 export default function Ending() {
   return (
-    <section id="contacto-v3" className="relative overflow-hidden bg-[#0d0d10]">
+    <section id="contacto-v3" className="relative overflow-hidden bg-[#08080a]">
       {/* Puente desde la sección clara de arriba: sin esto queda una línea. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-paper via-[#0d0d10]/70 to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-white/[0.04] to-transparent"
       />
 
       {/* Aurora atenuada, por detrás del contenido. */}
