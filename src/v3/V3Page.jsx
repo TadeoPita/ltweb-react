@@ -38,10 +38,10 @@ import { EASE } from '../lib/motion'
    demasiado y se come la pantalla; TITULO_COLOR es un carbón algo más suave
    que se lee igual de firme sin gritar. */
 
-const TITULO = 'Tu mejor vendedor'
-const TITULO_2 = 'trabaja online.'
+const TITULO = 'Tu negocio merece'
+const TITULO_2 = 'una web a la altura.'
 const TITULO_COLOR = 'text-[#26262b]'
-const TITULO_COLOR_2 = 'text-[#5b5b66]'
+const TITULO_COLOR_2 = 'text-[#26262b]'
 
 const BAJADA =
   'Diseñamos y programamos webs, tiendas online y sistemas a la medida de cada negocio. Vos contás qué necesitás y nosotros lo resolvemos de punta a punta.'
@@ -108,7 +108,7 @@ export default function V3Page() {
   return (
     <main className="bg-white">
       {/* Hero con el fondo Aurora */}
-      <AuroraBackground className="min-h-[92vh] pt-32 pb-20">
+      <AuroraBackground className="sticky top-0 z-0 min-h-screen pt-32 pb-20">
         <div className="mx-auto max-w-4xl px-6 text-center">
           <motion.p
             initial={{ opacity: 0, y: 14 }}
@@ -157,8 +157,13 @@ export default function V3Page() {
         </div>
       </AuroraBackground>
 
-      {/* Bento reordenable. Hace también de portfolio: los proyectos entran
-          acá y el contador enlaza al listado completo. */}
+      {/* Todo lo que sigue sube por encima del hero fijo.
+
+          Es el recurso que da la sensación de que la página se despliega
+          sobre la portada en vez de simplemente correrla hacia arriba: el
+          hero queda clavado y esta hoja lo va tapando. La esquina redondeada
+          y la sombra de canto marcan el borde de la hoja mientras avanza. */}
+      <div className="relative z-10 rounded-t-[28px] bg-white shadow-[0_-24px_60px_-30px_rgba(0,0,0,0.35)]">
       <section className="py-20 sm:py-28">
         <div className="mx-auto max-w-[1280px] px-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
@@ -198,6 +203,7 @@ export default function V3Page() {
       <Faq />
 
       <ClosingCta />
+      </div>
     </main>
   )
 }

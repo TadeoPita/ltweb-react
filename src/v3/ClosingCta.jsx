@@ -14,7 +14,15 @@ import { EASE } from '../lib/motion'
    quien no quiere escribir por WhatsApp, pero sin competirle en peso visual. */
 export default function ClosingCta() {
   return (
-    <AuroraBackground className="py-28 sm:py-36">
+    /* El corte con el FAQ era seco: esa sección termina en gris y acá
+       arrancaba blanco de golpe, con el aurora pegando fuerte contra el
+       borde. Ahora el fondo sale del mismo gris y va aclarando hacia el
+       final, y el aurora se concentra abajo, así que el empalme de arriba
+       queda liso. */
+    <AuroraBackground
+      desde="abajo"
+      className="bg-gradient-to-b from-paper via-white to-white py-28 sm:py-36"
+    >
       <div className="mx-auto max-w-3xl px-6 text-center">
         <motion.h2
           initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
