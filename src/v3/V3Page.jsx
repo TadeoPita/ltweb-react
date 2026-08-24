@@ -4,10 +4,12 @@ import { utils } from 'swapy'
 import { ArrowRight } from 'lucide-react'
 import V3Nav from './V3Nav'
 import HeroWall from './HeroWall'
-import ProcessRail from './ProcessRail'
-import Faq from './Faq'
-import Marquee from './Marquee'
 import Ending from './Ending'
+
+/* Secciones tomadas tal cual del sitio original, sobre pedido. */
+import Portfolio from '../components/Portfolio'
+import FAQ from '../components/FAQ'
+import SocialSection from '../components/SocialSection'
 import { SwapyLayout, SwapySlot, SwapyItem, DragHandle } from './Swapy'
 import {
   CardMarca,
@@ -148,11 +150,11 @@ export default function V3Page() {
         </div>
       </section>
 
-      <Marquee />
+      <Portfolio />
 
-      <ProcessRail />
+      <FAQ />
 
-      <Faq />
+      <SocialSection />
 
       <Ending />
     </main>

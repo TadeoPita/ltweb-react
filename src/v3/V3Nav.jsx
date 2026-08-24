@@ -13,8 +13,8 @@ import { WHATSAPP_URL } from '../data/content'
 
 const ENLACES = [
   { label: 'El estudio', href: '#bento-v3' },
-  { label: 'Proceso', href: '#proceso-v3' },
-  { label: 'Preguntas', href: '#faq-v3' },
+  { label: 'Proyectos', href: '#proyectos' },
+  { label: 'Preguntas', href: '#faq' },
 ]
 
 export default function V3Nav() {

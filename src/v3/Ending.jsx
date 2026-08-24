@@ -29,8 +29,8 @@ import { EASE } from '../lib/motion'
 const SECCIONES = [
   { label: 'Inicio', href: '#inicio-v3' },
   { label: 'El estudio', href: '#bento-v3' },
-  { label: 'Proceso', href: '#proceso-v3' },
-  { label: 'Preguntas', href: '#faq-v3' },
+  { label: 'Proyectos', href: '#proyectos' },
+  { label: 'Preguntas', href: '#faq' },
 ]
 
 const REDES = [
