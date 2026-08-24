@@ -3,6 +3,9 @@ import { motion } from 'framer-motion'
 import { utils } from 'swapy'
 import { ArrowRight } from 'lucide-react'
 import AuroraBackground from './AuroraBackground'
+import ProjectList from './ProjectList'
+import Process from './Process'
+import ClosingCta from './ClosingCta'
 import { SwapyLayout, SwapySlot, SwapyItem, DragHandle } from './Swapy'
 import {
   CardMarca,
@@ -201,6 +204,14 @@ export default function V3Page() {
           </SwapyLayout>
         </div>
       </section>
+
+      {/* El listado toma los proyectos visibles en la home; el resto queda
+          para /portfolio, que ya los muestra todos. */}
+      <ProjectList items={items.filter((p) => p.home && p.image)} />
+
+      <Process />
+
+      <ClosingCta />
     </main>
   )
 }

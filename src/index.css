@@ -152,15 +152,19 @@ h3.font-display {
 /* ---------------------------------------------------------------------------
    Fondo Aurora (v3)
 
-   El componente original apilaba dos capas iguales y las combinaba con
-   mix-blend-mode: difference, apoyandose en un filtro invert del contenedor.
-   Ese armado depende de que el fondo sea exactamente el que la libreria
-   supone: sobre blanco y sin el invert, difference devuelve gris y el color
-   desaparece, que es justo lo que pasaba aca.
+   Los colores son los del componente original: blue-500, indigo-300,
+   blue-300, violet-200 y blue-400 de la paleta de Tailwind. Van escritos en
+   hexadecimal y no como var(--blue-500), porque esas variables son de
+   Tailwind v3 y en la v4 el nombre es otro; dejarlas asi las hacia resolver a
+   nada y el degradado quedaba transparente.
 
-   Se resuelve de forma directa: una sola capa de bandas de color, muy
-   desenfocada y desplazandose. Menos artificio, resultado estable, y con los
-   colores de la marca en vez de la escala azul por defecto de Tailwind.
+   Lo que si se cambio es el armado. El original apila dos capas iguales y las
+   combina con mix-blend-mode: difference apoyandose en un filtro invert del
+   contenedor. Ese truco depende de que el fondo sea exactamente el que la
+   libreria supone; sobre blanco y sin ese invert, difference devuelve gris y
+   el color desaparece. Se resuelve con una sola capa de bandas muy
+   desenfocadas en movimiento: mismo resultado a la vista, sin depender del
+   modo de fusion.
 --------------------------------------------------------------------------- */
 @keyframes aurora {
   from { background-position: 0% 50%; }
@@ -170,13 +174,14 @@ h3.font-display {
 .aurora {
   background-image: repeating-linear-gradient(
     100deg,
-    var(--color-lilac) 0%,
-    var(--color-pastel-blue) 12%,
-    #ffffff 20%,
-    var(--color-pastel-purple) 30%,
-    var(--color-pastel-pink) 40%,
-    #ffffff 48%,
-    var(--color-lilac) 60%
+    #3b82f6 5%,    /* blue-500  */
+    #a5b4fc 12%,   /* indigo-300 */
+    #ffffff 18%,
+    #93c5fd 26%,   /* blue-300  */
+    #ddd6fe 34%,   /* violet-200 */
+    #ffffff 42%,
+    #60a5fa 52%,   /* blue-400  */
+    #3b82f6 60%
   );
   background-size: 200% 200%;
   filter: blur(56px);
