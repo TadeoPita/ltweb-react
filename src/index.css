@@ -29,6 +29,24 @@ body {
   overflow-x: hidden;
 }
 
+/* Phudu en mayúsculas y a tamaño de titular queda suelta con el tracking por
+   defecto: es una de las cosas que hace que un sitio se lea "de plantilla".
+   Cerrarla un poco es lo que separa un título compuesto de uno solo puesto.
+
+   Va sobre h1/h2/h3 y no sobre .font-display a secas, porque las volantas
+   ("SOBRE LTWEB", "SERVICIOS") son párrafos y necesitan lo contrario:
+   tracking abierto. Al llevar etiqueta + clase gana en especificidad sobre
+   las utilidades de Tailwind, así que no hace falta repetirlo en cada
+   componente. */
+h1.font-display,
+h2.font-display {
+  letter-spacing: -0.028em;
+}
+
+h3.font-display {
+  letter-spacing: -0.015em;
+}
+
 .text-gradient {
   background-clip: text;
   -webkit-background-clip: text;

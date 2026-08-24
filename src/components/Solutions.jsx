@@ -27,29 +27,40 @@ export default function Solutions() {
         src="/images/glow.png"
         alt=""
         aria-hidden
-        className="absolute top-24 left-1/2 translate-x-8 w-105 pointer-events-none select-none opacity-90"
+        className="absolute top-16 left-0 -translate-x-1/3 w-105 pointer-events-none select-none opacity-80"
       />
 
+      {/* Encabezado en dos columnas en vez de centrado.
+
+          Todas las secciones venían con la misma receta —volanta, título
+          centrado y bajada debajo— una atrás de otra, y esa repetición es lo
+          que hace que una página se lea armada con plantilla. Acá el título
+          va a la izquierda y la bajada lo acompaña a la derecha, apoyada
+          sobre la misma línea de base. En mobile se apila. */}
       <div className="relative mx-auto max-w-[1280px] px-6">
-        <motion.div {...blurUp(0)} className="text-center">
-          <span className="inline-block rounded-full bg-white border border-black/6 shadow-[0_8px_24px_rgba(0,0,0,0.07)] px-6 py-2.5 text-sm font-semibold font-body">
-            Servicios
-          </span>
-        </motion.div>
+        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-6 lg:gap-16 lg:items-end">
+          <div>
+            <motion.div {...blurUp(0)}>
+              <span className="inline-block rounded-full bg-white border border-black/6 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_8px_24px_-12px_rgba(0,0,0,0.25)] px-5 py-2 text-sm font-semibold font-body">
+                Servicios
+              </span>
+            </motion.div>
 
-        <motion.h2
-          {...blurUp(0.08)}
-          className="relative mt-8 text-center font-display font-bold uppercase text-ink leading-[0.95] text-4xl sm:text-6xl"
-        >
-          Qué hacemos
-        </motion.h2>
+            <motion.h2
+              {...blurUp(0.08)}
+              className="relative mt-7 font-display font-bold uppercase text-ink leading-[0.9] text-5xl sm:text-7xl"
+            >
+              Qué hacemos
+            </motion.h2>
+          </div>
 
-        <motion.p
-          {...blurUp(0.16)}
-          className="mt-6 text-center font-body text-ink/60 text-base sm:text-lg max-w-2xl mx-auto"
-        >
-          Tres áreas de trabajo que cubren desde una landing simple hasta soluciones a medida integradas con el resto de tu negocio.
-        </motion.p>
+          <motion.p
+            {...blurUp(0.16)}
+            className="font-body text-ink/60 text-base sm:text-lg leading-relaxed lg:pb-3"
+          >
+            Tres áreas de trabajo que cubren desde una landing simple hasta soluciones a medida integradas con el resto de tu negocio.
+          </motion.p>
+        </div>
 
         <motion.div {...blurStagger(0.12)} className="mt-16 grid md:grid-cols-3 gap-4">
           {SERVICES.map((s) => (

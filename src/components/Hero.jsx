@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, ArrowRight } from 'lucide-react'
 import { EASE } from '../lib/motion'
 import { usePortfolio } from '../data/portfolioStore'
 import { WHATSAPP_URL } from '../data/content'
@@ -41,18 +41,23 @@ function Sparkle({ className = 'w-9 h-9 sm:w-14 sm:h-14' }) {
 }
 
 function PrimaryCta({ size = 'lg' }) {
-  const pad = size === 'lg' ? 'px-8 py-4 text-base sm:text-lg' : 'px-7 py-3.5 text-base'
+  const pad = size === 'lg' ? 'px-8 py-4 text-base sm:text-lg' : 'px-6 py-3 text-[15px]'
   return (
+    /* La sombra anterior era un bloque difuso muy marcado y se leía pesada.
+       Ahora son dos capas suaves —una de contacto y otra de elevación— que es
+       como se resuelve en las interfaces cuidadas, y la flecha se corre unos
+       píxeles al pasar el cursor en vez de escalar el botón entero. */
     <motion.a
       href={WHATSAPP_URL}
       target="_blank"
       rel="noreferrer"
-      whileHover={{ scale: 1.04, y: -2 }}
-      whileTap={{ scale: 0.97 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-      className={`inline-block rounded-xl bg-[#2b2b2b] text-[#fdfdfd] font-body font-semibold shadow-[0_18px_40px_rgba(0,0,0,0.25)] hover:bg-[#060606] transition-colors ${pad}`}
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+      className={`group inline-flex items-center gap-2 rounded-full bg-[#111113] text-[#fdfdfd] font-body font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.16),0_8px_24px_-8px_rgba(0,0,0,0.35)] hover:bg-black transition-colors ${pad}`}
     >
       Contanos tu proyecto
+      <ArrowRight className="w-4 h-4 transition-transform duration-300 ease-out group-hover:translate-x-1" />
     </motion.a>
   )
 }
@@ -98,12 +103,14 @@ function HeroCentered() {
         <Badge />
       </motion.div>
 
+      {/* Titular más grande y con el tracking cerrado: en tamaños de display
+          el espaciado por defecto se ve suelto y "de plantilla". */}
       <motion.h1
         variants={item}
-        className="mt-10 font-display font-bold uppercase text-ink leading-[0.95] text-4xl sm:text-6xl lg:text-[76px] tracking-tight"
+        className="mt-10 font-display font-bold uppercase text-ink leading-[0.92] text-5xl sm:text-7xl lg:text-[96px] tracking-[-0.03em]"
       >
         {HEADLINE}
-        <span className="flex items-center justify-center gap-3 sm:gap-5 mt-2">
+        <span className="flex items-center justify-center gap-3 sm:gap-5 mt-1">
           <Sparkle />
           {HEADLINE_2}
         </span>
@@ -116,9 +123,10 @@ function HeroCentered() {
         {SUBLINE}
       </motion.p>
 
-      <motion.div variants={item} className="mt-10 flex flex-wrap items-center justify-center gap-3">
-        <PrimaryCta />
-        <SecondaryCta />
+      {/* Un solo botón, centrado. Dos opciones al mismo peso repartían la
+          atención justo donde conviene tener una sola acción clara. */}
+      <motion.div variants={item} className="mt-10 flex justify-center">
+        <PrimaryCta size="sm" />
       </motion.div>
     </motion.div>
   )
