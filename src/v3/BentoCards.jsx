@@ -156,22 +156,29 @@ export function CardRubros({ rubros }) {
 }
 
 /* Autoadministrable: el panel es parte del producto, no un extra. */
+/* El panel autoadministrable.
+
+   Es algo que hacemos, pero que ofrecemos poco: no es la propuesta del
+   estudio. Antes esta tarjeta era la unica con relleno pastel a toda la
+   superficie, o sea la mas llamativa de la grilla, y encima la que mas
+   prometia ("sin depender de nosotros ni pagar por cada cambio"). Eso la
+   convertia en una promesa central que despues hay que sostener.
+
+   Ahora va con el mismo fondo blanco y borde de 1px que Areas, Rubros y
+   Plazo: presente para quien lo busca, sin encabezar nada. El texto pasa de
+   prometer a describir una opcion. */
 export function CardPanel() {
   return (
-    <div
-      className={`${BASE} group p-6 flex flex-col justify-between`}
-      style={{ backgroundColor: 'var(--color-pastel-green)' }}
-    >
-      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/60 text-ink/80 transition-transform duration-500 ease-out group-hover:-rotate-6">
+    <div className={`${BASE} group border border-black/[0.07] bg-white p-6 flex flex-col justify-between`}>
+      <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-black/[0.06] bg-black/[0.03] text-ink/70 transition-transform duration-500 ease-out group-hover:-rotate-6">
         <SlidersHorizontal className="h-5 w-5" strokeWidth={1.9} />
       </span>
       <div>
         <p className="font-display font-bold uppercase text-ink/90 text-[15px] leading-tight">
-          Lo editás vos
+          Autoadministrable
         </p>
         <p className="mt-2 font-body text-[13.5px] leading-relaxed text-ink/60">
-          Textos, fotos y publicaciones desde un panel, sin depender de nosotros ni pagar por cada
-          cambio.
+          Cuando el proyecto lo justifica, sumamos un panel para editar textos y fotos.
         </p>
       </div>
     </div>
