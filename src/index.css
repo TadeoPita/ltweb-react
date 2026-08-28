@@ -5,7 +5,12 @@
   --font-body: "Be Vietnam Pro", sans-serif;
   --font-alt: "Poppins", sans-serif;
 
-  --color-ink: #161616;
+  /* Suavizado de #161616 a #22222a. A tamaño de titular el negro puro llena
+     de tinta la pantalla; este carbón se impone igual sin endurecer la
+     lectura. Va en el token y no en una regla sobre h1/h2/h3: esa regla le
+     ganaba en especificidad a text-white y dejaba los títulos de las
+     secciones oscuras en carbón sobre negro, o sea invisibles. */
+  --color-ink: #22222a;
   --color-ink-2: #141414;
   --color-paper: #f7f7f7;
   --color-card: #f9f9f9;
@@ -51,31 +56,9 @@ h3.font-display {
   letter-spacing: -0.015em;
 }
 
-/* Refinamiento tipográfico.
-
-   El negro del theme (#161616) a tamaño de titular pesa mucho: llena de tinta
-   la pantalla y endurece la lectura. Los titulares pasan a un carbón apenas
-   más claro. Es un cambio chico, del orden de un 6% de luminosidad, pero a
-   80px se nota bastante y es la diferencia entre un titular que grita y uno
-   que se impone solo.
-
-   Los párrafos ganan interlineado y un poco de aire entre letras. Un texto de
+/* Los párrafos ganan interlineado y un poco de aire entre letras. Un texto de
    15-18px con la línea suelta se lee de un tirón; apretado se lee como
    documentación técnica. */
-h1.font-display,
-h2.font-display,
-h3.font-display {
-  color: #22222a;
-}
-
-/* Solo sobre fondo claro: en las secciones oscuras el titular sigue blanco. */
-.bg-ink-2 h2.font-display,
-.bg-ink-2 h3.font-display,
-[class*="bg-[#111113]"] h2.font-display,
-[class*="bg-[#111113]"] h3.font-display {
-  color: inherit;
-}
-
 p.font-body {
   line-height: 1.72;
   letter-spacing: 0.004em;
