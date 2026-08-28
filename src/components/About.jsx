@@ -56,23 +56,17 @@ function Card({ item, index }) {
       variants={blurChild}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      className="group relative flex flex-col items-center bg-white p-6 text-center cursor-default transition-colors duration-300 sm:items-start sm:text-left hover:bg-black/[0.015]"
+      className="group relative bg-white p-6 cursor-default transition-colors duration-300 hover:bg-black/[0.015]"
     >
 
       {/* La pastilla se inclina unos grados hacia el costado y se levanta:
           rotación 2D pura sobre el eje Z (rotate), sin rotateX/rotateY ni
           perspectiva — eso era 3D y deformaba el ícono en vez de inclinarlo. */}
-      {/* Neutra en reposo y con el pastel al pasar el cursor. Ocho pastillas
-          de colores distintos, una al lado de la otra, era lo que mas le daba
-          aire de plantilla a esta grilla. */}
       <motion.span
         animate={hovered ? { rotate: -8, y: -4, scale: 1.04 } : { rotate: 0, y: 0, scale: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 16 }}
-        style={{ backgroundColor: hovered ? tint : undefined }}
-        className={
-          'relative flex items-center justify-center w-10 h-10 rounded-xl transition-colors duration-300 ' +
-          (hovered ? 'border border-transparent text-ink' : 'border border-black/[0.07] bg-black/[0.03] text-ink/75')
-        }
+        style={{ backgroundColor: tint }}
+        className="relative flex items-center justify-center w-10 h-10 rounded-xl text-ink"
       >
         <Icon className="w-5 h-5" strokeWidth={1.9} />
       </motion.span>

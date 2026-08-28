@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import ScrollText from './ScrollText'
+import TextReveal from './TextReveal'
 import { INSTAGRAM_URL, SOCIAL_CHIPS_LEFT, SOCIAL_CHIPS_RIGHT } from '../data/content'
 
 /* Chip estática; al hacer hover la estrella cruza al otro lado del texto
@@ -39,7 +39,7 @@ const RIGHT_OFFSETS = [150, 0, 150, 20]
 
 export default function SocialSection() {
   return (
-    <section className="bg-white py-24 sm:py-32 overflow-hidden">
+    <section className="bg-paper py-24 sm:py-32 overflow-hidden">
       <div className="mx-auto max-w-[1440px] px-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.85, y: 12 }}
@@ -85,7 +85,7 @@ export default function SocialSection() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             
-            className="block mx-auto w-full max-w-md rounded-[22px] overflow-hidden transition-all duration-500 ease-out hover:-translate-y-1.5 hover:shadow-[0_28px_60px_-28px_rgba(0,0,0,0.35)]"
+            className="block mx-auto w-full max-w-md border-0 border-ink rounded-[22px] overflow-hidden"
           >
             <img src="/images/instagram-phone.webp" alt="Instagram de LT WEB" loading="lazy" className="w-full h-auto rounded-[22px]" />
           </motion.a>
@@ -103,9 +103,12 @@ export default function SocialSection() {
         {/* En mobile no van las chips: quedan solo el teléfono y el texto de
             abajo. Amontonadas ocupaban media pantalla sin aportar nada. */}
 
-        <ScrollText
-          text="Conéctate con LT WEB y descubre las últimas tendencias en diseño web, estrategias digitales y optimización online. ¡No te pierdas nuestras novedades! 🚀"
-          className="mt-14 text-center font-body text-ink max-w-xl mx-auto leading-relaxed"
+        <TextReveal
+          as="p"
+          text="Compartimos proyectos nuevos, procesos de diseño y detrás de escena del estudio."
+          dim={0.14}
+          stagger={0.06}
+          className="mt-14 text-center font-body text-ink/70 max-w-md mx-auto leading-relaxed"
         />
       </div>
     </section>

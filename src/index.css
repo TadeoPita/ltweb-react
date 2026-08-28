@@ -4,13 +4,11 @@
   --font-display: "Phudu", sans-serif;
   --font-body: "Be Vietnam Pro", sans-serif;
   --font-alt: "Poppins", sans-serif;
+  /* Tipografia de la v3: una serif de display, deliberadamente distinta a la
+     condensada en mayusculas del sitio actual. */
+  --font-serif: "Instrument Serif", Georgia, serif;
 
-  /* Suavizado de #161616 a #22222a. A tamaño de titular el negro puro llena
-     de tinta la pantalla; este carbón se impone igual sin endurecer la
-     lectura. Va en el token y no en una regla sobre h1/h2/h3: esa regla le
-     ganaba en especificidad a text-white y dejaba los títulos de las
-     secciones oscuras en carbón sobre negro, o sea invisibles. */
-  --color-ink: #22222a;
+  --color-ink: #161616;
   --color-ink-2: #141414;
   --color-paper: #f7f7f7;
   --color-card: #f9f9f9;
@@ -31,11 +29,7 @@ body {
   font-family: var(--font-body);
   background: #ffffff;
   color: var(--color-ink);
-  /* clip y no hidden. Con overflow-x: hidden el body pasa a ser un contenedor
-     de scroll, y todo lo que dependa del avance del scroll dentro de el queda
-     clavado: las animaciones ligadas al scroll no avanzaban nunca. clip
-     recorta igual el desborde horizontal sin crear ese contenedor. */
-  overflow-x: clip;
+  overflow-x: hidden;
 }
 
 /* Phudu en mayúsculas y a tamaño de titular queda suelta con el tracking por
@@ -56,14 +50,6 @@ h3.font-display {
   letter-spacing: -0.015em;
 }
 
-/* Los párrafos ganan interlineado y un poco de aire entre letras. Un texto de
-   15-18px con la línea suelta se lee de un tirón; apretado se lee como
-   documentación técnica. */
-p.font-body {
-  line-height: 1.72;
-  letter-spacing: 0.004em;
-}
-
 .text-gradient {
   background-clip: text;
   -webkit-background-clip: text;
@@ -82,6 +68,60 @@ p.font-body {
 .clip-fix {
   -webkit-mask-image: -webkit-radial-gradient(white, black);
   mask-image: radial-gradient(white, black);
+}
+
+/* Barrido de luz sobre texto ("También trabajamos"), tipo etiqueta de oferta.
+
+   Animar `background-position` sobre un elemento con `background-clip: text`
+   no interpola de forma confiable (salta entre extremos y se ve trabado).
+   En vez de eso registramos una custom property como <percentage>: al estar
+   tipada, el navegador SÍ la interpola cuadro a cuadro, y la usamos para
+   mover las paradas del gradiente. El fondo queda en su tamaño natural, así
+   que no hay porcentajes raros de background-size de por medio. */
+@property --sheen-x {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 130%;
+}
+
+@keyframes text-sheen {
+  from { --sheen-x: -30%; }
+  to { --sheen-x: 130%; }
+}
+
+.text-sheen {
+  --sheen-base: rgba(22, 22, 22, 0.42);
+  background-image: linear-gradient(
+    100deg,
+    var(--sheen-base) 0%,
+    var(--sheen-base) calc(var(--sheen-x) - 16%),
+    rgba(22, 22, 22, 1) var(--sheen-x),
+    var(--sheen-base) calc(var(--sheen-x) + 16%),
+    var(--sheen-base) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: text-sheen 3.6s linear infinite;
+}
+
+/* Sin soporte de @property el gradiente no se anima: dejamos el texto plano. */
+@supports not (background: linear-gradient(in oklab, red, blue)) {
+  .text-sheen {
+    background-image: none;
+    color: var(--sheen-base);
+    -webkit-text-fill-color: var(--sheen-base);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-sheen {
+    animation: none;
+    background-image: none;
+    color: rgba(22, 22, 22, 0.42);
+    -webkit-text-fill-color: rgba(22, 22, 22, 0.42);
+  }
 }
 
 /* Orbes flotantes y glitch de texto de la página 404 */
@@ -110,4 +150,129 @@ p.font-body {
   94% { transform: translate(-3px, 2px); opacity: 0.45; }
   96% { transform: translate(2px, -1px); opacity: 0.3; }
   98% { transform: translate(0, 0); opacity: 0; }
+}
+
+/* ---------------------------------------------------------------------------
+   Fondo Aurora (v3)
+
+   Los colores son los del componente original: blue-500, indigo-300,
+   blue-300, violet-200 y blue-400 de la paleta de Tailwind. Van escritos en
+   hexadecimal y no como var(--blue-500), porque esas variables son de
+   Tailwind v3 y en la v4 el nombre es otro; dejarlas asi las hacia resolver a
+   nada y el degradado quedaba transparente.
+
+   Lo que si se cambio es el armado. El original apila dos capas iguales y las
+   combina con mix-blend-mode: difference apoyandose en un filtro invert del
+   contenedor. Ese truco depende de que el fondo sea exactamente el que la
+   libreria supone; sobre blanco y sin ese invert, difference devuelve gris y
+   el color desaparece. Se resuelve con una sola capa de bandas muy
+   desenfocadas en movimiento: mismo resultado a la vista, sin depender del
+   modo de fusion.
+--------------------------------------------------------------------------- */
+@keyframes aurora {
+  from { background-position: 0% 50%; }
+  to   { background-position: 200% 50%; }
+}
+
+.aurora {
+  background-image: repeating-linear-gradient(
+    100deg,
+    #3b82f6 5%,    /* blue-500  */
+    #a5b4fc 12%,   /* indigo-300 */
+    #ffffff 18%,
+    #93c5fd 26%,   /* blue-300  */
+    #ddd6fe 34%,   /* violet-200 */
+    #ffffff 42%,
+    #60a5fa 52%,   /* blue-400  */
+    #3b82f6 60%
+  );
+  background-size: 200% 200%;
+  filter: blur(56px);
+  animation: aurora 28s linear infinite;
+}
+
+/* Quien pidio menos movimiento no ve la tela desplazarse: queda el degradado
+   quieto, que igual cumple como fondo. */
+@media (prefers-reduced-motion: reduce) {
+  .aurora { animation: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Marquesina (v3)
+
+   La cinta se duplica en el markup y se desplaza exactamente el 50% de su
+   ancho: el reinicio cae justo donde empieza la copia, asi que el bucle no
+   tiene salto. Se frena al pasar el cursor, porque una cinta que no para
+   molesta cuando alguien quiere leerla.
+--------------------------------------------------------------------------- */
+@keyframes marquesina {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquesina {
+  animation: marquesina 38s linear infinite;
+  will-change: transform;
+  /* Los bordes se desvanecen para que las palabras no aparezcan de golpe
+     contra el filo de la pantalla. */
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquesina:hover { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquesina { animation: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Muro de proyectos del hero (v3)
+
+   Cada fila se duplica en el markup y se desplaza la mitad de su ancho: el
+   reinicio cae justo donde arranca la copia, asi que el bucle no salta. La
+   duracion y el sentido los define cada fila por estilo en linea.
+
+   Se frena al pasar el cursor por el hero entero, no por fila: si se frenara
+   solo la de abajo del cursor, las otras dos seguirian y quedaria raro.
+--------------------------------------------------------------------------- */
+@keyframes muro-desplazar {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.muro-fila {
+  animation-name: muro-desplazar;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+/* El muro no se frena nunca, ni al entrar al hero ni al apuntar una tarjeta:
+   cortar el movimiento se sentia como si la pagina se trabara. Lo unico que
+   responde al cursor es la tarjeta, que se levanta sin detener la fila. */
+
+/* La tarjeta se levanta y sube su brillo al pasarle el cursor.
+
+   Va con transform en una regla propia y no con las utilidades
+   hover:-translate-y de Tailwind: en la v4 esas escriben la propiedad
+   translate, que es distinta de transform, y acá no terminaba de aplicarse.
+   Con una regla nuestra el resultado es el mismo y no depende de eso. */
+.muro-tarjeta {
+  transform: translateY(0);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease;
+}
+
+.muro-tarjeta img {
+  opacity: 0.8;
+  transition: opacity 0.45s ease;
+}
+
+.muro-tarjeta:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.85);
+}
+
+.muro-tarjeta:hover img { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .muro-fila { animation: none; }
 }

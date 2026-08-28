@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import { FAQS } from '../data/content'
-import ScrollText from './ScrollText'
 
 function FaqItem({ faq, isOpen, onToggle }) {
   return (
@@ -44,7 +43,13 @@ export default function FAQ() {
   const [open, setOpen] = useState(-1)
 
   return (
-    <section id="faq" className="relative bg-paper py-24 sm:py-32">
+    <section id="faq" className="relative bg-paper py-24 sm:py-32 overflow-hidden">
+      <img
+        src="/images/glow.png"
+        alt=""
+        aria-hidden
+        className="absolute top-16 left-1/2 -translate-x-1/2 w-72 pointer-events-none select-none"
+      />
       <div className="relative mx-auto max-w-[1140px] px-6">
         <motion.h2
           initial={{ opacity: 0, y: 28 }}
@@ -55,10 +60,15 @@ export default function FAQ() {
         >
           ¿Tenés preguntas?
         </motion.h2>
-        <ScrollText
-          text="Las dudas más comunes que nos escriben antes de arrancar un proyecto."
-          className="mt-5 text-center font-body text-ink max-w-md mx-auto"
-        />
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.15 }}
+          className="mt-5 text-center font-body text-ink/60 max-w-md mx-auto"
+        >
+          Las dudas más comunes que nos escriben antes de arrancar un proyecto.
+        </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 24 }}
