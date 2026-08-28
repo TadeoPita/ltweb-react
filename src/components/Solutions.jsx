@@ -53,25 +53,29 @@ export default function Solutions() {
           />
         </div>
 
-        {/* Las tarjetas venían rellenas de pastel de punta a punta. Tres
-            bloques grandes de color plano, uno al lado del otro, es de las
-            cosas que más hacen que un sitio se lea genérico: el color termina
-            ocupando el lugar de la jerarquía.
+        {/* Tres tarjetas sueltas, cada una con su borde, en vez de un bloque
+            único dividido por líneas. Separadas se leen como tres propuestas
+            que se pueden comparar; pegadas se leían como una tabla.
 
-            Ahora el fondo es blanco y lo que separa cada tarjeta es una línea
-            de 1px. El pastel se conserva pero reducido a la pastilla del
-            ícono, que es donde suma identidad sin gobernar el bloque. El
-            número ordena la lectura y le da un aire editorial. */}
-        <motion.div {...blurStagger(0.12)} className="mt-16 grid md:grid-cols-3 gap-px bg-black/[0.07] border border-black/[0.07] rounded-2xl overflow-hidden">
+            El tratamiento es el de una página de producto: fondo blanco,
+            borde de 1px, y al pasar el cursor la tarjeta se levanta y el borde
+            se marca. Nada de relleno de color, que es lo que las hacía verse
+            decorativas en vez de informativas.
+
+            Lo que aporta el aire "de empresa" es la estructura, no el adorno:
+            arriba el número de área y el ícono, en el medio qué es, y abajo,
+            separado por una línea, el detalle de lo que incluye — leído como
+            una ficha y no como un párrafo suelto. */}
+        <motion.div {...blurStagger(0.1)} className="mt-16 grid md:grid-cols-3 gap-5">
           {SERVICES.map((s, i) => (
             <motion.div
               key={s.id}
               variants={blurChild}
-              className="group bg-white p-8 flex flex-col text-center md:text-left transition-colors duration-300 hover:bg-black/[0.015]"
+              className="group flex flex-col rounded-2xl border border-black/[0.08] bg-white p-8 text-center transition-all duration-500 ease-out hover:-translate-y-1 hover:border-black/[0.16] hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_18px_40px_-24px_rgba(0,0,0,0.30)] md:text-left"
             >
               <div className="flex items-center justify-center gap-4 md:justify-between md:gap-0">
                 <span
-                  className="flex items-center justify-center w-11 h-11 rounded-xl text-ink transition-transform duration-500 ease-out group-hover:-rotate-6"
+                  className="flex h-11 w-11 items-center justify-center rounded-xl text-ink transition-transform duration-500 ease-out group-hover:-rotate-6"
                   style={{ backgroundColor: s.tint }}
                 >
                   {icons[s.icon]}
@@ -82,14 +86,27 @@ export default function Solutions() {
               </div>
 
               <h3 className="mt-7 font-display font-bold uppercase text-[22px] leading-tight text-ink">{s.title}</h3>
-              <RichText as="p" text={s.text} className="mt-4 font-body text-[15px] leading-relaxed text-ink/65" strongClassName="text-ink" />
-              <ul className="mt-6 pt-6 border-t border-black/[0.07] flex flex-wrap justify-center gap-x-4 gap-y-2 md:justify-start">
-                {s.items.map((item) => (
-                  <li key={item} className="font-body text-[13px] text-ink/50">
-                    {item}
-                  </li>
-                ))}
-              </ul>
+              <RichText
+                as="p"
+                text={s.text}
+                className="mt-4 font-body text-[15px] leading-relaxed text-ink/65"
+                strongClassName="text-ink"
+              />
+
+              {/* El detalle va al pie y con mt-auto, así las tres líneas
+                  divisorias quedan alineadas aunque los textos midan distinto. */}
+              <div className="mt-auto pt-7">
+                <p className="font-body text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink/35">
+                  Incluye
+                </p>
+                <ul className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-2 md:justify-start">
+                  {s.items.map((item) => (
+                    <li key={item} className="font-body text-[13px] text-ink/55">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </motion.div>
           ))}
         </motion.div>
