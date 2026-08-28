@@ -5,6 +5,7 @@ import RichText from './RichText'
 import { blurUp, EASE } from '../lib/motion'
 import { STARTING_POINTS, WHATSAPP_URL } from '../data/content'
 import Label from './Label'
+import ScrollText from './ScrollText'
 
 /* "¿Por dónde empezamos?"
 
@@ -20,7 +21,7 @@ export default function StartingPoint() {
   const current = STARTING_POINTS.find((p) => p.id === active) ?? STARTING_POINTS[0]
 
   return (
-    <section id="empecemos" className="relative bg-ink-2 py-24 sm:py-32 overflow-hidden">
+    <section id="empecemos" className="relative bg-ink-2 py-24 sm:py-32">
 
       <div className="relative mx-auto max-w-[1280px] px-6">
         <motion.p
@@ -35,12 +36,11 @@ export default function StartingPoint() {
         >
           ¿Por dónde empezamos?
         </motion.h2>
-        <motion.p
-          {...blurUp(0.16)}
-          className="mt-6 text-center font-body text-white/50 text-base sm:text-lg max-w-2xl mx-auto"
-        >
-          Elegí la frase que más se parece a tu situación y te contamos cómo lo encaramos.
-        </motion.p>
+        <ScrollText
+          text="Elegí la frase que más se parece a tu situación y te contamos cómo lo encaramos."
+          className="mt-6 text-center font-body text-white text-base sm:text-lg max-w-2xl mx-auto"
+          apagado={0.22}
+        />
 
         {/* Selector */}
         <motion.div

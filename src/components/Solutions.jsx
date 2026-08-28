@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import RichText from './RichText'
 import Label from './Label'
+import ScrollText from './ScrollText'
 import { blurUp, blurStagger, blurChild } from '../lib/motion'
 import { SERVICES, EXTRA_CAPABILITIES } from '../data/content'
 
@@ -22,7 +23,7 @@ const icons = {
 
 export default function Solutions() {
   return (
-    <section id="servicios" className="relative bg-white py-24 sm:py-32 overflow-hidden">
+    <section id="servicios" className="relative bg-white py-24 sm:py-32">
 
       {/* Encabezado en dos columnas en vez de centrado.
 
@@ -46,12 +47,10 @@ export default function Solutions() {
             </motion.h2>
           </div>
 
-          <motion.p
-            {...blurUp(0.16)}
-            className="mx-auto max-w-xl font-body text-ink/60 text-base sm:text-lg leading-relaxed lg:mx-0 lg:pb-3"
-          >
-            Tres áreas de trabajo que cubren desde una landing simple hasta soluciones a medida integradas con el resto de tu negocio.
-          </motion.p>
+          <ScrollText
+            text="Tres áreas de trabajo que cubren desde una landing simple hasta soluciones a medida integradas con el resto de tu negocio."
+            className="mx-auto max-w-xl font-body text-ink text-base sm:text-lg leading-relaxed lg:mx-0 lg:pb-3"
+          />
         </div>
 
         {/* Las tarjetas venían rellenas de pastel de punta a punta. Tres
