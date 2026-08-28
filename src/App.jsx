@@ -54,7 +54,8 @@ function HomePage() {
     title: 'LTWEB — Diseño y desarrollo web en Buenos Aires',
     description:
       'Estudio de diseño y desarrollo web. Hacemos sitios institucionales, landing pages, tiendas online y sistemas de gestión a medida para empresas.',
-    path: '/',
+    path: '/clasico',
+    noindex: true,
   })
 
   /* Las preguntas frecuentes en formato FAQPage: es lo que habilita a Google a
@@ -94,9 +95,13 @@ function AppRoutes() {
   const { pathname } = useLocation()
   const isAuth = pathname.startsWith('/login')
   const isAdmin = pathname.startsWith('/admin')
-  /* La v3 trae navbar y pie propios: los del sitio actual hablan otro idioma
-     visual y el footer viejo dejaba un corte contra el cierre. */
-  const isV3 = pathname.startsWith('/v3')
+  /* La v3 trae navbar y pie propios: los del sitio anterior hablan otro idioma
+     visual y el footer viejo dejaba un corte contra el cierre.
+
+     Ahora la v3 es el sitio y vive en la raiz, asi que la raiz entra en esta
+     condicion. /v3 se mantiene como alias para no romper nada que ya apunte
+     ahi. */
+  const isV3 = pathname === '/' || pathname.startsWith('/v3')
 
   return (
     <>
@@ -105,8 +110,12 @@ function AppRoutes() {
           hacia arriba mientras se descarga el chunk de la ruta. */}
       <Suspense fallback={<div className="min-h-screen" />}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<V3Page />} />
           <Route path="/v3" element={<V3Page />} />
+          {/* La home anterior queda accesible para comparar. No se enlaza
+              desde ningun lado y lleva noindex, asi que no compite en Google
+              con la home real. */}
+          <Route path="/clasico" element={<HomePage />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="/proyecto/:id" element={<ProjectPage />} />
           <Route path="/login" element={<LoginPage />} />

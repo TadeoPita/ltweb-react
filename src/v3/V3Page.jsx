@@ -23,7 +23,8 @@ import {
   CardRedes,
   CardContacto,
 } from './BentoCards'
-import { WHATSAPP_URL } from '../data/content'
+import { WHATSAPP_URL, FAQS } from '../data/content'
+import { useSeo, useJsonLd } from '../lib/seo'
 import { usePortfolio } from '../data/portfolioStore'
 import { EASE } from '../lib/motion'
 
@@ -72,6 +73,29 @@ const ANCHOS = [
 ]
 
 export default function V3Page() {
+  /* Esta pasó a ser la home del sitio, así que le corresponden el título, la
+     descripción y el canonical de la raíz. Como página de prueba no los
+     necesitaba; como home, sin esto Google no tiene qué mostrar. */
+  useSeo({
+    title: 'LTWEB — Diseño y desarrollo web en Buenos Aires',
+    description:
+      'Estudio de diseño y desarrollo web. Hacemos sitios institucionales, landing pages, tiendas online y sistemas de gestión a medida para empresas.',
+    path: '/',
+  })
+
+  /* Las preguntas frecuentes en formato FAQPage: es lo que habilita a Google a
+     mostrarlas desplegables en el resultado de búsqueda. Se arman desde el
+     mismo FAQS que pinta la sección, sin las etiquetas <strong> del texto. */
+  useJsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQS.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/<[^>]+>/g, '') },
+    })),
+  })
+
   const { items } = usePortfolio()
 
   /* Dos proyectos en el bento, no tres: con tres, la grilla quedaba muy cargada

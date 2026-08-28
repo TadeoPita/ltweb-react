@@ -35,7 +35,7 @@ function upsertCanonical(href) {
   tag.setAttribute('href', href)
 }
 
-export function useSeo({ title, description, image, path = '', type = 'website' } = {}) {
+export function useSeo({ title, description, image, path = '', type = 'website', noindex = false } = {}) {
   useEffect(() => {
     const fullTitle = title ?? DEFAULT_TITLE
     const url = SITE + path
@@ -61,7 +61,18 @@ export function useSeo({ title, description, image, path = '', type = 'website' 
     upsertMeta('name', 'twitter:title', fullTitle)
     upsertMeta('name', 'twitter:description', description)
     upsertMeta('name', 'twitter:image', img)
-  }, [title, description, image, path, type])
+
+    /* La home anterior sigue accesible en /clasico para poder compararla, pero
+       no tiene que competir en Google con la home real: es el mismo contenido
+       y Google elegiria una de las dos. Se saca la etiqueta al desmontar, si
+       no la ruta siguiente se la lleva puesta. */
+    const robots = document.head.querySelector('meta[name="robots"]')
+    if (noindex) {
+      upsertMeta('name', 'robots', 'noindex, follow')
+    } else if (robots) {
+      robots.remove()
+    }
+  }, [title, description, image, path, type, noindex])
 }
 
 /* Datos estructurados que dependen de la página (las preguntas del FAQ, la

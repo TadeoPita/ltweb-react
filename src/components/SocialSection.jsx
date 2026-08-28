@@ -105,7 +105,7 @@ export default function SocialSection() {
 
         <TextReveal
           as="p"
-          text="Compartimos proyectos nuevos, procesos de diseño y detrás de escena del estudio."
+          text="Conéctate con LT WEB y descubre las últimas tendencias en diseño web, estrategias digitales y optimización online. ¡No te pierdas nuestras novedades! 🚀"
           dim={0.14}
           stagger={0.06}
           className="mt-14 text-center font-body text-ink/70 max-w-md mx-auto leading-relaxed"
