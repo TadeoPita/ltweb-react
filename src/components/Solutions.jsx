@@ -23,13 +23,6 @@ const icons = {
 export default function Solutions() {
   return (
     <section id="servicios" className="relative bg-white py-24 sm:py-32 overflow-hidden">
-      {/* Glow violeta detrás del título */}
-      <img
-        src="/images/glow.png"
-        alt=""
-        aria-hidden
-        className="absolute top-16 left-0 -translate-x-1/3 w-105 pointer-events-none select-none opacity-80"
-      />
 
       {/* Encabezado en dos columnas en vez de centrado.
 
@@ -39,9 +32,9 @@ export default function Solutions() {
           va a la izquierda y la bajada lo acompaña a la derecha, apoyada
           sobre la misma línea de base. En mobile se apila. */}
       <div className="relative mx-auto max-w-[1280px] px-6">
-        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-6 lg:gap-16 lg:items-end">
+        <div className="grid lg:grid-cols-[1.1fr_1fr] gap-6 lg:gap-16 lg:items-end text-center lg:text-left">
           <div>
-            <motion.div {...blurUp(0)}>
+            <motion.div {...blurUp(0)} className="flex justify-center lg:justify-start">
               <Label>Servicios</Label>
             </motion.div>
 
@@ -55,7 +48,7 @@ export default function Solutions() {
 
           <motion.p
             {...blurUp(0.16)}
-            className="font-body text-ink/60 text-base sm:text-lg leading-relaxed lg:pb-3"
+            className="mx-auto max-w-xl font-body text-ink/60 text-base sm:text-lg leading-relaxed lg:mx-0 lg:pb-3"
           >
             Tres áreas de trabajo que cubren desde una landing simple hasta soluciones a medida integradas con el resto de tu negocio.
           </motion.p>
@@ -75,9 +68,9 @@ export default function Solutions() {
             <motion.div
               key={s.id}
               variants={blurChild}
-              className="group bg-white p-8 flex flex-col transition-colors duration-300 hover:bg-black/[0.015]"
+              className="group bg-white p-8 flex flex-col text-center md:text-left transition-colors duration-300 hover:bg-black/[0.015]"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-center gap-4 md:justify-between md:gap-0">
                 <span
                   className="flex items-center justify-center w-11 h-11 rounded-xl text-ink transition-transform duration-500 ease-out group-hover:-rotate-6"
                   style={{ backgroundColor: s.tint }}
@@ -91,7 +84,7 @@ export default function Solutions() {
 
               <h3 className="mt-7 font-display font-bold uppercase text-[22px] leading-tight text-ink">{s.title}</h3>
               <RichText as="p" text={s.text} className="mt-4 font-body text-[15px] leading-relaxed text-ink/65" strongClassName="text-ink" />
-              <ul className="mt-6 pt-6 border-t border-black/[0.07] flex flex-wrap gap-x-4 gap-y-2">
+              <ul className="mt-6 pt-6 border-t border-black/[0.07] flex flex-wrap justify-center gap-x-4 gap-y-2 md:justify-start">
                 {s.items.map((item) => (
                   <li key={item} className="font-body text-[13px] text-ink/50">
                     {item}

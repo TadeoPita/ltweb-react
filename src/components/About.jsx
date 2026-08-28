@@ -56,7 +56,7 @@ function Card({ item, index }) {
       variants={blurChild}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      className="group relative bg-white p-6 cursor-default transition-colors duration-300 hover:bg-black/[0.015]"
+      className="group relative flex flex-col items-center bg-white p-6 text-center cursor-default transition-colors duration-300 sm:items-start sm:text-left hover:bg-black/[0.015]"
     >
 
       {/* La pastilla se inclina unos grados hacia el costado y se levanta:

@@ -1,8 +1,10 @@
 import { NAV_LINKS, INSTAGRAM_URL, TIKTOK_URL, WHATSAPP_URL, CONTACT_PHONE, CONTACT_EMAIL, LOCATION } from '../data/content'
 
+/* Lleva id="contacto" porque el menú apunta ahí: la sección que tenía ese
+   ancla se sacó de la home, y sin esto el enlace quedaba roto. */
 export default function Footer() {
   return (
-    <footer className="bg-[#111113] text-white pt-20 pb-28">
+    <footer id="contacto" className="bg-[#111113] text-white pt-20 pb-28">
       {/* En mobile todo el footer va centrado; desde md vuelve a alinearse
           a la izquierda como una grilla de columnas. */}
       <div className="mx-auto max-w-[1280px] px-6 text-center md:text-left">

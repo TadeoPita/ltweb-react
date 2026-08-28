@@ -21,12 +21,6 @@ export default function StartingPoint() {
 
   return (
     <section id="empecemos" className="relative bg-ink-2 py-24 sm:py-32 overflow-hidden">
-      <img
-        src="/images/glow.png"
-        alt=""
-        aria-hidden
-        className="absolute top-0 right-0 w-[560px] pointer-events-none select-none opacity-25"
-      />
 
       <div className="relative mx-auto max-w-[1280px] px-6">
         <motion.p

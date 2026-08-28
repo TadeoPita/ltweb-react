@@ -15,7 +15,6 @@ import StartingPoint from './components/StartingPoint'
 import About from './components/About'
 import FAQ from './components/FAQ'
 import SocialSection from './components/SocialSection'
-import FinalCTA from './components/FinalCTA'
 import Footer from './components/Footer'
 import NotFoundPage from './pages/NotFoundPage'
 
@@ -33,8 +32,9 @@ const AdminPage = lazy(() => import('./pages/AdminPage'))
    somos (Sobre LTWEB) → ¿esto aplica a mí? (¿Por dónde empezamos?) → dudas
    (FAQ) → redes → cierre.
 
-   El CTA final va último, pegado al footer: es el remate de la página y
-   comparte el mismo negro, así el cierre se lee como un solo bloque. */
+   El bloque final de contacto se saco: el pie ya cierra con los datos y las
+   redes, y venia repitiendo el mismo llamado dos veces seguidas. El ancla
+   #contacto que usaba el menu paso al pie. */
 function HomePage() {
   useSeo({
     title: 'LTWEB — Diseño y desarrollo web en Buenos Aires',
@@ -72,7 +72,6 @@ function HomePage() {
           volver a mostrarlos hay que importarlos de nuevo y ponerlos acá. */}
       <FAQ />
       <SocialSection />
-      <FinalCTA />
     </main>
   )
 }

@@ -44,12 +44,6 @@ export default function FAQ() {
 
   return (
     <section id="faq" className="relative bg-paper py-24 sm:py-32 overflow-hidden">
-      <img
-        src="/images/glow.png"
-        alt=""
-        aria-hidden
-        className="absolute top-16 left-1/2 -translate-x-1/2 w-72 pointer-events-none select-none"
-      />
       <div className="relative mx-auto max-w-[1140px] px-6">
         <motion.h2
           initial={{ opacity: 0, y: 28 }}
