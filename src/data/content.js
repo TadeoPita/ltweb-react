@@ -236,7 +236,7 @@ export const PORTFOLIO = [
 export const FAQS = [
   {
     q: '¿Cuánto tiempo tarda el desarrollo de una web?',
-    a: 'Depende del tipo de web. Una <strong>Landing Page</strong> puede estar lista en <strong>5-7 días hábiles</strong>, mientras que un <strong>E-Commerce</strong> o un sitio más complejo puede tardar <strong>2-4 semanas</strong>.',
+    a: 'Depende del tipo de web. Una <strong>Landing Page</strong> puede estar lista en <strong>1 a 2 semanas</strong>, mientras que un <strong>E-Commerce</strong> o un sitio más complejo puede tardar <strong>2-4 semanas</strong>.',
   },
   {
     q: '¿Qué incluye el servicio de diseño web?',
