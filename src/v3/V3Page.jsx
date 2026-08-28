@@ -2,9 +2,7 @@ import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { utils } from 'swapy'
 import { ArrowRight } from 'lucide-react'
-import V3Nav from './V3Nav'
 import HeroWall from './HeroWall'
-import Ending from './Ending'
 
 /* Secciones tomadas tal cual del sitio original, sobre pedido. */
 import Portfolio from '../components/Portfolio'
@@ -139,8 +137,6 @@ export default function V3Page() {
 
   return (
     <main className="bg-[#08080a]">
-      <V3Nav />
-
       <HeroWall />
 
       {/* El bento va sobre blanco, como estaba. */}
@@ -150,7 +146,9 @@ export default function V3Page() {
             <h2 className="font-display font-bold uppercase leading-[0.9] text-4xl sm:text-6xl max-w-xl text-ink">
               Todo el estudio en una pantalla
             </h2>
-            <p className="max-w-xs font-body text-[13.5px] text-ink/45">
+            {/* Solo donde hay mouse: en tactil el arrastre esta apagado para
+                no comerse el scroll, asi que invitar a arrastrar seria mentir. */}
+            <p className="hidden max-w-xs font-body text-[13.5px] text-ink/45 [@media(pointer:fine)]:block">
               Arrastrá las tarjetas para acomodarlas como quieras. Sí, se puede.
             </p>
           </div>
@@ -173,7 +171,7 @@ export default function V3Page() {
                         esa seleccion, que es lo que dejaba todo marcado. */}
                     <SwapyItem
                       id={itemId}
-                      className="group relative cursor-grab select-none active:cursor-grabbing"
+                      className="group relative select-none [@media(pointer:fine)]:cursor-grab [@media(pointer:fine)]:active:cursor-grabbing"
                     >
                       {tarjeta.nodo}
                     </SwapyItem>
@@ -190,8 +188,6 @@ export default function V3Page() {
       <FAQ />
 
       <SocialSection />
-
-      <Ending />
     </main>
   )
 }

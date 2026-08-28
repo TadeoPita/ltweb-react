@@ -2,23 +2,9 @@ import { Suspense, lazy } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { ProjectLightboxProvider } from './components/ProjectLightbox'
-import { useSeo, useJsonLd } from './lib/seo'
-import { FAQS } from './data/content'
 import ProtectedRoute from './components/ProtectedRoute'
-import Navbar from './components/Navbar'
-import BottomNav from './components/BottomNav'
-import Hero from './components/Hero'
-import ClientsShowcase from './components/ClientsShowcase'
-import Testimonials from './components/Testimonials'
-import Portfolio from './components/Portfolio'
-import Solutions from './components/Solutions'
-import StartingPoint from './components/StartingPoint'
-import About from './components/About'
-import Steps from './components/Steps'
-import FAQ from './components/FAQ'
-import SocialSection from './components/SocialSection'
-import FinalCTA from './components/FinalCTA'
-import Footer from './components/Footer'
+import V3Nav from './v3/V3Nav'
+import Ending from './v3/Ending'
 import NotFoundPage from './pages/NotFoundPage'
 
 /* Rutas partidas del bundle principal. Antes todo viajaba en un solo archivo
@@ -35,77 +21,31 @@ const AdminPage = lazy(() => import('./pages/AdminPage'))
    la publicada sin tocarla. Va aparte del bundle: no la carga nadie que entre
    a la home. */
 const V3Page = lazy(() => import('./v3/V3Page'))
+/* La home anterior: once secciones mas la barra y el pie viejos. Estatica
+   viajaba en el paquete principal y se la bajaba todo el mundo. */
+const ClasicoPage = lazy(() => import('./pages/ClasicoPage'))
 
-/* Orden de la home: qué hacés (Servicios) → mostralo (Proyectos) → quiénes
-   somos (Sobre LTWEB) → ¿esto aplica a mí? (¿Por dónde empezamos?) → la
-   prueba (Casos) → cómo se trabaja (Proceso) → dudas (FAQ) → redes → cierre.
-
-   Los Casos bajaron hasta acá a propósito: apoyan al bloque de "¿Por dónde
-   empezamos?" mostrando esos mismos planteos ya resueltos con clientes
-   reales, en vez de aparecer arriba antes de que se sepa qué ofrecemos.
-
-   El CTA final va último, pegado al footer: es el remate de la página y
-   comparte el mismo negro, así el cierre se lee como un solo bloque.
-
-   La alternancia claro/oscuro se mantiene intacta con este orden, porque las
-   tres secciones que se movieron son todas de fondo blanco. */
-function HomePage() {
-  useSeo({
-    title: 'LTWEB — Diseño y desarrollo web en Buenos Aires',
-    description:
-      'Estudio de diseño y desarrollo web. Hacemos sitios institucionales, landing pages, tiendas online y sistemas de gestión a medida para empresas.',
-    path: '/clasico',
-    noindex: true,
-  })
-
-  /* Las preguntas frecuentes en formato FAQPage: es lo que habilita a Google a
-     mostrarlas desplegables directamente en el resultado de búsqueda. Se
-     arman desde el mismo FAQS que pinta la sección, sin las etiquetas <strong>
-     que usa el texto en pantalla. */
-  useJsonLd({
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: FAQS.map((f) => ({
-      '@type': 'Question',
-      name: f.q,
-      acceptedAnswer: { '@type': 'Answer', text: f.a.replace(/<[^>]+>/g, '') },
-    })),
-  })
-
-  return (
-    <main>
-      <Hero />
-      <Solutions />
-      <Portfolio />
-      <About />
-      <StartingPoint />
-      {/* Testimonios va a ocupar el lugar de Casos. Mientras no haya frases
-          reales cargadas no se renderiza, así que hoy la home no cambia. */}
-      <Testimonials />
-      <ClientsShowcase />
-      <Steps />
-      <FAQ />
-      <SocialSection />
-      <FinalCTA />
-    </main>
-  )
-}
 
 function AppRoutes() {
   const { pathname } = useLocation()
   const isAuth = pathname.startsWith('/login')
   const isAdmin = pathname.startsWith('/admin')
-  /* La v3 trae navbar y pie propios: los del sitio anterior hablan otro idioma
-     visual y el footer viejo dejaba un corte contra el cierre.
+  /* La barra y el pie del v3 son ahora los del sitio entero, no los de una
+     pagina.
 
-     Ahora la v3 es el sitio y vive en la raiz, asi que la raiz entra en esta
-     condicion. /v3 se mantiene como alias para no romper nada que ya apunte
-     ahi. */
-  const isV3 = pathname === '/' || pathname.startsWith('/v3')
+     Antes la home traia los suyos y el resto de las rutas publicas seguia con
+     los del sitio anterior: al entrar a un proyecto desde el portfolio
+     cambiaba el marco completo de golpe. Ahora /, /v3, /portfolio,
+     /proyecto/:id y el 404 comparten cascara.
+
+     /clasico es la excepcion a proposito: es el archivo de la home anterior y
+     tiene que verse como era, con su barra y su pie. */
+  const esClasico = pathname === '/clasico'
+  const esPublica = !isAuth && !isAdmin
 
   return (
     <>
-      {!isAuth && !isAdmin && !isV3 && <Navbar />}
+      {esPublica && !esClasico && <V3Nav />}
       {/* El fallback ocupa el alto de la pantalla para que el footer no salte
           hacia arriba mientras se descarga el chunk de la ruta. */}
       <Suspense fallback={<div className="min-h-screen" />}>
@@ -115,7 +55,7 @@ function AppRoutes() {
           {/* La home anterior queda accesible para comparar. No se enlaza
               desde ningun lado y lleva noindex, asi que no compite en Google
               con la home real. */}
-          <Route path="/clasico" element={<HomePage />} />
+          <Route path="/clasico" element={<ClasicoPage />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="/proyecto/:id" element={<ProjectPage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -130,8 +70,7 @@ function AppRoutes() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
-      {!isAuth && !isAdmin && !isV3 && <Footer />}
-      {!isAuth && !isAdmin && !isV3 && <BottomNav />}
+      {esPublica && !esClasico && <Ending />}
     </>
   )
 }

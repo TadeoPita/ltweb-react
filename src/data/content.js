@@ -1,7 +1,7 @@
 export const WHATSAPP_URL =
   'https://api.whatsapp.com/send/?phone=5491159532487&text=%C2%A1Hola+equipo+LT+WEB%21+Me+contacto+mediante+la+p%C3%A1gina+web.+%C2%BFC%C3%B3mo+arrancamos+un+proyecto+juntos%3F&type=phone_number&app_absent=0'
 
-export const INSTAGRAM_URL = 'https://www.instagram.com/ltweb__/'
+export const INSTAGRAM_URL = 'https://www.instagram.com/ltweb.ar/'
 export const TIKTOK_URL = 'https://www.tiktok.com/@ltweb__'
 export const CONTACT_PHONE = '(+54) 11 5953-2487'
 export const CONTACT_EMAIL = 'ltwebs.studio@gmail.com'

@@ -12,9 +12,9 @@ import { WHATSAPP_URL } from '../data/content'
    scrolea, para no tapar el muro de proyectos de entrada. */
 
 const ENLACES = [
-  { label: 'El estudio', href: '#bento-v3' },
-  { label: 'Proyectos', href: '#proyectos' },
-  { label: 'Preguntas', href: '#faq' },
+  { label: 'El estudio', href: '/#bento-v3' },
+  { label: 'Proyectos', href: '/#proyectos' },
+  { label: 'Preguntas', href: '/#faq' },
 ]
 
 export default function V3Nav() {
@@ -35,12 +35,14 @@ export default function V3Nav() {
       }
     >
       <div className="mx-auto flex max-w-[1400px] items-center justify-between px-6 py-4">
-        <Link to="/v3" aria-label="LT WEB" className="shrink-0">
+        <Link to="/" aria-label="LT WEB" className="shrink-0">
           <img
             draggable={false}
             src="/images/logo-blanco.webp"
             alt="LT WEB"
             className="h-7 w-auto sm:h-8"
+            width="200"
+            height="32"
           />
         </Link>
 

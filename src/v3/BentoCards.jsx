@@ -215,7 +215,7 @@ export function CardRedes() {
       </p>
       <div>
         <p className="font-display font-bold uppercase text-ink/90 text-2xl leading-none transition-transform duration-500 ease-out group-hover:-translate-y-0.5">
-          @ltweb__
+          @ltweb.ar
         </p>
         <span className="mt-2 inline-flex items-center gap-1.5 font-body text-[13px] text-ink/55">
           Procesos y detrás de escena

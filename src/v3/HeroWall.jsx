@@ -29,15 +29,35 @@ import { usePortfolio } from '../data/portfolioStore'
    las utilidades hover:-translate-y de Tailwind: en la v4 esas escriben la
    propiedad `translate`, que acá no llegaba a aplicarse. Con `transform` en
    una regla nuestra el comportamiento es el mismo y no depende de eso. */
+/* El muro dibuja recuadros de 268x168 pero las portadas del portfolio son de
+   1536 de ancho para arriba, y una llegaba a 1600x2844. El navegador igual las
+   descomprime enteras: una imagen asi ocupa cerca de 18 MB en memoria ya
+   decodificada, y habia veintipico en pantalla al mismo tiempo. Eso era el
+   tiron al entrar — no la animacion, que va por transform y no cuesta nada.
+
+   Para las portadas que viven en el repo hay una copia de 672 de ancho en
+   /images/muro, que es el doble de lo que se dibuja (suficiente para pantallas
+   densas). Las que vienen de la base se dejan como estan: no se pueden
+   redimensionar de este lado, y por eso el muro las usa ultimas. */
+function miniatura(url) {
+  if (!url) return url
+  return url.startsWith('/images/pf-') ? url.replace('/images/', '/images/muro/') : url
+}
+
 function Tarjeta({ p }) {
   return (
     <div className="muro-tarjeta relative h-[168px] w-[268px] shrink-0 overflow-hidden rounded-xl border border-white/10 bg-white/5 sm:h-[210px] sm:w-[336px]">
       <img
         draggable={false}
-        src={p.image}
+        src={miniatura(p.image)}
         alt=""
         aria-hidden
         loading="lazy"
+        /* async saca el decodificado del hilo principal: sin esto el navegador
+           frena todo mientras descomprime cada imagen. */
+        decoding="async"
+        width="336"
+        height="210"
         className="h-full w-full object-cover object-top"
       />
     </div>
@@ -65,9 +85,20 @@ function Fila({ proyectos, invertida, duracion }) {
 export default function HeroWall() {
   const { items } = usePortfolio()
 
-  /* Todos los proyectos que tengan imagen, repartidos en tres filas. */
+  /* Tres filas de cuatro. Antes entraban todos los proyectos con imagen: 27,
+     y como cada fila se duplica para que el bucle no salte, eran 54 imagenes
+     dibujadas a la vez detras del titulo. El fondo se ve igual con doce —
+     nadie las cuenta— y el navegador descomprime menos de la mitad.
+
+     Van primero las que tienen miniatura, que son las del repo. Asi las que
+     vienen de la base, que pesan mucho mas y no se pueden achicar de este
+     lado, quedan afuera mientras haya locales suficientes. */
   const filas = useMemo(() => {
-    const conImagen = items.filter((p) => p.image)
+    const conImagen = items
+      .filter((p) => p.image)
+      .slice()
+      .sort((a, b) => Number(b.image.startsWith('/images/pf-')) - Number(a.image.startsWith('/images/pf-')))
+      .slice(0, 12)
     if (!conImagen.length) return [[], [], []]
     const porFila = Math.ceil(conImagen.length / 3)
     return [
@@ -109,15 +140,20 @@ export default function HeroWall() {
           </span>
         </motion.span>
 
+        {/* Sin blur animado. El titulo ocupa 12vw: desenfocarlo obliga al
+            navegador a recalcular ese filtro sobre media pantalla en cada
+            cuadro, y justo mientras entra la pagina y se estan decodificando
+            las imagenes del muro. Con opacidad y desplazamiento la entrada se
+            ve practicamente igual y la maneja el compositor. */}
         <motion.h1
-          initial={{ opacity: 0, y: 24, filter: 'blur(12px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
           className="mt-9 font-display font-bold uppercase text-white leading-[0.9] text-[12vw] sm:text-[9vw] lg:text-[88px]"
         >
-          Webs que tu negocio
+          La web que tu negocio
           <br />
-          <span className="text-white/55">se merece.</span>
+          <span className="text-white/55">merece.</span>
         </motion.h1>
 
         <motion.p

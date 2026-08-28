@@ -20,6 +20,19 @@ import { cn } from '../lib/utils'
    habia al montar y el arrastre deja de funcionar por completo.
 
    Por eso, cada vez que cambia `clave`, se le avisa que vuelva a escanear. */
+/* En pantallas tactiles el arrastre queda apagado.
+
+   Sin mouse, el unico gesto disponible para agarrar una tarjeta es el mismo
+   que se usa para scrollear: apoyar el dedo y moverlo. Swapy se queda con ese
+   gesto, asi que al pasar por encima de la grilla la pagina dejaba de bajar y
+   las tarjetas se movian solas. Con nueve tarjetas ocupando pantalla completa
+   en vertical, eso es un tramo del sitio por el que no se puede pasar.
+
+   La condicion es (pointer: coarse) y no un ancho: lo que importa no es el
+   tamano de la pantalla sino si hay un puntero fino con el que apuntar. Una
+   notebook angosta conserva el arrastre; una tablet grande no lo tiene. */
+const SIN_MOUSE = '(pointer: coarse)'
+
 export function SwapyLayout({ id, onSwap, config = {}, className, clave, children }) {
   const contenedor = useRef(null)
   const swapy = useRef(null)
@@ -32,10 +45,24 @@ export function SwapyLayout({ id, onSwap, config = {}, className, clave, childre
   useEffect(() => {
     if (!contenedor.current) return
 
-    swapy.current = createSwapy(contenedor.current, configRef.current)
+    const tactil = window.matchMedia(SIN_MOUSE)
+
+    swapy.current = createSwapy(contenedor.current, {
+      ...configRef.current,
+      enabled: !tactil.matches,
+    })
     swapy.current.onSwap((evento) => onSwapRef.current?.(evento))
 
-    return () => swapy.current?.destroy()
+    /* Se escucha el cambio porque el usuario puede enchufar un mouse, girar
+       el telefono a un modo de escritorio o abrir las herramientas de
+       desarrollo: el valor no es fijo para toda la sesion. */
+    const alCambiar = (e) => swapy.current?.enable(!e.matches)
+    tactil.addEventListener('change', alCambiar)
+
+    return () => {
+      tactil.removeEventListener('change', alCambiar)
+      swapy.current?.destroy()
+    }
   }, [])
 
   useEffect(() => {
