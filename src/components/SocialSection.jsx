@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import TextReveal from './TextReveal'
+import ScrollText from './ScrollText'
 import { INSTAGRAM_URL, SOCIAL_CHIPS_LEFT, SOCIAL_CHIPS_RIGHT } from '../data/content'
 
 /* Chip estática; al hacer hover la estrella cruza al otro lado del texto
@@ -15,7 +15,7 @@ function Chip({ text, delay }) {
       transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      className="inline-flex items-center gap-2.5 rounded-full bg-paper border border-black/4 px-5 py-2.5 font-body font-medium text-[15px] text-ink cursor-default select-none shadow-none hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_-14px_rgba(0,0,0,0.20)] transition-shadow duration-300"
+      className="inline-flex items-center gap-2.5 rounded-full border border-white/12 bg-white/[0.05] px-5 py-2.5 font-body font-medium text-[15px] text-white/75 cursor-default select-none transition-colors duration-300 hover:border-white/30 hover:bg-white/10 hover:text-white"
     >
       <motion.img
         layout
@@ -39,8 +39,26 @@ const RIGHT_OFFSETS = [150, 0, 150, 20]
 
 export default function SocialSection() {
   return (
-    <section className="bg-paper py-24 sm:py-32 overflow-hidden">
-      <div className="mx-auto max-w-[1440px] px-6">
+    /* Fondo oscuro y propio.
+
+       Venia en el mismo gris que Preguntas frecuentes, justo arriba, y las dos
+       secciones se leian como una sola tirada larga del mismo color. Pero el
+       pie tambien es oscuro (#111113), asi que copiarle el negro habria hecho
+       lo mismo del otro lado: la seccion pasaba a leerse como la parte de
+       arriba del pie. El negro de aca es un punto mas profundo, y una linea de
+       1px marca donde termina una cosa y empieza la otra.
+       Es la unica seccion con un foco: el telefono queda iluminado sobre el
+       fondo en vez de apoyado sobre el. */
+    <section className="relative isolate bg-[#08080a] py-24 sm:py-32 overflow-hidden">
+      {/* Halo detras del telefono. Blanco muy bajo y bien abierto: levanta el
+          centro sin que se vea de donde sale la luz. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[820px] w-[820px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-70"
+        style={{ background: 'radial-gradient(circle, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.03) 42%, transparent 68%)' }}
+      />
+
+      <div className="relative mx-auto max-w-[1440px] px-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.85, y: 12 }}
           whileInView={{ opacity: 1, scale: 1, y: 0 }}
@@ -48,7 +66,7 @@ export default function SocialSection() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="flex justify-center mb-8"
         >
-          <img src="/images/x39_3.svg" alt="" aria-hidden className="w-12 h-16" />
+          <img src="/images/x39_3.svg" alt="" aria-hidden className="w-12 h-16 invert opacity-70" />
         </motion.div>
 
         <motion.h2
@@ -56,7 +74,7 @@ export default function SocialSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center font-display font-bold uppercase text-ink leading-[1.02] text-4xl sm:text-6xl"
+          className="text-center font-display font-bold uppercase text-white leading-[1.02] text-4xl sm:text-6xl"
         >
           Seguinos en
           <br />
@@ -85,7 +103,7 @@ export default function SocialSection() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             
-            className="block mx-auto w-full max-w-md border-0 border-ink rounded-[22px] overflow-hidden"
+            className="group block mx-auto w-full max-w-md rounded-[22px] border border-white/10 overflow-hidden transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-white/25"
           >
             <img src="/images/instagram-phone.webp" alt="Instagram de LT WEB" loading="lazy" className="w-full h-auto rounded-[22px]" />
           </motion.a>
@@ -103,12 +121,10 @@ export default function SocialSection() {
         {/* En mobile no van las chips: quedan solo el teléfono y el texto de
             abajo. Amontonadas ocupaban media pantalla sin aportar nada. */}
 
-        <TextReveal
-          as="p"
-          text="Compartimos proyectos nuevos, procesos de diseño y detrás de escena del estudio."
-          dim={0.14}
-          stagger={0.06}
-          className="mt-14 text-center font-body text-ink/70 max-w-md mx-auto leading-relaxed"
+        <ScrollText
+          text="Conéctate con LT WEB y descubre las últimas tendencias en diseño web, estrategias digitales y optimización online. ¡No te pierdas nuestras novedades! 🚀"
+          className="mt-14 text-center font-body text-white max-w-xl mx-auto leading-relaxed"
+          apagado={0.22}
         />
       </div>
     </section>

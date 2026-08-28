@@ -71,13 +71,14 @@ export default function Solutions() {
             <motion.div
               key={s.id}
               variants={blurChild}
+              style={{ '--tinte': s.tint }}
               className="group flex flex-col rounded-2xl border border-black/[0.08] bg-white p-8 text-center transition-all duration-500 ease-out hover:-translate-y-1 hover:border-black/[0.16] hover:shadow-[0_1px_2px_rgba(0,0,0,0.04),0_18px_40px_-24px_rgba(0,0,0,0.30)] md:text-left"
             >
               <div className="flex items-center justify-center gap-4 md:justify-between md:gap-0">
-                <span
-                  className="flex h-11 w-11 items-center justify-center rounded-xl text-ink transition-transform duration-500 ease-out group-hover:-rotate-6"
-                  style={{ backgroundColor: s.tint }}
-                >
+                {/* Pastilla neutra en reposo. El color de cada area aparece
+                    recien al pasar el cursor: usado asi es un dato, y no cinco
+                    pasteles repartidos por la pagina para decorar. */}
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-black/[0.07] bg-black/[0.03] text-ink/75 transition-all duration-500 ease-out group-hover:border-transparent group-hover:bg-[var(--tinte)] group-hover:text-ink">
                   {icons[s.icon]}
                 </span>
                 <span className="font-body text-[11px] font-semibold tracking-[0.18em] text-ink/25">
@@ -113,7 +114,7 @@ export default function Solutions() {
 
         {/* Capacidades complementarias */}
         <motion.div {...blurUp(0.1)} className="mt-12 flex flex-wrap items-center justify-center gap-3">
-          <span className="text-sheen text-xs font-semibold uppercase tracking-wide">También trabajamos</span>
+          <span className="font-body text-[10.5px] font-semibold uppercase tracking-[0.16em] text-ink/40">También trabajamos</span>
           {EXTRA_CAPABILITIES.map((cap) => (
             <motion.span
               key={cap}
