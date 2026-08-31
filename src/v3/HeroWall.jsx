@@ -36,12 +36,21 @@ import { chica } from '../lib/imagen'
    decodificada, y habia veintipico en pantalla al mismo tiempo. Eso era el
    tiron al entrar — no la animacion, que va por transform y no cuesta nada.
 
-   Para las portadas que viven en el repo hay una copia de 672 de ancho en
-   /images/muro, que es el doble de lo que se dibuja (suficiente para pantallas
-   densas). Las que vienen de la base se dejan como estan: no se pueden
-   redimensionar de este lado, y por eso el muro las usa ultimas. */
+   Todas tienen una copia de 672 de ancho —el doble de lo que se dibuja, que
+   alcanza para pantallas densas— y recortada arriba, que es la franja que se
+   ve. Ver servidor/lib/imagenes.js. */
 
-function Tarjeta({ p }) {
+/* `prioritaria` marca las primeras tarjetas de cada fila, que son las unicas
+   que ya estan en pantalla al entrar.
+  
+   loading="lazy" en una imagen que YA se ve no ayuda: la retrasa. El navegador
+   tiene que calcular la maqueta para saber que esta en el viewport antes de
+   pedirla, asi que llega despues de las que no lo llevan. Y una de estas es el
+   elemento mas grande de la primera pantalla, o sea la que define el LCP.
+  
+   El resto de la fila sigue en lazy: entra en escena desplazandose, y no tiene
+   sentido pedirla toda de entrada. */
+function Tarjeta({ p, prioritaria }) {
   return (
     <div className="muro-tarjeta relative h-[168px] w-[268px] shrink-0 overflow-hidden rounded-xl border border-white/10 bg-white/5 sm:h-[210px] sm:w-[336px]">
       <img
@@ -49,7 +58,8 @@ function Tarjeta({ p }) {
         src={chica(p.image)}
         alt=""
         aria-hidden
-        loading="lazy"
+        loading={prioritaria ? 'eager' : 'lazy'}
+        fetchPriority={prioritaria ? 'high' : 'auto'}
         /* async saca el decodificado del hilo principal: sin esto el navegador
            frena todo mientras descomprime cada imagen. */
         decoding="async"
@@ -70,8 +80,10 @@ function Fila({ proyectos, invertida, duracion }) {
     >
       {[0, 1].map((copia) => (
         <div key={copia} className="flex shrink-0 gap-4" aria-hidden={copia === 1 || undefined}>
-          {proyectos.map((p) => (
-            <Tarjeta key={copia + p.id} p={p} />
+          {proyectos.map((p, i) => (
+            /* Solo las dos primeras de la copia original: la segunda copia
+               existe para que el bucle no salte y nunca se ve al entrar. */
+            <Tarjeta key={copia + p.id} p={p} prioritaria={copia === 0 && i < 2} />
           ))}
         </div>
       ))}

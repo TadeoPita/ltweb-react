@@ -35,11 +35,11 @@
     <meta name="twitter:image" content="https://ltweb.com.ar/og-image.jpg" />
     <meta name="theme-color" content="#111113" />
 
-    <!-- El fondo del hero es el elemento más grande de la primera pantalla, o
-         sea el que define el LCP. Al ser un background de CSS el navegador
-         recién se entera de que existe cuando terminó de bajar y parsear la
-         hoja de estilos; precargarlo le permite pedirlo desde el arranque. -->
-    <link rel="preload" as="image" href="/images/bg-6.webp" fetchpriority="high" />
+    <!-- Acá se precargaba bg-6.webp con prioridad alta. Se sacó: esa imagen
+         es el fondo del hero ANTERIOR, que hoy solo vive en /clasico. En la
+         home actual no se muestra nunca, así que eran 60 KB bajados con la
+         máxima prioridad en cada visita, compitiendo por ancho de banda con
+         las imágenes que sí se ven. -->
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -153,6 +153,50 @@
          al instante lleva Cache-Control no-cache desde el .htaccess. Sin eso
          quedaba atrapado en la regla que cachea todo .js por un año. -->
     <script src="/data/projects.js"></script>
+
+    <!-- Precarga de las primeras portadas del muro.
+
+         Estas imágenes las dibuja React, así que el navegador se entera de que
+         existen recién cuando bajó, parseó y ejecutó todo el JavaScript. Hasta
+         ese momento la conexión está ociosa. Una de ellas es el elemento más
+         grande de la primera pantalla, o sea la que define el LCP.
+
+         Acá se piden apenas se leen los datos —que ya están en memoria por el
+         script de arriba, sin ningún pedido de red—, o sea unos cientos de
+         milisegundos antes.
+
+         Van solo tres: precargar las doce sería peor, porque compiten entre
+         ellas y las tres primeras tardarían más en llegar. -->
+    <script>
+      (function () {
+        try {
+          var d = window.__LTWEB_DATOS__
+          if (!d || !d.proyectos) return
+
+          /* Misma regla que src/lib/imagen.js: el muro usa la copia chica. */
+          function chica(u) {
+            if (!u) return u
+            if (u.indexOf('/images/pf-') === 0) return u.replace('/images/', '/images/muro/')
+            if (u.indexOf('/subidas/') === 0 && u.slice(-5) === '.webp') return u.slice(0, -5) + '-672.webp'
+            return u
+          }
+
+          d.proyectos
+            .filter(function (p) { return p.image })
+            .slice(0, 3)
+            .forEach(function (p) {
+              var l = document.createElement('link')
+              l.rel = 'preload'
+              l.as = 'image'
+              l.href = chica(p.image)
+              l.fetchPriority = 'high'
+              document.head.appendChild(l)
+            })
+        } catch (e) {
+          /* Si algo falla, el sitio carga igual: esto solo adelanta pedidos. */
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
