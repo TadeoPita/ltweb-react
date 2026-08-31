@@ -58,9 +58,23 @@ function cacheDe(ruta) {
    contra la cadena original no alcanza, porque hay muchas formas de escribir
    lo mismo (%2e%2e, barras dobles, etc). */
 function rutaSegura(base, pedida) {
-  const limpia = normalize(decodeURIComponent(pedida)).replace(/^(\.\.[/\\])+/, '')
+  let limpia
+  try {
+    limpia = normalize(decodeURIComponent(pedida)).replace(/^(\.\.[/\\])+/, '')
+  } catch {
+    /* decodeURIComponent revienta con un %ZZ mal formado. Antes eso tiraba el
+       pedido con un 500 en vez de responder "no encontrado". */
+    return null
+  }
+
   const completa = join(base, limpia)
-  return completa.startsWith(base) ? completa : null
+
+  /* Se compara contra base + separador, no solo contra base. Con startsWith a
+     secas, una carpeta hermana que empiece igual —dist y dist-privado— pasaba
+     la comprobación. Acá no llega a ser explotable porque join siempre resuelve
+     dentro de base, pero la comprobación tiene que ser correcta por sí sola y
+     no depender de lo que hace la línea de arriba. */
+  return completa === base || completa.startsWith(base + sep) ? completa : null
 }
 
 async function servirArchivo(res, ruta, urlOriginal) {
