@@ -19,6 +19,33 @@ const CAMPOS = [
 
 const LIMITE_IMAGEN = 25 * 1024 * 1024
 
+/* Comprueba de dónde viene un pedido que modifica algo.
+ *
+ * La cookie ya va con SameSite=Strict, que es la defensa principal contra que
+ * otra página abierta en el mismo navegador mande formularios usando tu
+ * sesión. Esto es la segunda capa, por dos motivos concretos: hay navegadores
+ * viejos que no respetan SameSite, y basta un error de configuración futuro
+ * para que esa bandera se pierda. Comprobar el origen no depende de ninguna de
+ * las dos cosas.
+ *
+ * Un pedido sin Origin ni Referer se deja pasar a propósito: así los mandan
+ * curl y las herramientas de línea de comandos, que no son un vector de CSRF
+ * —el ataque necesita el navegador de la víctima, y el navegador siempre manda
+ * uno de los dos. */
+function origenValido(req) {
+  const origen = req.headers.origin || req.headers.referer
+  if (!origen) return true
+
+  const host = req.headers.host
+  if (!host) return false
+
+  try {
+    return new URL(origen).host === host
+  } catch {
+    return false
+  }
+}
+
 function responder(res, codigo, datos, cabeceras = {}) {
   res.writeHead(codigo, {
     'Content-Type': 'application/json; charset=utf-8',
@@ -69,6 +96,9 @@ export async function manejarApi(req, res, ctx) {
   const { raiz, raizPublica, rutas: r, produccion, pedirSesion } = ctx
 
   try {
+    if (metodo !== 'GET' && !origenValido(req)) {
+      return responder(res, 403, { error: 'Origen no permitido.' }), true
+    }
     // -----------------------------------------------------------------------
     // Acceso
     // -----------------------------------------------------------------------
@@ -96,19 +126,21 @@ export async function manejarApi(req, res, ctx) {
     }
 
     // -----------------------------------------------------------------------
-    // Lectura: abierta. Es el mismo contenido que ya está publicado.
-    // -----------------------------------------------------------------------
-
-    if (ruta === '/proyectos' && metodo === 'GET') {
-      return responder(res, 200, await leerDatos(r)), true
-    }
-
-    // -----------------------------------------------------------------------
-    // De acá para abajo hace falta sesión.
+    // De acá para abajo hace falta sesión, la lectura incluida.
+    //
+    // Leer también, aunque parezca de más: este archivo no es lo publicado
+    // sino el borrador. Un proyecto a medio cargar, con el nombre de un
+    // cliente que todavía no salió al aire, estaba a la vista de cualquiera
+    // que pidiera /api/proyectos. El sitio no lo necesita —lee
+    // data/projects.js, que es estático—, así que cerrarlo no cuesta nada.
     // -----------------------------------------------------------------------
 
     if (pedirSesion && !sesionValida(leerCookieSesion(req))) {
       return responder(res, 401, { error: 'Sesión vencida. Volvé a entrar.' }), true
+    }
+
+    if (ruta === '/proyectos' && metodo === 'GET') {
+      return responder(res, 200, await leerDatos(r)), true
     }
 
     if (ruta === '/proyectos' && metodo === 'POST') {

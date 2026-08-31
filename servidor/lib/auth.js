@@ -26,6 +26,22 @@ const BLOQUEO_MS = 15 * 60 * 1000
 const sesiones = new Map() // id -> { creada, vista }
 const intentos = new Map() // ip -> [tiempos]
 
+/* Contador global de fallos, sin mirar de dónde vienen.
+ *
+ * El bloqueo por IP solo, tal como estaba, no servía para nada: la IP se lee
+ * de X-Forwarded-For, que es una cabecera que manda el cliente y cualquiera
+ * puede inventar. Probado: catorce intentos fallidos cambiando la cabecera en
+ * cada uno y no bloqueaba nunca. O sea que se podía probar el diccionario
+ * entero sin freno.
+ *
+ * Este contador no depende de ninguna cabecera, así que no se puede esquivar.
+ * El umbral es más alto que el de por IP para no dejar afuera a la persona que
+ * de verdad se olvidó la contraseña, pero corta cualquier intento sistemático:
+ * con scrypt cada prueba cuesta cerca de 100 ms, así que 40 fallos en 15
+ * minutos ya es una máquina probando, no una persona. */
+const FALLOS_GLOBALES_MAXIMOS = 40
+let fallosGlobales = []
+
 // ---------------------------------------------------------------------------
 // Contraseña
 // ---------------------------------------------------------------------------
@@ -81,8 +97,21 @@ export async function hayClaveConfigurada(raiz) {
 // ---------------------------------------------------------------------------
 
 function estaBloqueado(ip) {
+  fallosGlobales = fallosGlobales.filter((t) => Date.now() - t < BLOQUEO_MS)
+  if (fallosGlobales.length >= FALLOS_GLOBALES_MAXIMOS) return true
+
   const lista = (intentos.get(ip) ?? []).filter((t) => Date.now() - t < BLOQUEO_MS)
   intentos.set(ip, lista)
+
+  /* El Map crecía sin techo: cada IP inventada dejaba su entrada para siempre,
+     así que mandar cabeceras al azar era una forma de llenar la memoria. Se
+     limpian las que ya no tienen fallos vigentes. */
+  if (intentos.size > 5000) {
+    for (const [k, v] of intentos) {
+      if (!v.some((t) => Date.now() - t < BLOQUEO_MS)) intentos.delete(k)
+    }
+  }
+
   return lista.length >= INTENTOS_MAXIMOS
 }
 
@@ -90,6 +119,7 @@ function anotarFallo(ip) {
   const lista = intentos.get(ip) ?? []
   lista.push(Date.now())
   intentos.set(ip, lista)
+  fallosGlobales.push(Date.now())
 }
 
 // ---------------------------------------------------------------------------
@@ -175,8 +205,12 @@ export function cookieBorrada(produccion) {
 }
 
 export function ipDe(req) {
-  /* Detrás del proxy de Hostinger, REMOTE_ADDR es el proxy y no el visitante.
-     El primer valor de X-Forwarded-For es la IP real. */
+  /* Detrás del proxy de Hostinger, REMOTE_ADDR es el proxy y no el visitante,
+     así que hace falta mirar X-Forwarded-For.
+  
+     OJO: esta cabecera la manda el cliente y se puede inventar. Sirve para
+     agrupar visitantes normales, NO como control de seguridad. Por eso el
+     freno real es el contador global de más arriba, que no la mira. */
   const reenviada = req.headers['x-forwarded-for']
   if (typeof reenviada === 'string' && reenviada.length) {
     return reenviada.split(',')[0].trim()

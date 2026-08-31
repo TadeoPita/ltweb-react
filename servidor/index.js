@@ -1,7 +1,7 @@
 import { createServer } from 'node:http'
 import { createReadStream } from 'node:fs'
 import { stat, mkdir } from 'node:fs/promises'
-import { resolve, join, normalize, extname } from 'node:path'
+import { resolve, join, normalize, extname, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { manejarApi } from './lib/api.js'
 import { rutasProduccion } from './lib/datos.js'
@@ -135,6 +135,18 @@ const servidor = createServer(async (req, res) => {
 
 await mkdir(SUBIDAS, { recursive: true })
 await mkdir(join(RAIZ, 'datos'), { recursive: true })
+
+/* Sin esto, el puerto ocupado tira un volcado de pila de veinte lineas que no
+   dice que hacer. Pasa al probar en local con otra instancia levantada. */
+servidor.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`
+  El puerto ${PUERTO} ya esta en uso. Cerra el otro proceso o usa: PORT=otro npm start
+`)
+    process.exit(1)
+  }
+  throw err
+})
 
 servidor.listen(PUERTO, () => {
   console.log(`\n  LTWEB en http://localhost:${PUERTO}`)
