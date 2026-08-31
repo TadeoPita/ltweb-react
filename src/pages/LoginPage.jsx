@@ -63,13 +63,14 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wide text-ink/50 mb-1.5">
-                Email
+                Usuario
               </label>
               <input
-                type="email"
+                type="text"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@email.com"
+                placeholder="admin"
+                autoComplete="username"
                 className="w-full rounded-lg border border-black/10 bg-white px-4 py-2.5 text-sm font-body focus:outline-none focus:border-ink/30 focus:ring-2 focus:ring-ink/10 transition-all"
                 disabled={loading}
               />

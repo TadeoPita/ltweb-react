@@ -3,66 +3,73 @@ import { useLocation } from 'react-router-dom'
 
 const AuthContext = createContext(null)
 
-/* Firebase Auth pesa unos 130 KB y lo único que lo necesita es el panel.
-   Como este provider envuelve toda la app, antes se descargaba en la primera
-   visita a cualquier página. Ahora el módulo se pide recién cuando la ruta lo
-   pide: en el sitio público no se baja nunca. La promesa se guarda para que
-   varias llamadas compartan la misma carga. */
-let firebasePromise
-function loadFirebase() {
-  firebasePromise ??= Promise.all([import('firebase/auth'), import('../lib/firebase')]).then(
-    ([mod, { auth }]) => ({ ...mod, auth }),
-  )
-  return firebasePromise
-}
-
+/* Sesión del panel.
+ *
+ * Antes esto era Firebase Auth: 154 KB de SDK y una cuenta en un servicio
+ * externo, para autenticar las escrituras contra Supabase. Sin Supabase, no
+ * queda nada que justifique esa dependencia — el panel ahora escribe contra
+ * nuestro propio servidor, así que la sesión también la lleva él.
+ *
+ * La sesión vive en una cookie httponly que pone el servidor. Este componente
+ * nunca ve el identificador: solo pregunta "¿hay sesión?" y muestra una cosa u
+ * otra. Que JavaScript no pueda leer la cookie es justamente el punto — si
+ * algún día se cuela un XSS, no alcanza para robarse la sesión.
+ */
 export function AuthProvider({ children }) {
   const { pathname } = useLocation()
-  const needsAuth = pathname.startsWith('/admin') || pathname.startsWith('/login')
+  const necesitaSesion = pathname.startsWith('/admin') || pathname.startsWith('/login')
+
   const [currentUser, setCurrentUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    // Fuera de /admin y /login no hay sesión que observar: cortamos el estado
-    // de carga sin tocar Firebase.
-    if (!needsAuth) {
+    /* Fuera de /admin y /login no hay nada que consultar: se corta el estado de
+       carga sin hacer ningún pedido. */
+    if (!necesitaSesion) {
       setLoading(false)
       return
     }
 
-    let cancelled = false
-    let unsubscribe = () => {}
+    let cancelado = false
 
-    loadFirebase().then(({ onAuthStateChanged, auth }) => {
-      if (cancelled) return
-      unsubscribe = onAuthStateChanged(auth, (user) => {
-        setCurrentUser(user)
+    fetch('/api/sesion')
+      .then((r) => r.json())
+      .then((d) => {
+        if (cancelado) return
+        /* pideClave en false es el modo desarrollo: el panel corre en tu
+           máquina y entra directo. */
+        setCurrentUser(d.activa ? { usuario: 'panel' } : null)
         setLoading(false)
       })
-    })
+      .catch(() => {
+        if (!cancelado) setLoading(false)
+      })
 
     return () => {
-      cancelled = true
-      unsubscribe()
+      cancelado = true
     }
-  }, [needsAuth])
+  }, [necesitaSesion])
 
-  async function signIn(email, password) {
+  async function signIn(usuario, clave) {
     setError(null)
     try {
-      const { signInWithEmailAndPassword, auth } = await loadFirebase()
-      await signInWithEmailAndPassword(auth, email, password)
-      return true
-    } catch (err) {
-      const errorMsg = {
-        'auth/user-not-found': 'Usuario no encontrado',
-        'auth/wrong-password': 'Contraseña incorrecta',
-        'auth/invalid-email': 'Email inválido',
-        'auth/user-disabled': 'Usuario deshabilitado',
-      }[err.code] || err.message
+      const res = await fetch('/api/entrar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, clave }),
+      })
+      const d = await res.json()
 
-      setError(errorMsg)
+      if (!res.ok) {
+        setError(d.error || 'No se pudo entrar.')
+        return false
+      }
+
+      setCurrentUser({ usuario })
+      return true
+    } catch {
+      setError('No se pudo contactar al servidor.')
       return false
     }
   }
@@ -70,28 +77,20 @@ export function AuthProvider({ children }) {
   async function logout() {
     setError(null)
     try {
-      const { signOut, auth } = await loadFirebase()
-      await signOut(auth)
-    } catch (err) {
-      setError(err.message)
+      await fetch('/api/salir', { method: 'POST' })
+    } catch {
+      /* Si el pedido falla igual se cierra del lado del navegador. */
     }
+    setCurrentUser(null)
   }
 
-  const value = {
-    currentUser,
-    loading,
-    error,
-    signIn,
-    logout,
-  }
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={{ currentUser, loading, error, signIn, logout }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth debe usarse dentro de AuthProvider')
-  }
-  return context
+  return useContext(AuthContext)
 }

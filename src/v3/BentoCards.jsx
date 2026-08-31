@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { usarClicSinArrastre } from './usarClicSinArrastre'
 import { ArrowUpRight, MessageCircle, SlidersHorizontal, Zap } from 'lucide-react'
 import { WHATSAPP_URL, INSTAGRAM_URL } from '../data/content'
+import { chica } from '../lib/imagen'
 
 /* Tarjetas del bento de la v3.
 
@@ -55,7 +56,7 @@ export function CardProyecto({ id, nombre, tipo, imagen }) {
     <Link draggable={false} to={`/proyecto/${id}`} {...clic} className={`${BASE} group block bg-black`}>
       <img
         draggable={false}
-        src={imagen}
+        src={chica(imagen)}
         alt={nombre}
         loading="lazy"
         className="absolute inset-0 h-full w-full object-cover object-top opacity-70 transition-all duration-700 ease-out group-hover:scale-[1.04] group-hover:opacity-90"

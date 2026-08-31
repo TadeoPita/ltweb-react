@@ -1,0 +1,137 @@
+import { readFile, writeFile, mkdir, rename } from 'node:fs/promises'
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
+
+/* Persistencia del contenido.
+ *
+ * Reemplaza a Supabase. Los proyectos viven en datos/proyectos.json, un
+ * archivo del servidor, y no en una base en la nube. Para el volumen que
+ * maneja esto —decenas de proyectos, una persona editando— una base de datos
+ * es infraestructura de más: un archivo se lee entero en un milisegundo, se
+ * versiona con git, se respalda copiándolo y no tiene plan gratis que se pueda
+ * terminar.
+ *
+ * El archivo NUNCA lo lee el visitante. Lo lee el panel. Lo que ve el sitio es
+ * data/projects.js, que se genera al publicar.
+ */
+
+const AJUSTES_POR_DEFECTO = { variant: 'gallery', pageVariant: 'classic', heroVariant: 'centered' }
+
+export function rutas(raiz) {
+  return {
+    datos: resolve(raiz, 'datos/proyectos.json'),
+    carpetaDatos: resolve(raiz, 'datos'),
+    publicado: resolve(raiz, 'public/data/projects.js'),
+    carpetaPublicado: resolve(raiz, 'public/data'),
+  }
+}
+
+/* En producción el sitio ya está construido, así que publicar tiene que
+   escribir dentro de dist/ y no de public/, que ahí no lo lee nadie. */
+export function rutasProduccion(raiz) {
+  return {
+    datos: resolve(raiz, 'datos/proyectos.json'),
+    carpetaDatos: resolve(raiz, 'datos'),
+    publicado: resolve(raiz, 'dist/data/projects.js'),
+    carpetaPublicado: resolve(raiz, 'dist/data'),
+  }
+}
+
+export async function leerDatos(r) {
+  if (!existsSync(r.datos)) {
+    return { ajustes: { ...AJUSTES_POR_DEFECTO }, proyectos: [] }
+  }
+  try {
+    const crudo = JSON.parse(await readFile(r.datos, 'utf8'))
+    return {
+      ajustes: { ...AJUSTES_POR_DEFECTO, ...(crudo.ajustes ?? {}) },
+      proyectos: Array.isArray(crudo.proyectos) ? crudo.proyectos : [],
+    }
+  } catch (err) {
+    console.error('[datos] proyectos.json ilegible:', err.message)
+    return { ajustes: { ...AJUSTES_POR_DEFECTO }, proyectos: [] }
+  }
+}
+
+/* Se escribe en un temporal y recién al final se renombra. rename dentro del
+   mismo disco es atómico: o queda el archivo viejo entero o el nuevo entero,
+   nunca la mitad de cada uno. Si el proceso muere a mitad de una escritura
+   directa, se pierde el portfolio completo. */
+export async function guardarDatos(r, datos) {
+  await mkdir(r.carpetaDatos, { recursive: true })
+  const tmp = r.datos + '.tmp'
+  await writeFile(tmp, JSON.stringify(datos, null, 2), 'utf8')
+  await rename(tmp, r.datos)
+}
+
+/* Convierte un texto en algo que sirva como URL: /proyecto/lo-que-sea.
+   Los puntos y las barras importan especialmente: un id como "../algo" no
+   sería una ficha sino una ruta hacia otro lado. */
+export function comoId(texto) {
+  const base = String(texto ?? '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 64)
+  return base || 'proyecto-' + Math.random().toString(36).slice(2, 8)
+}
+
+export function idLibre(proyectos, base) {
+  const id = comoId(base)
+  if (!proyectos.some((p) => p.id === id)) return id
+  let n = 2
+  while (proyectos.some((p) => p.id === `${id}-${n}`)) n++
+  return `${id}-${n}`
+}
+
+/* Escribe el archivo que lee el sitio.
+ *
+ * Sale como .js y no como .json para que entre con una etiqueta <script> en el
+ * <head>: así los proyectos ya están en memoria cuando React arranca, y no hay
+ * pedido de red, ni pantalla de carga, ni salto de maqueta. Con JSON habría
+ * que ir a buscarlo después de que la página cargó, que es exactamente lo que
+ * hacía la versión con Supabase. */
+export async function publicar(r) {
+  const datos = await leerDatos(r)
+
+  const salida = {
+    generado: new Date().toISOString(),
+    ajustes: datos.ajustes,
+    proyectos: datos.proyectos.map((p) => ({
+      id: p.id,
+      name: p.name ?? '',
+      type: p.type ?? '',
+      image: p.image ?? '',
+      url: p.url ?? '',
+      size: p.size ?? 'normal',
+      home: p.home !== false,
+      label: p.label || null,
+      blurred: Boolean(p.blurred),
+      category: p.category ?? '',
+      problem: p.problem ?? '',
+      solution: p.solution ?? '',
+      description: p.description ?? '',
+      services: p.services ?? '',
+      gallery: Array.isArray(p.gallery) ? p.gallery : [],
+      beforeImage: p.beforeImage ?? '',
+    })),
+  }
+
+  /* < y > salen escapados para que un texto que contenga "</script>" no pueda
+     cerrar la etiqueta y colar HTML en la página. */
+  const json = JSON.stringify(salida).replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
+
+  const contenido =
+    `/* Generado por el panel el ${new Date().toLocaleString('es-AR')}.\n` +
+    `   No editar a mano: se pisa entero en la próxima publicación. */\n` +
+    `window.__LTWEB_DATOS__ = ${json};\n`
+
+  await mkdir(r.carpetaPublicado, { recursive: true })
+  const tmp = r.publicado + '.tmp'
+  await writeFile(tmp, contenido, 'utf8')
+  await rename(tmp, r.publicado)
+
+  return salida.proyectos.length
+}

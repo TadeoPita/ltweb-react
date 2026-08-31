@@ -4,6 +4,7 @@ import { ArrowUpRight, Plus } from 'lucide-react'
 import MotionLink, { projectPath } from './MotionLink'
 import { useLightbox } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
+import { chica, mediana } from '../lib/imagen'
 
 /* Diseño alternativo del portfolio: lista tipográfica grande.
    Al pasar el mouse por un proyecto, aparece una preview flotante
@@ -44,7 +45,7 @@ export default function PortfolioShowcase({ items }) {
             {activeItem && (
               <motion.img
                 key={activeItem.id}
-                src={activeItem.image}
+                src={mediana(activeItem.image)}
                 alt=""
                 initial={{ opacity: 0, scale: 0.82, rotate: -4 }}
                 animate={{ opacity: 1, scale: 1, rotate: 3 }}
@@ -75,7 +76,7 @@ export default function PortfolioShowcase({ items }) {
               <div className="flex items-center gap-5 min-w-0">
                 {/* Thumb fijo en mobile/tablet */}
                 <img
-                  src={p.image}
+                  src={chica(p.image)}
                   alt=""
                   loading="lazy"
                   className="lg:hidden w-20 h-14 object-cover object-top rounded-lg border border-white/10 shrink-0"

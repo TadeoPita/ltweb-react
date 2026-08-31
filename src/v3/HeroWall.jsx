@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { WHATSAPP_URL } from '../data/content'
 import { usePortfolio } from '../data/portfolioStore'
+import { chica } from '../lib/imagen'
 
 /* Hero.
 
@@ -39,17 +40,13 @@ import { usePortfolio } from '../data/portfolioStore'
    /images/muro, que es el doble de lo que se dibuja (suficiente para pantallas
    densas). Las que vienen de la base se dejan como estan: no se pueden
    redimensionar de este lado, y por eso el muro las usa ultimas. */
-function miniatura(url) {
-  if (!url) return url
-  return url.startsWith('/images/pf-') ? url.replace('/images/', '/images/muro/') : url
-}
 
 function Tarjeta({ p }) {
   return (
     <div className="muro-tarjeta relative h-[168px] w-[268px] shrink-0 overflow-hidden rounded-xl border border-white/10 bg-white/5 sm:h-[210px] sm:w-[336px]">
       <img
         draggable={false}
-        src={miniatura(p.image)}
+        src={chica(p.image)}
         alt=""
         aria-hidden
         loading="lazy"
@@ -90,15 +87,10 @@ export default function HeroWall() {
      dibujadas a la vez detras del titulo. El fondo se ve igual con doce —
      nadie las cuenta— y el navegador descomprime menos de la mitad.
 
-     Van primero las que tienen miniatura, que son las del repo. Asi las que
-     vienen de la base, que pesan mucho mas y no se pueden achicar de este
-     lado, quedan afuera mientras haya locales suficientes. */
+     Ya no hace falta priorizar las del repositorio: las que venian de afuera
+     se trajeron al proyecto y tienen las mismas tres medidas que el resto. */
   const filas = useMemo(() => {
-    const conImagen = items
-      .filter((p) => p.image)
-      .slice()
-      .sort((a, b) => Number(b.image.startsWith('/images/pf-')) - Number(a.image.startsWith('/images/pf-')))
-      .slice(0, 12)
+    const conImagen = items.filter((p) => p.image).slice(0, 12)
     if (!conImagen.length) return [[], [], []]
     const porFila = Math.ceil(conImagen.length / 3)
     return [
