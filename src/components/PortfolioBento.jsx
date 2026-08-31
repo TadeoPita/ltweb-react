@@ -4,7 +4,7 @@ import { ArrowUpRight, Plus } from 'lucide-react'
 import MotionLink, { projectPath } from './MotionLink'
 import { useProjectCard } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
-import { mediana } from '../lib/imagen'
+import { mediana, textoPortada } from '../lib/imagen'
 
 /* Cuarta versión del portfolio: mosaico tipo "bento".
    El tamaño de cada card sale del campo "size" que se edita en /admin,
@@ -60,7 +60,7 @@ function BentoCard({ project, index }) {
       <motion.div {...card.imageProps} className="absolute inset-0">
         <img
           src={mediana(project.image)}
-          alt={project.name}
+          alt={textoPortada(project)}
           loading="lazy"
           className={
             'w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.06] ' +

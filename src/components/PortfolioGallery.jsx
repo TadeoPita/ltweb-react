@@ -4,7 +4,7 @@ import { ArrowUpRight, Plus } from 'lucide-react'
 import MotionLink, { projectPath } from './MotionLink'
 import { useProjectCard } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
-import { mediana } from '../lib/imagen'
+import { mediana, textoPortada } from '../lib/imagen'
 
 /* Tercera versión del portfolio: galería horizontal cinemática.
    Las imágenes se ven de entrada (sin hover). Al scrollear verticalmente,
@@ -26,7 +26,7 @@ function GalleryCard({ project, index, scope }) {
       <motion.div {...card.imageProps} className="relative h-[420px] sm:h-[460px] overflow-hidden">
         <img
           src={mediana(project.image)}
-          alt={project.name}
+          alt={textoPortada(project)}
           loading="lazy"
           className={
             'w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04] ' +

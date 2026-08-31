@@ -34,3 +34,20 @@ export function mediana(url) {
   if (url.startsWith('/subidas/') && url.endsWith('.webp')) return url.slice(0, -5) + '-900.webp'
   return url
 }
+
+/* Texto alternativo de una portada.
+ *
+ * "AURALYS" a secas describe de quien es la captura, pero no que es. Un lector
+ * de pantalla escucha el nombre de un cliente sin contexto, y para Google es
+ * una palabra suelta que no dice a que se dedica el sitio.
+ *
+ * "Sitio web disenado por LTWEB para AURALYS - Salud" dice las tres cosas: que
+ * es la imagen, quien lo hizo y de que rubro. El rubro sale del proyecto, asi
+ * que no hay nada que escribir a mano.
+ */
+export function textoPortada(proyecto) {
+  if (!proyecto?.name) return ''
+  const tipo = (proyecto.type || 'Sitio web').toLowerCase()
+  const rubro = proyecto.category ? ` — ${proyecto.category}` : ''
+  return `${tipo.charAt(0).toUpperCase()}${tipo.slice(1)} diseñada por LTWEB para ${proyecto.name}${rubro}`
+}

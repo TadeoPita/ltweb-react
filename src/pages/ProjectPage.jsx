@@ -8,6 +8,7 @@ import { useSeo, useJsonLd } from '../lib/seo'
 import BeforeAfter from '../components/BeforeAfter'
 import { WHATSAPP_URL } from '../data/content'
 import NotFoundPage from './NotFoundPage'
+import { textoPortada } from '../lib/imagen'
 
 const ease = [0.22, 1, 0.36, 1]
 
@@ -39,6 +40,26 @@ export default function ProjectPage() {
     window.scrollTo(0, 0)
   }, [id])
 
+  /* Una ficha sin nada escrito no entra al índice.
+
+     De los proyectos cargados, la mayoría todavía no tiene problema, solución
+     ni descripción: esas páginas muestran "Estamos preparando el detalle" y son
+     casi idénticas entre sí. Ya quedaban afuera del sitemap, pero igual se
+     llegaba a ellas desde /portfolio, así que Google las encontraba lo mismo.
+
+     Veintitrés páginas casi vacías no suman: diluyen la calidad promedio del
+     sitio y compiten entre ellas por las mismas palabras. La página sigue
+     abierta para quien entre por el enlace —follow deja pasar el enlace al
+     sitio del cliente—, pero no se ofrece a buscadores.
+
+     En cuanto le escribas la ficha a un proyecto desde el panel, entra solo:
+     esto se calcula del contenido, no hay nada que marcar a mano. */
+  const tieneFicha = Boolean(
+    (project?.problem ?? '').trim() ||
+      (project?.solution ?? '').trim() ||
+      (project?.description ?? '').trim(),
+  )
+
   /* La ficha aporta su propio título, descripción e imagen: así cada
      proyecto se comparte con su propia portada en vez de la genérica. */
   useSeo({
@@ -50,6 +71,7 @@ export default function ProjectPage() {
     image: project?.image,
     path: `/proyecto/${id}`,
     type: 'article',
+    noindex: !tieneFicha,
   })
 
   /* El breadcrumb le dice a Google dónde vive esta página, y aparece como
@@ -146,7 +168,7 @@ export default function ProjectPage() {
         >
           <img
             src={project.image}
-            alt={project.name}
+            alt={textoPortada(project)}
             className={'w-full h-auto object-cover object-top ' + (project.blurred ? 'blur-[6px] scale-105' : '')}
           />
           {project.label && (
@@ -194,7 +216,7 @@ export default function ProjectPage() {
                 <BeforeAfter
                   before={project.beforeImage}
                   after={project.image}
-                  alt={project.name}
+                  alt={textoPortada(project)}
                   className="mt-4"
                 />
               </div>
@@ -230,7 +252,7 @@ export default function ProjectPage() {
                     >
                       <img
                         src={photo.url}
-                        alt={`${project.name} — imagen ${i + 1}`}
+                        alt={`${project.name}, imagen ${i + 1} del proyecto`}
                         loading="lazy"
                         className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                       />

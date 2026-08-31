@@ -3,7 +3,7 @@ import { Plus } from 'lucide-react'
 import MotionLink, { projectPath } from './MotionLink'
 import { useProjectCard } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
-import { mediana } from '../lib/imagen'
+import { mediana, textoPortada } from '../lib/imagen'
 
 export function ProjectCard({ project, className = '' }) {
   const card = useProjectCard(project, 'grid')
@@ -23,7 +23,7 @@ export function ProjectCard({ project, className = '' }) {
       <motion.div {...card.imageProps} className="clip-fix relative mt-5 rounded-xl overflow-hidden flex-1">
         <motion.img
           src={mediana(project.image)}
-          alt={project.name}
+          alt={textoPortada(project)}
           loading="lazy"
           className={
             'w-full h-full object-cover object-top group-hover:scale-[1.025] transition-transform duration-700 ease-out ' +

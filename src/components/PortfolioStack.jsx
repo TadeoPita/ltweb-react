@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Plus } from 'lucide-react'
 import MotionLink, { projectPath } from './MotionLink'
 import { useLightbox } from './ProjectLightbox'
 import { WHATSAPP_URL } from '../data/content'
-import { mediana } from '../lib/imagen'
+import { mediana, textoPortada } from '../lib/imagen'
 
 /* Quinta versión del portfolio: mazo de cards arrastrables, como cartas.
    La de encima se arrastra a los costados (con física real: elástico si
@@ -17,7 +17,7 @@ function CardVisual({ project }) {
     <div className="clip-fix absolute inset-0 rounded-3xl overflow-hidden border border-white/10 bg-white/[0.03] shadow-2xl shadow-black/50">
       <img
         src={mediana(project.image)}
-        alt={project.name}
+        alt={textoPortada(project)}
         draggable={false}
         loading="lazy"
         className={
