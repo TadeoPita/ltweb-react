@@ -64,7 +64,68 @@ function itemsFromRows(rows) {
     }))
 }
 
+/* Datos publicados por el panel PHP.
+
+   El panel escribe /data/projects.js, que index.html carga con una etiqueta
+   <script> comun antes del bundle. O sea que cuando React arranca los
+   proyectos ya estan en memoria: no hay pedido de red, ni pantalla de carga,
+   ni salto de maqueta cuando llegan.
+
+   Si el archivo no esta —en desarrollo, o antes de la primera publicacion— se
+   devuelve null y sigue el camino de siempre contra Supabase. Los dos
+   conviven a proposito: asi el sitio no depende de que la mudanza este
+   terminada para seguir funcionando. */
+function datosPublicados() {
+  if (typeof window === 'undefined') return null
+  const d = window.__LTWEB_DATOS__
+  if (!d || !Array.isArray(d.proyectos) || d.proyectos.length === 0) return null
+  return d
+}
+
+/* El panel ya entrega los campos con los nombres del sitio; lo unico que hace
+   falta es asegurar los tipos y poner los valores por defecto. */
+function itemsPublicados(proyectos) {
+  return proyectos.map((p) => ({
+    id: p.id,
+    name: p.name ?? '',
+    type: p.type ?? '',
+    image: p.image ?? '',
+    url: p.url ?? '',
+    size: p.size ?? 'normal',
+    home: p.home !== false,
+    label: p.label || undefined,
+    blurred: Boolean(p.blurred),
+    category: p.category ?? '',
+    problem: p.problem ?? '',
+    solution: p.solution ?? '',
+    description: p.description ?? '',
+    services: p.services ?? '',
+    /* La galeria del panel viejo eran objetos {url, path} y la del nuevo son
+       rutas sueltas. Se aceptan las dos para que un export viejo importado no
+       deje las fotos invisibles. */
+    gallery: Array.isArray(p.gallery)
+      ? p.gallery.map((g) => (typeof g === 'string' ? { url: g } : g)).filter((g) => g && g.url)
+      : [],
+    beforeImage: p.beforeImage ?? '',
+    beforeImagePath: '',
+  }))
+}
+
 async function loadInitial() {
+  const publicado = datosPublicados()
+  if (publicado) {
+    state = {
+      variant: publicado.ajustes?.variant ?? 'gallery',
+      pageVariant: publicado.ajustes?.pageVariant ?? 'classic',
+      heroVariant: publicado.ajustes?.heroVariant ?? 'centered',
+      items: itemsPublicados(publicado.proyectos),
+      loading: false,
+      error: null,
+    }
+    emit()
+    return
+  }
+
   let items, settingsRows
   try {
     ;[items, settingsRows] = await Promise.all([

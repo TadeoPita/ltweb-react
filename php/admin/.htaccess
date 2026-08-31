@@ -1,0 +1,20 @@
+# Nada de esta carpeta se abre desde el navegador.
+#
+# Acá viven config.php (con la contraseña de la base), las librerías y la
+# vista. Ninguno esta pensado para pedirse directo: admin.php los incluye
+# desde el servidor, y para eso no hace falta que sean accesibles por HTTP.
+#
+# Sin esto, alguien que pruebe /admin/config.php podria llegar a ver las
+# credenciales si el servidor sirviera el archivo como texto (pasa cuando PHP
+# se cae o se desconfigura).
+
+# Apache 2.4
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>
+
+# Apache 2.2, por si el hosting es viejo
+<IfModule !mod_authz_core.c>
+  Order allow,deny
+  Deny from all
+</IfModule>

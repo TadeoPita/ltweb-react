@@ -78,4 +78,18 @@
   <FilesMatch "\.(html|json|xml|webmanifest)$">
     Header set Cache-Control "no-cache, must-revalidate"
   </FilesMatch>
+
+  # data/projects.js es la excepción a la regla de arriba, y es importante.
+  #
+  # Los assets de dist llevan un hash en el nombre, por eso se pueden cachear
+  # un año: si cambian, cambia la URL. projects.js no: lo pisa el panel cada
+  # vez que se publica y siempre se llama igual. Con la regla genérica de .js
+  # quedaba cacheado un año como "immutable", así que publicar no se habría
+  # visto nunca en el navegador de alguien que ya hubiera entrado al sitio.
+  #
+  # Va después del bloque anterior a propósito: cuando dos reglas de mod_headers
+  # aplican al mismo archivo, gana la última.
+  <Files "projects.js">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </Files>
 </IfModule>

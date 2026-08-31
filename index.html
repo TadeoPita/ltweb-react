@@ -141,6 +141,18 @@
         ]
       }
     </script>
+
+    <!-- Proyectos publicados desde el panel.
+
+         Va acá arriba, sin defer ni module, para que se ejecute antes que el
+         bundle: cuando React arranca, los proyectos ya están en memoria. Eso
+         evita el pedido de red, la pantalla de carga y el salto de maqueta que
+         había cuando llegaban después.
+
+         El archivo se llama siempre igual, así que para que publicar se vea
+         al instante lleva Cache-Control no-cache desde el .htaccess. Sin eso
+         quedaba atrapado en la regla que cachea todo .js por un año. -->
+    <script src="/data/projects.js"></script>
   </head>
   <body>
     <div id="root"></div>
