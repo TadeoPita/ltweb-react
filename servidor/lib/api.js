@@ -1,6 +1,6 @@
 import { leerDatos, guardarDatos, publicar, idLibre, comoId } from './datos.js'
 import { guardarImagen, borrarImagen } from './imagenes.js'
-import { entrar, salir, sesionValida, leerCookieSesion, cookieSesion, cookieBorrada, ipDe, hayClaveConfigurada } from './auth.js'
+import { entrar, salir, sesionValida, leerCookieSesion, cookieSesion, cookieBorrada, ipDe, estadoDeLaClave } from './auth.js'
 
 /* Las rutas del panel.
  *
@@ -118,9 +118,14 @@ export async function manejarApi(req, res, ctx) {
     }
 
     if (ruta === '/sesion' && metodo === 'GET') {
+      const clave = await estadoDeLaClave(raiz)
       return responder(res, 200, {
         activa: !pedirSesion || sesionValida(leerCookieSesion(req)),
-        configurada: await hayClaveConfigurada(raiz),
+        configurada: clave.configurada,
+        /* completa en false significa que la variable llegó cortada. Suele ser
+           la shell comiéndose lo que va después de un "$". Sin este dato, el
+           sintoma era "usuario o contraseña incorrectos" sin ninguna pista. */
+        completa: clave.completa,
         pideClave: pedirSesion,
       }), true
     }

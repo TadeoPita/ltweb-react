@@ -46,18 +46,47 @@ let fallosGlobales = []
 // Contraseña
 // ---------------------------------------------------------------------------
 
-/** Formato: scrypt$<sal en hex>$<hash en hex> */
+/* Formato: scrypt.<sal en hex>.<hash en hex>
+ *
+ * El separador es un punto y no un signo peso, que es lo habitual en bcrypt.
+ * La razón es concreta y costó un rato encontrarla: este hash se carga como
+ * variable de entorno en el hosting, y ahí el valor pasa por una shell. Un "$"
+ * seguido de texto se interpreta como nombre de variable, así que
+ *
+ *   scrypt$f96863b1$a4c2...   ->   scrypt
+ *
+ * El valor llegaba mutilado, la variable existía igual —o sea que el panel
+ * decía "configurada"— y todo intento de entrar fallaba con "usuario o
+ * contraseña incorrectos", sin ninguna pista de por qué.
+ *
+ * El punto no significa nada en ninguna shell ni en los formatos de
+ * configuración habituales. */
 export async function hashearClave(clave) {
   const sal = randomBytes(16)
   const hash = await scryptAsync(clave, sal, 64)
-  return `scrypt$${sal.toString('hex')}$${hash.toString('hex')}`
+  return `scrypt.${sal.toString('hex')}.${hash.toString('hex')}`
 }
 
 /* timingSafeEqual y no ===: compara en tiempo constante. Con === se puede
    deducir el hash byte por byte midiendo cuánto tarda en fallar. */
+/* Se aceptan los dos separadores: el punto que se usa ahora y el peso de los
+   hashes generados antes del cambio, para no dejar afuera a nadie que ya lo
+   tuviera cargado y sin mutilar. */
+function partirHash(guardado) {
+  const t = String(guardado ?? '')
+  const partes = t.includes('.') ? t.split('.') : t.split('$')
+  return partes.length === 3 && partes[0] === 'scrypt' ? partes : null
+}
+
+/** ¿El valor tiene forma de hash completo? Sirve para diagnosticar. */
+export function hashBienFormado(guardado) {
+  const p = partirHash(guardado)
+  return Boolean(p && /^[0-9a-f]{32}$/.test(p[1]) && /^[0-9a-f]{128}$/.test(p[2]))
+}
+
 async function verificarClave(clave, guardado) {
-  const partes = String(guardado ?? '').split('$')
-  if (partes.length !== 3 || partes[0] !== 'scrypt') return false
+  const partes = partirHash(guardado)
+  if (!partes) return false
 
   try {
     const sal = Buffer.from(partes[1], 'hex')
@@ -86,6 +115,17 @@ async function claveGuardada(raiz) {
   } catch {
     return null
   }
+}
+
+/* Devuelve si hay clave y si además está entera.
+ *
+ * La diferencia importa: antes esto solo decía "hay una variable cargada", y
+ * con el hash cortado por la shell respondía que sí mientras el login fallaba
+ * siempre. Ahora se puede ver la diferencia desde /api/sesion. */
+export async function estadoDeLaClave(raiz) {
+  const g = await claveGuardada(raiz)
+  if (!g) return { configurada: false, completa: false }
+  return { configurada: true, completa: hashBienFormado(g.hash) }
 }
 
 export async function hayClaveConfigurada(raiz) {

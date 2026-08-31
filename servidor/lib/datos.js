@@ -20,6 +20,7 @@ const AJUSTES_POR_DEFECTO = { variant: 'gallery', pageVariant: 'classic', heroVa
 export function rutas(raiz) {
   return {
     datos: resolve(raiz, 'datos/proyectos.json'),
+    semilla: resolve(raiz, 'datos/semilla.json'),
     carpetaDatos: resolve(raiz, 'datos'),
     publicado: resolve(raiz, 'public/data/projects.js'),
     carpetaPublicado: resolve(raiz, 'public/data'),
@@ -31,14 +32,40 @@ export function rutas(raiz) {
 export function rutasProduccion(raiz) {
   return {
     datos: resolve(raiz, 'datos/proyectos.json'),
+    semilla: resolve(raiz, 'datos/semilla.json'),
     carpetaDatos: resolve(raiz, 'datos'),
     publicado: resolve(raiz, 'dist/data/projects.js'),
     carpetaPublicado: resolve(raiz, 'dist/data'),
   }
 }
 
+/* La semilla y el archivo de trabajo son dos cosas distintas, y la diferencia
+   es la que evita perder contenido.
+ *
+ * datos/semilla.json viaja en el repositorio: es el punto de partida, los
+ * proyectos que ya estaban cargados. datos/proyectos.json es con lo que
+ * trabaja el panel, y NO esta versionado.
+ *
+ * Si estuvieran en el mismo archivo, cada despliegue clonaria el repositorio
+ * encima y se llevaria puesto todo lo cargado desde el panel desde el
+ * despliegue anterior. Asi, la semilla solo se usa cuando todavia no hay nada.
+ */
 export async function leerDatos(r) {
   if (!existsSync(r.datos)) {
+    if (r.semilla && existsSync(r.semilla)) {
+      try {
+        const crudo = JSON.parse(await readFile(r.semilla, 'utf8'))
+        const inicial = {
+          ajustes: { ...AJUSTES_POR_DEFECTO, ...(crudo.ajustes ?? {}) },
+          proyectos: Array.isArray(crudo.proyectos) ? crudo.proyectos : [],
+        }
+        await guardarDatos(r, inicial)
+        console.log(`[datos] primer arranque: sembrados ${inicial.proyectos.length} proyectos`)
+        return inicial
+      } catch (err) {
+        console.error('[datos] semilla ilegible:', err.message)
+      }
+    }
     return { ajustes: { ...AJUSTES_POR_DEFECTO }, proyectos: [] }
   }
   try {

@@ -28,3 +28,9 @@ datos/acceso.json
 # El archivo con la contraseña del panel que genera scripts/generar-acceso.js.
 # Es para leerlo una vez y borrarlo: nunca al repositorio.
 MI-CLAVE-DEL-PANEL.txt
+
+# El contenido con el que trabaja el panel EN EL SERVIDOR. Fuera del repo a
+# proposito: si estuviera versionado, cada despliegue lo pisaria con la copia
+# del repositorio y se perderia todo lo cargado desde el panel.
+# Lo que si viaja es datos/semilla.json, que es el punto de partida.
+datos/proyectos.json
