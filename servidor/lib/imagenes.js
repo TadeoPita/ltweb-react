@@ -1,37 +1,42 @@
 import { mkdir, unlink } from 'node:fs/promises'
 import { resolve, basename } from 'node:path'
 import { randomUUID } from 'node:crypto'
-import sharp from 'sharp'
 
 /* Subida y redimensionado de imágenes.
  *
+ * POR QUE SHARP SE CARGA A PEDIDO Y NO ARRIBA
+ *
+ * Antes era `import sharp from 'sharp'` acá arriba, y eso tiró el sitio
+ * entero. sharp trae binarios compilados por sistema operativo; si falta el de
+ * la plataforma, el import falla. Y como este módulo lo importa api.js, y a
+ * api.js lo importa el servidor, ese fallo se propagaba hasta arriba: el
+ * proceso no arrancaba y el hosting devolvía 503 en TODAS las páginas.
+ *
+ * Cargarlo dentro de la función que lo usa cambia el peor caso por completo:
+ * si sharp no está, el sitio funciona igual y lo único que falla es subir una
+ * imagen desde el panel, con un mensaje que dice qué pasó. Una función
+ * opcional no puede tumbar la web.
+ *
+ * (El error de fondo era que sharp estaba en devDependencies mientras el
+ * servidor lo necesita en ejecución; ya está en dependencies. Esto es la
+ * segunda línea de defensa, no el arreglo.)
+ *
  * POR QUE SE GENERAN TRES TAMAÑOS Y NO UNO
  *
- * Esta es la causa del tirón al scrollear, y conviene dejarla escrita porque
- * no es obvia: el problema no es cuánto pesa la imagen sino cuánto ocupa
+ * Lo que traba el scroll no es cuánto pesa la imagen sino cuánto ocupa
  * DESCOMPRIMIDA. Una captura de 1600x2844 son 250 KB en disco, pero al
  * dibujarla el navegador la expande a 1600 × 2844 × 4 bytes ≈ 18 MB de
  * memoria. Y eso pasa aunque en pantalla se vea en un recuadro de 268 px.
  *
- * Con veintipico de proyectos en la página, eso es medio giga de mapas de bits
- * y una tanda de decodificaciones que le come cuadros al scroll. Bajar la
- * calidad del WebP no arregla nada: el peso baja, los píxeles siguen siendo
- * los mismos.
- *
- * La única solución real es mandar menos píxeles. Por eso cada imagen se
- * guarda en tres medidas y cada lugar del sitio pide la que necesita:
- *
- *   muro    672 px   el fondo del inicio, que dibuja a 268-336
- *   tarjeta 900 px   la grilla del portfolio
- *   (base) 1600 px   la ficha del proyecto, que se ve grande
- *
- * El muro pasa de 18 MB a 1 MB por imagen. Eso es lo que saca el tirón.
+ * Bajar la calidad del WebP no arregla nada: el peso baja, los píxeles siguen
+ * siendo los mismos. La única solución es mandar menos píxeles, así que cada
+ * imagen se guarda en tres medidas y cada lugar del sitio pide la que necesita.
  *
  * SEGURIDAD
  *
- * La imagen se recodifica siempre: se redibuja desde los píxeles con sharp, lo
- * que descarta cualquier cosa escondida en los metadatos. Y el nombre lo pone
- * el servidor al azar, nunca el que traía el archivo — ahí es donde viajan los
+ * La imagen se recodifica siempre: se redibuja desde los píxeles, lo que
+ * descarta cualquier cosa escondida en los metadatos. Y el nombre lo pone el
+ * servidor al azar, nunca el que traía el archivo — ahí es donde viajan los
  * "../.." y las extensiones dobles.
  */
 
@@ -39,13 +44,13 @@ export const MEDIDAS = [
   { sufijo: '', ancho: 1600, calidad: 82 },
   { sufijo: '-900', ancho: 900, calidad: 80 },
   /* La chica además se recorta arriba.
-  
+
      Muchas portadas son capturas de página entera: hay una de 1920x9562. Con
      solo achicar el ancho a 672 quedaba de 3347 de alto, o sea 2,2 megapíxeles
      para un recuadro que en pantalla mide 268x168. Como el muro las dibuja con
      object-cover y object-top —o sea que muestra la franja de arriba y descarta
      el resto—, guardar el largo completo es peso que nunca se ve.
-  
+
      Recortada a 672x420 (la misma proporción que el recuadro) son 0,28
      megapíxeles: ocho veces menos que descomprimir. */
   { sufijo: '-672', ancho: 672, calidad: 76, altoMaximo: 420 },
@@ -59,9 +64,25 @@ export function rutaSubidas(raizPublica) {
 
 export const URL_SUBIDAS = '/' + CARPETA
 
-/* Aplica una medida a la imagen. Se exporta porque el script que trae las
-   imágenes de afuera tiene que hacer exactamente lo mismo. */
-export function procesar(buffer, meta, m) {
+/* Se carga una sola vez y se reusa. */
+let sharpPromesa
+
+async function cargarSharp() {
+  sharpPromesa ??= import('sharp')
+    .then((m) => m.default)
+    .catch((err) => {
+      console.error('[imagenes] no se pudo cargar sharp:', err.message)
+      sharpPromesa = undefined // que el próximo intento vuelva a probar
+      throw new Error(
+        'El procesador de imágenes no está disponible en el servidor. ' +
+          'Revisá que sharp esté instalado (npm ci) y volvé a desplegar.',
+      )
+    })
+  return sharpPromesa
+}
+
+/** Aplica una medida. La usa también el script que trae imágenes de afuera. */
+export function procesar(sharp, buffer, meta, m) {
   const ancho = Math.min(meta.width, m.ancho)
   const img = sharp(buffer)
 
@@ -82,6 +103,8 @@ export function procesar(buffer, meta, m) {
 /* Guarda las tres medidas y devuelve la URL de la grande. Las otras dos se
    deducen del nombre, así que no hace falta guardarlas en el JSON. */
 export async function guardarImagen(raizPublica, buffer) {
+  const sharp = await cargarSharp()
+
   const dir = rutaSubidas(raizPublica)
   await mkdir(dir, { recursive: true })
 
@@ -93,7 +116,7 @@ export async function guardarImagen(raizPublica, buffer) {
   const base = randomUUID()
 
   for (const m of MEDIDAS) {
-    await procesar(buffer, meta, m).toFile(resolve(dir, `${base}${m.sufijo}.webp`))
+    await procesar(sharp, buffer, meta, m).toFile(resolve(dir, `${base}${m.sufijo}.webp`))
   }
 
   return `${URL_SUBIDAS}/${base}.webp`

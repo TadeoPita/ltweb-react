@@ -1,6 +1,6 @@
 import { createServer } from 'node:http'
-import { createReadStream } from 'node:fs'
-import { stat, mkdir } from 'node:fs/promises'
+import { createReadStream, mkdirSync } from 'node:fs'
+import { stat } from 'node:fs/promises'
 import { resolve, join, normalize, extname, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { manejarApi } from './lib/api.js'
@@ -147,8 +147,21 @@ const servidor = createServer(async (req, res) => {
   }
 })
 
-await mkdir(SUBIDAS, { recursive: true })
-await mkdir(join(RAIZ, 'datos'), { recursive: true })
+/* Versión sincrónica a propósito, aunque el resto del archivo sea asíncrono.
+ *
+ * Acá había `await mkdir(...)` y eso tiraba el sitio entero con 503. Hostinger
+ * corre las apps Node sobre LiteSpeed, que carga el archivo de entrada con
+ * require(). Node sabe hacer require() de un módulo ESM, pero NO si tiene await
+ * en el nivel superior: ahí devuelve ERR_REQUIRE_ASYNC_MODULE y el proceso ni
+ * arranca.
+ *
+ * mkdirSync hace lo mismo sin volver asíncrono el módulo. Son dos carpetas que
+ * se crean una vez al arrancar; que sea sincrónico no le cuesta nada a nadie.
+ *
+ * Regla para lo que venga: en este archivo no puede haber await fuera de una
+ * función. */
+mkdirSync(SUBIDAS, { recursive: true })
+mkdirSync(join(RAIZ, 'datos'), { recursive: true })
 
 /* Sin esto, el puerto ocupado tira un volcado de pila de veinte lineas que no
    dice que hacer. Pasa al probar en local con otra instancia levantada. */

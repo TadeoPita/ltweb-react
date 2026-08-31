@@ -24,3 +24,7 @@ datos/acceso.json
 # viajan con el código. Las que se cargan en desarrollo van a public/subidas,
 # que sí se versiona.
 /subidas
+
+# El archivo con la contraseña del panel que genera scripts/generar-acceso.js.
+# Es para leerlo una vez y borrarlo: nunca al repositorio.
+MI-CLAVE-DEL-PANEL.txt
