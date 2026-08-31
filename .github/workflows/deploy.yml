@@ -8,15 +8,20 @@
 # el codigo fuente. Y el hosting compartido no corre Node, asi que no lo puede
 # construir el solo. Alguien tiene que compilar antes: o vos a mano, o esto.
 #
-# Se dispara con cada push a main, igual que venias trabajando.
+# OJO: esto es OPCIONAL. Si preferis el zip (npm run empaquetar) y subirlo
+# a mano por el Administrador de archivos, no hace falta nada de esto.
 
 name: Deploy a Hostinger
 
 on:
-  push:
-    branches: [main]
-  # Tambien se puede lanzar a mano desde la pestaña Actions de GitHub.
+  # Solo a pedido, desde la pestaña Actions de GitHub.
+  #
+  # Estaba en cada push a main, pero sin los cuatro secretos cargados el paso
+  # de FTP falla, y eso es un mail de error por cada commit. Cuando esten
+  # puestos, descomentar el bloque de abajo y se vuelve automatico.
   workflow_dispatch:
+  # push:
+  #   branches: [main]
 
 jobs:
   publicar:

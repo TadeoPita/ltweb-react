@@ -1,91 +1,50 @@
 import { useSyncExternalStore } from 'react'
 import { PORTFOLIO } from './content'
-import { restSelect } from '../lib/supabaseRest'
-import { comprimirImagen } from '../lib/comprimirImagen'
 
-/* Store del portfolio respaldado por Supabase (tablas portfolio_items y
-   portfolio_settings, bucket portfolio-images). Lectura pública; escritura
-   requiere sesión válida de Firebase (Third-Party Auth + políticas RLS
-   configuradas en Supabase).
+/* Store del portfolio.
+ *
+ * Reemplaza a la versión que hablaba con Supabase. Hay dos fuentes, y el orden
+ * en que se prueban importa:
+ *
+ * 1. window.__LTWEB_DATOS__ — lo escribe el panel al publicar, y viene en
+ *    public/data/projects.js con una etiqueta <script> del index.html. Como se
+ *    ejecuta antes que el bundle, los proyectos ya están en memoria cuando
+ *    React arranca: no hay pedido de red, ni pantalla de carga, ni salto de
+ *    maqueta. Este es el camino del sitio publicado.
+ *
+ * 2. /api/proyectos — el panel corriendo en `npm run dev` (ver
+ *    scripts/panel-plugin.js). Es la fuente mientras se edita, para ver los
+ *    cambios sin publicar cada vez.
+ *
+ * 3. PORTFOLIO de content.js — el contenido que viene con el proyecto, por si
+ *    no hay ninguna de las dos.
+ *
+ * Las escrituras van todas a /api, o sea que solo funcionan con el servidor de
+ * desarrollo levantado. Es a propósito: el sitio publicado son archivos
+ * estáticos y no tiene —ni debe tener— forma de escribir nada.
+ */
 
-   La lectura va por HTTP contra la API REST (ver lib/supabaseRest.js) para no
-   cargar el SDK en el sitio público. El SDK completo —escrituras, Storage y
-   tiempo real— se importa recién cuando hace falta, o sea en /admin. */
-
-let clientPromise
-function sb() {
-  clientPromise ??= import('../lib/supabase').then((m) => m.supabase)
-  return clientPromise
+let state = {
+  variant: 'gallery',
+  pageVariant: 'classic',
+  heroVariant: 'centered',
+  items: [],
+  loading: true,
+  error: null,
 }
 
-let state = { variant: 'gallery', pageVariant: 'classic', heroVariant: 'centered', items: [], loading: true, error: null }
 const listeners = new Set()
 
 function emit() {
   listeners.forEach((l) => l())
 }
 
-/* La galería se guarda como JSON en una columna de texto:
-   [{ url, path }]. Guardamos también el path del Storage para poder
-   borrar el archivo cuando se saca una foto de la galería. */
-function parseGallery(raw) {
-  if (!raw) return []
-  try {
-    const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed.filter((g) => g && g.url) : []
-  } catch {
-    return []
-  }
-}
-
-function itemsFromRows(rows) {
-  return rows
-    .slice()
-    .sort((a, b) => a.position - b.position)
-    .map((r) => ({
-      id: r.id,
-      name: r.name,
-      type: r.type,
-      image: r.image,
-      imagePath: r.image_path ?? undefined,
-      url: r.url,
-      size: r.size,
-      home: r.home,
-      label: r.label ?? undefined,
-      blurred: r.blurred,
-      category: r.category ?? '',
-      problem: r.problem ?? '',
-      solution: r.solution ?? '',
-      description: r.description ?? '',
-      services: r.services ?? '',
-      gallery: parseGallery(r.gallery),
-      beforeImage: r.before_image ?? '',
-      beforeImagePath: r.before_image_path ?? '',
-    }))
-}
-
-/* Datos publicados por el panel PHP.
-
-   El panel escribe /data/projects.js, que index.html carga con una etiqueta
-   <script> comun antes del bundle. O sea que cuando React arranca los
-   proyectos ya estan en memoria: no hay pedido de red, ni pantalla de carga,
-   ni salto de maqueta cuando llegan.
-
-   Si el archivo no esta —en desarrollo, o antes de la primera publicacion— se
-   devuelve null y sigue el camino de siempre contra Supabase. Los dos
-   conviven a proposito: asi el sitio no depende de que la mudanza este
-   terminada para seguir funcionando. */
-function datosPublicados() {
-  if (typeof window === 'undefined') return null
-  const d = window.__LTWEB_DATOS__
-  if (!d || !Array.isArray(d.proyectos) || d.proyectos.length === 0) return null
-  return d
-}
-
-/* El panel ya entrega los campos con los nombres del sitio; lo unico que hace
-   falta es asegurar los tipos y poner los valores por defecto. */
-function itemsPublicados(proyectos) {
-  return proyectos.map((p) => ({
+/* Normaliza un proyecto venga de donde venga. La galería es el único campo con
+   dos formas históricas: el panel viejo guardaba objetos {url, path} y el
+   nuevo guarda {url}. Se aceptan las dos para que un JSON exportado del panel
+   anterior no deje las fotos invisibles. */
+function normalizar(p) {
+  return {
     id: p.id,
     name: p.name ?? '',
     type: p.type ?? '',
@@ -100,354 +59,224 @@ function itemsPublicados(proyectos) {
     solution: p.solution ?? '',
     description: p.description ?? '',
     services: p.services ?? '',
-    /* La galeria del panel viejo eran objetos {url, path} y la del nuevo son
-       rutas sueltas. Se aceptan las dos para que un export viejo importado no
-       deje las fotos invisibles. */
     gallery: Array.isArray(p.gallery)
       ? p.gallery.map((g) => (typeof g === 'string' ? { url: g } : g)).filter((g) => g && g.url)
       : [],
     beforeImage: p.beforeImage ?? '',
-    beforeImagePath: '',
-  }))
+  }
 }
 
-async function loadInitial() {
-  const publicado = datosPublicados()
-  if (publicado) {
-    state = {
-      variant: publicado.ajustes?.variant ?? 'gallery',
-      pageVariant: publicado.ajustes?.pageVariant ?? 'classic',
-      heroVariant: publicado.ajustes?.heroVariant ?? 'centered',
-      items: itemsPublicados(publicado.proyectos),
-      loading: false,
-      error: null,
-    }
-    emit()
-    return
-  }
-
-  let items, settingsRows
-  try {
-    ;[items, settingsRows] = await Promise.all([
-      restSelect('portfolio_items', '&order=position'),
-      restSelect('portfolio_settings', '&id=eq.1'),
-    ])
-  } catch (err) {
-    state = { ...state, loading: false, error: err.message }
-    emit()
-    return
-  }
-  if (items.length === 0 && !state.seeding) {
-    await seedDefaults()
-    return
-  }
-  const settings = settingsRows[0]
+function aplicar({ ajustes, proyectos }) {
   state = {
-    variant: settings?.variant ?? 'gallery',
-    pageVariant: settings?.page_variant ?? 'classic',
-    heroVariant: settings?.hero_variant ?? 'centered',
-    items: itemsFromRows(items),
+    variant: ajustes?.variant ?? 'gallery',
+    pageVariant: ajustes?.pageVariant ?? 'classic',
+    heroVariant: ajustes?.heroVariant ?? 'centered',
+    items: proyectos.map(normalizar),
     loading: false,
     error: null,
   }
   emit()
 }
 
-async function seedDefaults() {
-  state = { ...state, seeding: true }
-  const rows = PORTFOLIO.map((p, i) => ({
-    id: p.id,
-    name: p.name,
-    type: p.type,
-    image: p.image,
-    url: p.url ?? '#',
-    size: p.size ?? 'normal',
-    home: p.home ?? true,
-    label: p.label ?? null,
-    blurred: p.blurred ?? false,
-    position: i,
-  }))
-  const client = await sb()
-  await client.from('portfolio_items').insert(rows)
-  await client
-    .from('portfolio_settings')
-    .upsert({ id: 1, variant: 'gallery', page_variant: 'classic', hero_variant: 'centered' })
-  state = { ...state, seeding: false }
-  await loadInitial()
+/* Lo que dejó la última publicación. */
+function datosPublicados() {
+  if (typeof window === 'undefined') return null
+  const d = window.__LTWEB_DATOS__
+  if (!d || !Array.isArray(d.proyectos) || d.proyectos.length === 0) return null
+  return d
 }
 
-loadInitial()
-
-// Cualquier cambio en las tablas (desde /admin o desde otra pestaña) recarga el estado.
-// Debounce corto para no disparar N recargas cuando una operación toca varias filas.
-let reloadTimer
-function scheduleReload() {
-  clearTimeout(reloadTimer)
-  reloadTimer = setTimeout(loadInitial, 150)
+async function pedir(ruta, opciones = {}) {
+  const res = await fetch('/api' + ruta, opciones)
+  if (!res.ok) {
+    const cuerpo = await res.json().catch(() => ({}))
+    throw new Error(cuerpo.error || `Falló ${ruta} (${res.status})`)
+  }
+  return res.json()
 }
 
-/* Suscripción a cambios en vivo. Antes se abría sola al importar el store, o
-   sea que cada visitante del sitio público mantenía un WebSocket abierto solo
-   para que nosotros viéramos los cambios mientras editábamos. Ahora la levanta
-   /admin explícitamente: el visitante ve el contenido de cuando cargó la
-   página, que es exactamente lo que necesita. */
-let realtimeStarted = false
-export function startRealtime() {
-  if (realtimeStarted) return
-  realtimeStarted = true
-  sb().then((client) => {
-    client
-      .channel('portfolio-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'portfolio_items' }, scheduleReload)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'portfolio_settings' }, scheduleReload)
-      .subscribe()
-  })
+/* Tras cada escritura se relee todo del servidor en vez de parchear el estado
+   en memoria. Es un pedido de más, pero contra un archivo local no se nota, y
+   evita la clase de bug en la que la pantalla y el archivo dicen cosas
+   distintas porque alguna actualización optimista salió mal. */
+async function recargar() {
+  aplicar(await pedir('/proyectos'))
 }
 
-if (import.meta.hot) {
-  import.meta.hot.dispose(() => {
-    clearTimeout(reloadTimer)
-    if (realtimeStarted) sb().then((client) => client.removeAllChannels())
-  })
+let cargaInicial
+
+async function cargar() {
+  const publicado = datosPublicados()
+  if (publicado) {
+    aplicar(publicado)
+    return
+  }
+
+  try {
+    await recargar()
+  } catch {
+    /* Sin panel levantado y sin publicación previa: queda el contenido que
+       viene con el proyecto, así el sitio nunca se ve vacío. */
+    aplicar({ ajustes: {}, proyectos: PORTFOLIO })
+  }
 }
 
-function must(result) {
-  if (result.error) throw result.error
-  return result
+function asegurarCarga() {
+  cargaInicial ??= cargar()
+  return cargaInicial
 }
+
+/* Existía para la suscripción en tiempo real de Supabase. Se deja como función
+   vacía para no romper el import de AdminPage: con un archivo local no hay
+   nada a lo que suscribirse, la única fuente de cambios es este mismo panel. */
+export function startRealtime() {}
 
 export const portfolioStore = {
-  get: () => state,
+  get state() {
+    return state
+  },
+
   subscribe(listener) {
     listeners.add(listener)
+    asegurarCarga()
     return () => listeners.delete(listener)
   },
 
+  // --- Ajustes ------------------------------------------------------------
+
   async setVariant(variant) {
-    const supabase = await sb()
-    must(await supabase.from('portfolio_settings').update({ variant }).eq('id', 1))
-    state = { ...state, variant }
-    emit()
+    await pedir('/ajustes', { method: 'PUT', body: JSON.stringify({ variant }) })
+    await recargar()
   },
 
   async setPageVariant(pageVariant) {
-    const supabase = await sb()
-    must(await supabase.from('portfolio_settings').update({ page_variant: pageVariant }).eq('id', 1))
-    state = { ...state, pageVariant }
-    emit()
+    await pedir('/ajustes', { method: 'PUT', body: JSON.stringify({ pageVariant }) })
+    await recargar()
   },
 
   async setHeroVariant(heroVariant) {
-    const supabase = await sb()
-    must(await supabase.from('portfolio_settings').update({ hero_variant: heroVariant }).eq('id', 1))
-    state = { ...state, heroVariant }
-    emit()
+    await pedir('/ajustes', { method: 'PUT', body: JSON.stringify({ heroVariant }) })
+    await recargar()
   },
 
+  // --- Proyectos ----------------------------------------------------------
+
   async updateItem(id, patch) {
-    const supabase = await sb()
-    const row = {}
-    if ('name' in patch) row.name = patch.name
-    if ('type' in patch) row.type = patch.type
-    if ('image' in patch) row.image = patch.image
-    if ('imagePath' in patch) row.image_path = patch.imagePath ?? null
-    if ('url' in patch) row.url = patch.url
-    if ('size' in patch) row.size = patch.size
-    if ('home' in patch) row.home = patch.home
-    if ('label' in patch) row.label = patch.label ?? null
-    if ('blurred' in patch) row.blurred = patch.blurred
-    if ('category' in patch) row.category = patch.category ?? ''
-    if ('problem' in patch) row.problem = patch.problem ?? ''
-    if ('solution' in patch) row.solution = patch.solution ?? ''
-    if ('description' in patch) row.description = patch.description ?? ''
-    if ('services' in patch) row.services = patch.services ?? ''
-    if ('gallery' in patch) row.gallery = JSON.stringify(patch.gallery ?? [])
-    if ('beforeImage' in patch) row.before_image = patch.beforeImage ?? ''
-    if ('beforeImagePath' in patch) row.before_image_path = patch.beforeImagePath ?? ''
-    must(await supabase.from('portfolio_items').update(row).eq('id', id))
-    state = { ...state, items: state.items.map((it) => (it.id === id ? { ...it, ...patch } : it)) }
-    emit()
+    await pedir(`/proyectos/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(patch),
+    })
+    await recargar()
   },
 
   async addItem(item) {
-    const supabase = await sb()
-    const id = 'p' + Date.now().toString(36)
-    const row = {
-      name: item.name ?? '',
-      type: item.type ?? '',
-      image: item.image ?? '',
-      url: item.url ?? '#',
-      size: item.size ?? 'normal',
-      home: item.home ?? true,
-      label: item.label ?? null,
-      blurred: item.blurred ?? false,
-      category: item.category ?? '',
-      problem: item.problem ?? '',
-      solution: item.solution ?? '',
-      description: item.description ?? '',
-      services: item.services ?? '',
-      gallery: '[]',
-    }
-    must(await supabase.from('portfolio_items').insert({ id, ...row, position: state.items.length }))
-    state = {
-      ...state,
-      items: [...state.items, { id, ...row, label: row.label ?? undefined, imagePath: undefined, gallery: [] }],
-    }
-    emit()
-    return id
+    const nuevo = await pedir('/proyectos', { method: 'POST', body: JSON.stringify(item) })
+    await recargar()
+    return nuevo
   },
 
   async removeItem(id) {
-    const supabase = await sb()
-    const item = state.items.find((it) => it.id === id)
-    must(await supabase.from('portfolio_items').delete().eq('id', id))
-    // Limpiamos del Storage tanto la portada como las fotos de la galería.
-    const paths = [item?.imagePath, item?.beforeImagePath, ...(item?.gallery ?? []).map((g) => g.path)].filter(Boolean)
-    if (paths.length) {
-      supabase.storage.from('portfolio-images').remove(paths).catch(() => {})
-    }
-    const remaining = state.items.filter((it) => it.id !== id)
-    state = { ...state, items: remaining }
-    emit()
-    // Renumerar para que las posiciones sigan 0..n-1 sin huecos (moveItem depende de esto).
-    await Promise.all(
-      remaining.map((it, i) => supabase.from('portfolio_items').update({ position: i }).eq('id', it.id)),
-    )
+    await pedir(`/proyectos/${encodeURIComponent(id)}`, { method: 'DELETE' })
+    await recargar()
   },
 
   async moveItem(id, dir) {
-    const supabase = await sb()
-    const items = state.items
-    const i = items.findIndex((it) => it.id === id)
-    const j = i + dir
-    if (i < 0 || j < 0 || j >= items.length) return
-    await Promise.all([
-      must(await supabase.from('portfolio_items').update({ position: j }).eq('id', items[i].id)),
-      must(await supabase.from('portfolio_items').update({ position: i }).eq('id', items[j].id)),
-    ])
-    const next = items.slice()
-    ;[next[i], next[j]] = [next[j], next[i]]
-    state = { ...state, items: next }
-    emit()
+    await pedir(`/proyectos/${encodeURIComponent(id)}/mover`, {
+      method: 'POST',
+      body: JSON.stringify({ dir }),
+    })
+    await recargar()
   },
+
+  // --- Imágenes -----------------------------------------------------------
+  //
+  // El archivo viaja crudo en el cuerpo. No hace falta multipart ni
+  // comprimirlo antes: el servidor lo recodifica a WebP y lo achica a 1600 px
+  // con sharp, que hace mejor trabajo que el canvas del navegador.
 
   async uploadImage(file, itemId) {
-    const supabase = await sb()
-    file = await comprimirImagen(file)
-    const path = `${itemId}/${Date.now()}-${file.name}`
-    const { error: uploadError } = await supabase.storage.from('portfolio-images').upload(path, file)
-    if (uploadError) throw uploadError
-    const { data } = supabase.storage.from('portfolio-images').getPublicUrl(path)
-    const prev = state.items.find((it) => it.id === itemId)?.imagePath
-    await portfolioStore.updateItem(itemId, { image: data.publicUrl, imagePath: path })
-    if (prev) {
-      supabase.storage.from('portfolio-images').remove([prev]).catch(() => {})
-    }
+    const r = await pedir(`/proyectos/${encodeURIComponent(itemId)}/portada`, {
+      method: 'POST',
+      body: file,
+    })
+    await recargar()
+    return r.url
   },
 
-  /* Sube la captura del sitio anterior, para el comparador antes/después. */
   async uploadBeforeImage(file, itemId) {
-    const supabase = await sb()
-    file = await comprimirImagen(file)
-    const path = `${itemId}/antes/${Date.now()}-${file.name}`
-    const { error: uploadError } = await supabase.storage.from('portfolio-images').upload(path, file)
-    if (uploadError) throw uploadError
-    const { data } = supabase.storage.from('portfolio-images').getPublicUrl(path)
-    const prev = state.items.find((it) => it.id === itemId)?.beforeImagePath
-    await portfolioStore.updateItem(itemId, { beforeImage: data.publicUrl, beforeImagePath: path })
-    if (prev) supabase.storage.from('portfolio-images').remove([prev]).catch(() => {})
+    const r = await pedir(`/proyectos/${encodeURIComponent(itemId)}/antes`, {
+      method: 'POST',
+      body: file,
+    })
+    await recargar()
+    return r.url
   },
 
   async removeBeforeImage(itemId) {
-    const supabase = await sb()
-    const prev = state.items.find((it) => it.id === itemId)?.beforeImagePath
-    await portfolioStore.updateItem(itemId, { beforeImage: '', beforeImagePath: '' })
-    if (prev) supabase.storage.from('portfolio-images').remove([prev]).catch(() => {})
+    await pedir(`/proyectos/${encodeURIComponent(itemId)}/antes`, { method: 'DELETE' })
+    await recargar()
   },
 
-  /* Sube una foto extra a la galería del proyecto y la agrega al final. */
   async addGalleryImage(file, itemId) {
-    const supabase = await sb()
-    file = await comprimirImagen(file)
-    const path = `${itemId}/galeria/${Date.now()}-${file.name}`
-    const { error: uploadError } = await supabase.storage.from('portfolio-images').upload(path, file)
-    if (uploadError) throw uploadError
-    const { data } = supabase.storage.from('portfolio-images').getPublicUrl(path)
-    const current = state.items.find((it) => it.id === itemId)?.gallery ?? []
-    await portfolioStore.updateItem(itemId, {
-      gallery: [...current, { url: data.publicUrl, path }],
+    const r = await pedir(`/proyectos/${encodeURIComponent(itemId)}/galeria`, {
+      method: 'POST',
+      body: file,
     })
+    await recargar()
+    return r.url
   },
 
-  /* Saca una foto de la galería y borra el archivo del Storage si era nuestro. */
   async removeGalleryImage(itemId, index) {
-    const supabase = await sb()
-    const current = state.items.find((it) => it.id === itemId)?.gallery ?? []
-    const removed = current[index]
-    await portfolioStore.updateItem(itemId, {
-      gallery: current.filter((_, i) => i !== index),
-    })
-    if (removed?.path) {
-      supabase.storage.from('portfolio-images').remove([removed.path]).catch(() => {})
-    }
+    await pedir(`/proyectos/${encodeURIComponent(itemId)}/galeria?i=${index}`, { method: 'DELETE' })
+    await recargar()
   },
+
+  // --- Traspaso y publicación --------------------------------------------
 
   async importJSON(json) {
-    const supabase = await sb()
-    const parsed = JSON.parse(json)
-    if (!Array.isArray(parsed.items)) throw new Error('JSON inválido: falta "items"')
-    must(await supabase.from('portfolio_items').delete().neq('id', ''))
-    const rows = parsed.items.map((p, i) => ({
-      id: p.id ?? 'p' + Date.now().toString(36) + i,
-      name: p.name ?? '',
-      type: p.type ?? '',
-      image: p.image ?? '',
-      image_path: p.imagePath ?? null,
-      url: p.url ?? '#',
-      size: p.size ?? 'normal',
-      home: p.home ?? true,
-      label: p.label ?? null,
-      blurred: p.blurred ?? false,
-      category: p.category ?? '',
-      problem: p.problem ?? '',
-      solution: p.solution ?? '',
-      description: p.description ?? '',
-      services: p.services ?? '',
-      gallery: JSON.stringify(p.gallery ?? []),
-      position: i,
-    }))
-    must(await supabase.from('portfolio_items').insert(rows))
-    must(
-      await supabase.from('portfolio_settings').upsert({
-        id: 1,
-        variant: parsed.variant ?? 'gallery',
-        page_variant: parsed.pageVariant ?? 'classic',
-        hero_variant: parsed.heroVariant ?? 'centered',
-      }),
-    )
-    await loadInitial()
+    const datos = typeof json === 'string' ? JSON.parse(json) : json
+    const r = await pedir('/importar', { method: 'POST', body: JSON.stringify(datos) })
+    await recargar()
+    return r.importados
   },
 
   exportJSON() {
     return JSON.stringify(
       {
-        variant: state.variant,
-        pageVariant: state.pageVariant,
-        heroVariant: state.heroVariant,
-        items: state.items,
+        exportado: new Date().toISOString(),
+        ajustes: {
+          variant: state.variant,
+          pageVariant: state.pageVariant,
+          heroVariant: state.heroVariant,
+        },
+        proyectos: state.items,
       },
       null,
       2,
     )
   },
 
+  /* Escribe public/data/projects.js. Hasta que se aprieta esto, los cambios
+     viven solo en datos/proyectos.json y el sitio publicado no los ve. */
+  async publicar() {
+    const r = await pedir('/publicar', { method: 'POST' })
+    return r.publicados
+  },
+
+  /* Vuelve al contenido que viene con el proyecto. */
   async reset() {
-    const supabase = await sb()
-    must(await supabase.from('portfolio_items').delete().neq('id', ''))
-    await seedDefaults()
+    await pedir('/importar', {
+      method: 'POST',
+      body: JSON.stringify({ proyectos: PORTFOLIO }),
+    })
+    await recargar()
   },
 }
 
 export function usePortfolio() {
-  return useSyncExternalStore(portfolioStore.subscribe, portfolioStore.get)
+  return useSyncExternalStore(
+    portfolioStore.subscribe,
+    () => state,
+    () => state,
+  )
 }

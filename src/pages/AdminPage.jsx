@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowUp, ArrowDown, Trash2, Plus, Download, Upload, RotateCcw, Home, Eye, EyeOff } from 'lucide-react'
+import { ArrowUp, ArrowDown, Trash2, Plus, Download, Upload, UploadCloud, RotateCcw, Home, Eye, EyeOff } from 'lucide-react'
 import { portfolioStore, usePortfolio, startRealtime } from '../data/portfolioStore'
 
 /* Panel de administración del portfolio.
@@ -441,6 +441,23 @@ export default function AdminPage() {
     startRealtime()
   }, [])
 
+  const [publicando, setPublicando] = useState(false)
+  const [mensajePublicar, setMensajePublicar] = useState('')
+
+  async function publicar() {
+    setPublicando(true)
+    setMensajePublicar('')
+    try {
+      const n = await portfolioStore.publicar()
+      setMensajePublicar(`Publicados ${n} proyectos.`)
+    } catch (err) {
+      setMensajePublicar('No se pudo publicar: ' + err.message)
+    } finally {
+      setPublicando(false)
+      setTimeout(() => setMensajePublicar(''), 6000)
+    }
+  }
+
   function exportJSON() {
     const blob = new Blob([portfolioStore.exportJSON()], { type: 'application/json' })
     const a = document.createElement('a')
@@ -483,10 +500,27 @@ export default function AdminPage() {
           <div>
             <h1 className="font-display font-bold uppercase text-2xl">Admin · Portfolio</h1>
             <p className="text-sm text-ink/50 font-body">
-              Los cambios se guardan automáticamente y se ven al instante para cualquier visitante de la web.
+              Los cambios se guardan solos en <code>datos/proyectos.json</code>. Para que los vea
+              el sitio hay que <strong>Publicar</strong>.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            {/* Publicar escribe public/data/projects.js, que es lo que lee el
+                sitio. Que guardar y publicar sean dos pasos distintos permite
+                dejar algo a medio cargar sin que se vea. */}
+            <button
+              onClick={publicar}
+              disabled={publicando}
+              className="flex items-center gap-2 rounded-lg bg-ink text-white px-4 py-2 text-sm font-semibold hover:bg-black disabled:opacity-50 cursor-pointer"
+            >
+              <UploadCloud className="w-4 h-4" />
+              {publicando ? 'Publicando…' : 'Publicar al sitio'}
+            </button>
+
+            {mensajePublicar && (
+              <span className="font-body text-sm text-ink/60">{mensajePublicar}</span>
+            )}
+
             <Link to="/" className="flex items-center gap-2 rounded-lg border border-black/10 px-4 py-2 text-sm font-semibold hover:bg-black/5">
               <Home className="w-4 h-4" /> Ver web
             </Link>
