@@ -20,17 +20,27 @@ import { cn } from '../lib/utils'
    habia al montar y el arrastre deja de funcionar por completo.
 
    Por eso, cada vez que cambia `clave`, se le avisa que vuelva a escanear. */
-/* En pantallas tactiles el arrastre queda apagado.
-
-   Sin mouse, el unico gesto disponible para agarrar una tarjeta es el mismo
-   que se usa para scrollear: apoyar el dedo y moverlo. Swapy se queda con ese
-   gesto, asi que al pasar por encima de la grilla la pagina dejaba de bajar y
-   las tarjetas se movian solas. Con nueve tarjetas ocupando pantalla completa
-   en vertical, eso es un tramo del sitio por el que no se puede pasar.
-
+/* En pantallas tactiles no se crea Swapy. Ni apagado: directamente no existe.
+   
+   El primer intento fue crearlo con `enabled: false`, y no alcanzo. Mirando la
+   libreria se ve por que: al construirse engancha
+   
+     document.body.addEventListener("touchmove", M, { passive: false })
+     function M(m) { if (!l) return true; m.preventDefault() }
+   
+   o sea un listener NO pasivo sobre el body entero que corta el gesto cuando
+   esta arrastrando. Y `enabled` se consulta solo en los callbacks de
+   intercambio: el manejador de pointerdown, que es el que prende esa bandera,
+   no lo mira. Resultado: con el arrastre "apagado" igual entraba en modo
+   arrastre al apoyar el dedo, y el touchmove siguiente se cancelaba. Por eso
+   el scroll se trababa sobre las tarjetas y solo respondia en los bordes de la
+   pantalla, que es donde no hay grilla.
+   
+   Como el listener se engancha al construir y no al arrastrar, la unica forma
+   de que no exista es no construir la instancia.
+   
    La condicion es (pointer: coarse) y no un ancho: lo que importa no es el
-   tamano de la pantalla sino si hay un puntero fino con el que apuntar. Una
-   notebook angosta conserva el arrastre; una tablet grande no lo tiene. */
+   tamano de la pantalla sino si hay un puntero fino con el que apuntar. */
 const SIN_MOUSE = '(pointer: coarse)'
 
 export function SwapyLayout({ id, onSwap, config = {}, className, clave, children }) {
@@ -47,21 +57,27 @@ export function SwapyLayout({ id, onSwap, config = {}, className, clave, childre
 
     const tactil = window.matchMedia(SIN_MOUSE)
 
-    swapy.current = createSwapy(contenedor.current, {
-      ...configRef.current,
-      enabled: !tactil.matches,
-    })
-    swapy.current.onSwap((evento) => onSwapRef.current?.(evento))
+    function crear() {
+      if (swapy.current || !contenedor.current) return
+      swapy.current = createSwapy(contenedor.current, configRef.current)
+      swapy.current.onSwap((evento) => onSwapRef.current?.(evento))
+    }
 
-    /* Se escucha el cambio porque el usuario puede enchufar un mouse, girar
-       el telefono a un modo de escritorio o abrir las herramientas de
-       desarrollo: el valor no es fijo para toda la sesion. */
-    const alCambiar = (e) => swapy.current?.enable(!e.matches)
+    function destruir() {
+      swapy.current?.destroy()
+      swapy.current = null
+    }
+
+    if (!tactil.matches) crear()
+
+    /* Se escucha el cambio porque el valor no es fijo para toda la sesion: se
+       puede enchufar un mouse, o abrir las herramientas de desarrollo. */
+    const alCambiar = (e) => (e.matches ? destruir() : crear())
     tactil.addEventListener('change', alCambiar)
 
     return () => {
       tactil.removeEventListener('change', alCambiar)
-      swapy.current?.destroy()
+      destruir()
     }
   }, [])
 
