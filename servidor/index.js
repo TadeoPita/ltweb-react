@@ -177,7 +177,28 @@ servidor.on('error', (err) => {
 
 servidor.listen(PUERTO, () => {
   console.log(`\n  LTWEB en http://localhost:${PUERTO}`)
-  console.log(`  Panel:   http://localhost:${PUERTO}/admin\n`)
+  console.log(`  Panel:   http://localhost:${PUERTO}/admin`)
+
+  /* Aviso sobre dónde queda el contenido.
+
+     Si los datos viven dentro de la carpeta de la app y el hosting hace un
+     clon limpio en cada despliegue, todo lo cargado desde el panel se pierde
+     al desplegar — sin ningún error, simplemente vuelve a la semilla. Es la
+     clase de problema que se descubre tarde y mal.
+
+     Sale en el registro cada vez que arranca, así queda a la vista antes de
+     que pase y no depende de que alguien se acuerde. */
+  const r = rutasProduccion(RAIZ)
+  console.log(`  Datos:   ${r.carpetaDatos}`)
+
+  if (!process.env.DATOS_DIR) {
+    console.log('')
+    console.log('  AVISO: los datos estan dentro de la carpeta de la app.')
+    console.log('  Si el hosting borra esa carpeta al desplegar, se pierde lo')
+    console.log('  cargado desde el panel. Para evitarlo, defini la variable')
+    console.log('  de entorno DATOS_DIR apuntando a una carpeta de afuera.')
+  }
+  console.log('')
 })
 
 /* El hosting manda SIGTERM al reiniciar. Cerrar ordenado evita cortar un

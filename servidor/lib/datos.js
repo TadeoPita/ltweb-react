@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir, rename } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, rename, copyFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 
@@ -17,11 +17,31 @@ import { resolve } from 'node:path'
 
 const AJUSTES_POR_DEFECTO = { variant: 'gallery', pageVariant: 'classic', heroVariant: 'centered' }
 
+/* Dónde se guarda el contenido.
+ *
+ * Por defecto va en <app>/datos, pero se puede mover con la variable de
+ * entorno DATOS_DIR, y esa opción existe por una razón concreta:
+ *
+ * Algunos hostings hacen un clon limpio del repositorio en cada despliegue.
+ * Si lo hacen, cualquier archivo escrito en tiempo de ejecución —o sea todo lo
+ * que cargues desde el panel— desaparece al desplegar. Apuntando DATOS_DIR a
+ * una carpeta FUERA del directorio de la app, el contenido queda a salvo pase
+ * lo que pase, porque el despliegue ni la toca.
+ *
+ * Se puede comprobar en dos minutos: cargá un proyecto, desplegá, y fijate si
+ * sigue. Si no está, poné DATOS_DIR y listo. */
+function carpetaDeDatos(raiz) {
+  return process.env.DATOS_DIR ? resolve(process.env.DATOS_DIR) : resolve(raiz, 'datos')
+}
+
 export function rutas(raiz) {
+  const carpeta = carpetaDeDatos(raiz)
   return {
-    datos: resolve(raiz, 'datos/proyectos.json'),
+    datos: resolve(carpeta, 'proyectos.json'),
+    /* La semilla se busca siempre en la app, no en DATOS_DIR: viaja con el
+       codigo y es de solo lectura. */
     semilla: resolve(raiz, 'datos/semilla.json'),
-    carpetaDatos: resolve(raiz, 'datos'),
+    carpetaDatos: carpeta,
     publicado: resolve(raiz, 'public/data/projects.js'),
     carpetaPublicado: resolve(raiz, 'public/data'),
   }
@@ -30,10 +50,11 @@ export function rutas(raiz) {
 /* En producción el sitio ya está construido, así que publicar tiene que
    escribir dentro de dist/ y no de public/, que ahí no lo lee nadie. */
 export function rutasProduccion(raiz) {
+  const carpeta = carpetaDeDatos(raiz)
   return {
-    datos: resolve(raiz, 'datos/proyectos.json'),
+    datos: resolve(carpeta, 'proyectos.json'),
     semilla: resolve(raiz, 'datos/semilla.json'),
-    carpetaDatos: resolve(raiz, 'datos'),
+    carpetaDatos: carpeta,
     publicado: resolve(raiz, 'dist/data/projects.js'),
     carpetaPublicado: resolve(raiz, 'dist/data'),
   }
@@ -80,12 +101,31 @@ export async function leerDatos(r) {
   }
 }
 
-/* Se escribe en un temporal y recién al final se renombra. rename dentro del
-   mismo disco es atómico: o queda el archivo viejo entero o el nuevo entero,
-   nunca la mitad de cada uno. Si el proceso muere a mitad de una escritura
-   directa, se pierde el portfolio completo. */
 export async function guardarDatos(r, datos) {
   await mkdir(r.carpetaDatos, { recursive: true })
+
+  /* Antes de pisar el archivo se guarda la version anterior.
+  
+     Son tres copias rotativas: respaldo-1 es la mas reciente. Ocupan unos
+     pocos KB cada una y cubren el caso de "borre un proyecto sin querer" o
+     "importe un JSON equivocado y se fue todo", que con un solo archivo no
+     tiene vuelta atras. */
+  if (existsSync(r.datos)) {
+    try {
+      for (let i = 3; i > 1; i--) {
+        const viejo = resolve(r.carpetaDatos, `respaldo-${i - 1}.json`)
+        if (existsSync(viejo)) await copyFile(viejo, resolve(r.carpetaDatos, `respaldo-${i}.json`))
+      }
+      await copyFile(r.datos, resolve(r.carpetaDatos, 'respaldo-1.json'))
+    } catch (err) {
+      /* Que falle el respaldo no puede impedir guardar. */
+      console.error('[datos] no se pudo respaldar:', err.message)
+    }
+  }
+
+  /* Se escribe en un temporal y recien al final se renombra. rename dentro del
+     mismo disco es atomico: o queda el archivo viejo entero o el nuevo entero,
+     nunca la mitad de cada uno. */
   const tmp = r.datos + '.tmp'
   await writeFile(tmp, JSON.stringify(datos, null, 2), 'utf8')
   await rename(tmp, r.datos)
