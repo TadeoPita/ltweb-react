@@ -1,6 +1,6 @@
 import { createServer } from 'node:http'
-import { createReadStream, mkdirSync } from 'node:fs'
-import { stat } from 'node:fs/promises'
+import { createReadStream, existsSync, mkdirSync } from 'node:fs'
+import { copyFile, mkdir, readdir, stat } from 'node:fs/promises'
 import { resolve, join, normalize, extname, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { manejarApi } from './lib/api.js'
@@ -19,7 +19,9 @@ import { rutasProduccion } from './lib/datos.js'
 
 const RAIZ = resolve(fileURLToPath(import.meta.url), '../..')
 const DIST = join(RAIZ, 'dist')
-const SUBIDAS = join(RAIZ, 'subidas')
+const RUTAS = rutasProduccion(RAIZ)
+const SUBIDAS = RUTAS.carpetaSubidas
+const SUBIDAS_ANTERIORES = join(RAIZ, 'subidas')
 
 const PUERTO = Number(process.env.PORT) || 3000
 
@@ -108,8 +110,10 @@ const servidor = createServer(async (req, res) => {
     // --- La API ---
     const manejada = await manejarApi(req, res, {
       raiz: RAIZ,
-      raizPublica: RAIZ,
-      rutas: rutasProduccion(RAIZ),
+      /* guardarImagen agrega /subidas. En producción la raíz es el storage
+         persistente; en desarrollo el plugin de Vite sigue usando public/. */
+      raizPublica: RUTAS.carpetaDatos,
+      rutas: RUTAS,
       produccion: true,
       pedirSesion: true,
     })
@@ -124,9 +128,19 @@ const servidor = createServer(async (req, res) => {
     // subir el sitio.
     if (camino.startsWith('/subidas/')) {
       const relativa = camino.slice('/subidas'.length)
-      for (const base of [SUBIDAS, join(DIST, 'subidas')]) {
+      for (const base of new Set([SUBIDAS, SUBIDAS_ANTERIORES, join(DIST, 'subidas')])) {
         const ruta = rutaSegura(base, relativa)
         if (ruta && (await servirArchivo(res, ruta, camino))) return
+      }
+      res.writeHead(404).end('No encontrado')
+      return
+    }
+
+    // La publicación hecha desde el panel vive en el storage persistente. Si
+    // todavía nunca se publicó ahí, se usa la copia que vino dentro del build.
+    if (camino === '/data/projects.js') {
+      for (const ruta of [RUTAS.publicado, join(DIST, 'data/projects.js')]) {
+        if (await servirArchivo(res, ruta, camino)) return
       }
       res.writeHead(404).end('No encontrado')
       return
@@ -160,8 +174,14 @@ const servidor = createServer(async (req, res) => {
  *
  * Regla para lo que venga: en este archivo no puede haber await fuera de una
  * función. */
-mkdirSync(SUBIDAS, { recursive: true })
-mkdirSync(join(RAIZ, 'datos'), { recursive: true })
+try {
+  mkdirSync(RUTAS.carpetaDatos, { recursive: true })
+  mkdirSync(SUBIDAS, { recursive: true })
+} catch (err) {
+  /* El sitio público puede seguir sirviendo el build aunque falle el storage.
+     El panel devolverá un error claro en vez de tumbar toda la web con 503. */
+  console.error('[storage] no se pudo preparar la carpeta persistente:', err)
+}
 
 /* Sin esto, el puerto ocupado tira un volcado de pila de veinte lineas que no
    dice que hacer. Pasa al probar en local con otra instancia levantada. */
@@ -175,9 +195,43 @@ servidor.on('error', (err) => {
   throw err
 })
 
-servidor.listen(PUERTO, () => {
-  console.log(`\n  LTWEB en http://localhost:${PUERTO}`)
-  console.log(`  Panel:   http://localhost:${PUERTO}/admin`)
+async function migrarArchivosAnteriores() {
+  /* Versiones anteriores guardaban datos y fotos dentro de la carpeta Node.
+     Si todavía están presentes en el primer arranque con storage externo, se
+     copian una sola vez. Nunca se pisa un archivo que ya exista en destino. */
+  const datosAnteriores = join(RAIZ, 'datos', 'proyectos.json')
+  if (datosAnteriores !== RUTAS.datos && existsSync(datosAnteriores) && !existsSync(RUTAS.datos)) {
+    await mkdir(RUTAS.carpetaDatos, { recursive: true })
+    await copyFile(datosAnteriores, RUTAS.datos)
+    console.log('[storage] proyectos anteriores migrados')
+  }
+
+  if (SUBIDAS_ANTERIORES !== SUBIDAS && existsSync(SUBIDAS_ANTERIORES)) {
+    await mkdir(SUBIDAS, { recursive: true })
+    for (const nombre of await readdir(SUBIDAS_ANTERIORES)) {
+      const origen = join(SUBIDAS_ANTERIORES, nombre)
+      const destino = join(SUBIDAS, nombre)
+      if (!existsSync(destino) && (await stat(origen)).isFile()) await copyFile(origen, destino)
+    }
+  }
+}
+
+function storageDentroDelDespliegue() {
+  const raiz = resolve(RAIZ)
+  const storage = resolve(RUTAS.carpetaDatos)
+  return storage === raiz || storage.startsWith(raiz + sep)
+}
+
+async function iniciar() {
+  try {
+    await migrarArchivosAnteriores()
+  } catch (err) {
+    console.error('[storage] no se pudieron migrar archivos anteriores:', err)
+  }
+
+  servidor.listen(PUERTO, () => {
+    console.log(`\n  LTWEB en http://localhost:${PUERTO}`)
+    console.log(`  Panel:   http://localhost:${PUERTO}/admin`)
 
   /* Aviso sobre dónde queda el contenido.
 
@@ -188,18 +242,22 @@ servidor.listen(PUERTO, () => {
 
      Sale en el registro cada vez que arranca, así queda a la vista antes de
      que pase y no depende de que alguien se acuerde. */
-  const r = rutasProduccion(RAIZ)
-  console.log(`  Datos:   ${r.carpetaDatos}`)
+    console.log(`  Datos:   ${RUTAS.carpetaDatos}`)
+    console.log(`  Subidas: ${RUTAS.carpetaSubidas}`)
 
-  if (!process.env.DATOS_DIR) {
+    if (storageDentroDelDespliegue()) {
+      console.log('')
+      console.log('  AVISO: el storage esta dentro de la carpeta de la app.')
+      console.log('  Si el hosting reemplaza esa carpeta al desplegar, se pierde lo')
+      console.log('  cargado. En Hostinger usa STORAGE_DIR=../ltweb-storage.')
+    }
     console.log('')
-    console.log('  AVISO: los datos estan dentro de la carpeta de la app.')
-    console.log('  Si el hosting borra esa carpeta al desplegar, se pierde lo')
-    console.log('  cargado desde el panel. Para evitarlo, defini la variable')
-    console.log('  de entorno DATOS_DIR apuntando a una carpeta de afuera.')
-  }
-  console.log('')
-})
+  })
+}
+
+/* No usar await en el nivel superior: Hostinger carga este ESM con require()
+   y un top-level await impediría que el proceso arranque. */
+void iniciar()
 
 /* El hosting manda SIGTERM al reiniciar. Cerrar ordenado evita cortar un
    pedido a la mitad —por ejemplo una publicación a medio escribir. */

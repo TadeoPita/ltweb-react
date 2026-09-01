@@ -1,6 +1,7 @@
-import { readFile, writeFile, mkdir, rename, copyFile } from 'node:fs/promises'
+import { readFile, writeFile, mkdir, rename, copyFile, unlink } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { basename, dirname, resolve } from 'node:path'
+import { randomUUID } from 'node:crypto'
 
 /* Persistencia del contenido.
  *
@@ -28,10 +29,40 @@ const AJUSTES_POR_DEFECTO = { variant: 'gallery', pageVariant: 'classic', heroVa
  * una carpeta FUERA del directorio de la app, el contenido queda a salvo pase
  * lo que pase, porque el despliegue ni la toca.
  *
- * Se puede comprobar en dos minutos: cargá un proyecto, desplegá, y fijate si
- * sigue. Si no está, poné DATOS_DIR y listo. */
-function carpetaDeDatos(raiz) {
-  return process.env.DATOS_DIR ? resolve(process.env.DATOS_DIR) : resolve(raiz, 'datos')
+ * En el hosting administrado de Hostinger el código de una app backend queda
+ * en .../<dominio>/nodejs. Esa carpeta se reemplaza al desplegar, así que en
+ * ese entorno se usa automáticamente una hermana llamada ltweb-storage.
+ *
+ * STORAGE_DIR es el nombre actual. DATOS_DIR se sigue aceptando para no romper
+ * instalaciones anteriores. Las rutas relativas se resuelven contra la raíz
+ * de la app, no contra process.cwd(), que el hosting puede cambiar. */
+const RUTA_DE_EJEMPLO = /(?:tu[-_ ]?usuario|your[-_ ]?(?:user|username)|[<{]\s*(?:usuario|user|username)\s*[>}])/i
+
+let avisoRutaEjemplo = false
+
+function esRutaDeEjemplo(valor) {
+  return RUTA_DE_EJEMPLO.test(String(valor ?? ''))
+}
+
+export function carpetaDeDatos(raiz, configurada = process.env.STORAGE_DIR || process.env.DATOS_DIR) {
+  const valor = String(configurada ?? '').trim()
+
+  if (valor && !esRutaDeEjemplo(valor)) return resolve(raiz, valor)
+
+  if (valor && !avisoRutaEjemplo) {
+    avisoRutaEjemplo = true
+    console.warn(
+      '[datos] STORAGE_DIR/DATOS_DIR tenía una ruta de ejemplo y se ignoró. ' +
+        'No uses "/home/tu-usuario": quitá la variable o poné una ruta real.',
+    )
+  }
+
+  const absoluta = resolve(raiz)
+  if (basename(absoluta).toLowerCase() === 'nodejs') {
+    return resolve(dirname(absoluta), 'ltweb-storage')
+  }
+
+  return resolve(absoluta, 'datos')
 }
 
 export function rutas(raiz) {
@@ -42,6 +73,7 @@ export function rutas(raiz) {
        codigo y es de solo lectura. */
     semilla: resolve(raiz, 'datos/semilla.json'),
     carpetaDatos: carpeta,
+    carpetaSubidas: resolve(carpeta, 'subidas'),
     publicado: resolve(raiz, 'public/data/projects.js'),
     carpetaPublicado: resolve(raiz, 'public/data'),
   }
@@ -55,8 +87,31 @@ export function rutasProduccion(raiz) {
     datos: resolve(carpeta, 'proyectos.json'),
     semilla: resolve(raiz, 'datos/semilla.json'),
     carpetaDatos: carpeta,
-    publicado: resolve(raiz, 'dist/data/projects.js'),
-    carpetaPublicado: resolve(raiz, 'dist/data'),
+    carpetaSubidas: resolve(carpeta, 'subidas'),
+    /* La copia publicada también queda fuera del despliegue. El servidor la
+       sirve antes que la incluida en dist, así publicar sobrevive a redeploys
+       sin hacer públicos los borradores. */
+    publicado: resolve(carpeta, 'publicado/projects.js'),
+    carpetaPublicado: resolve(carpeta, 'publicado'),
+  }
+}
+
+function errorDeDatos(mensaje, causa) {
+  const error = new Error(mensaje, { cause: causa })
+  error.code = causa?.code || 'EDATA'
+  error.statusCode = 500
+  error.expose = true
+  return error
+}
+
+async function escribirAtomico(ruta, contenido, encoding = 'utf8') {
+  const tmp = `${ruta}.${process.pid}.${randomUUID()}.tmp`
+  try {
+    await writeFile(tmp, contenido, encoding)
+    await rename(tmp, ruta)
+  } catch (err) {
+    await unlink(tmp).catch(() => {})
+    throw err
   }
 }
 
@@ -84,7 +139,9 @@ export async function leerDatos(r) {
         console.log(`[datos] primer arranque: sembrados ${inicial.proyectos.length} proyectos`)
         return inicial
       } catch (err) {
-        console.error('[datos] semilla ilegible:', err.message)
+        console.error('[datos] no se pudo inicializar desde la semilla:', err)
+        if (err?.statusCode) throw err
+        throw errorDeDatos('No se pudo inicializar el portfolio guardado.', err)
       }
     }
     return { ajustes: { ...AJUSTES_POR_DEFECTO }, proyectos: [] }
@@ -96,8 +153,11 @@ export async function leerDatos(r) {
       proyectos: Array.isArray(crudo.proyectos) ? crudo.proyectos : [],
     }
   } catch (err) {
-    console.error('[datos] proyectos.json ilegible:', err.message)
-    return { ajustes: { ...AJUSTES_POR_DEFECTO }, proyectos: [] }
+    console.error('[datos] proyectos.json no se pudo leer:', err)
+    throw errorDeDatos(
+      'No se pudieron leer los datos del portfolio. Revisá proyectos.json o restaurá un respaldo.',
+      err,
+    )
   }
 }
 
@@ -126,9 +186,7 @@ export async function guardarDatos(r, datos) {
   /* Se escribe en un temporal y recien al final se renombra. rename dentro del
      mismo disco es atomico: o queda el archivo viejo entero o el nuevo entero,
      nunca la mitad de cada uno. */
-  const tmp = r.datos + '.tmp'
-  await writeFile(tmp, JSON.stringify(datos, null, 2), 'utf8')
-  await rename(tmp, r.datos)
+  await escribirAtomico(r.datos, JSON.stringify(datos, null, 2))
 }
 
 /* Convierte un texto en algo que sirva como URL: /proyecto/lo-que-sea.
@@ -196,9 +254,7 @@ export async function publicar(r) {
     `window.__LTWEB_DATOS__ = ${json};\n`
 
   await mkdir(r.carpetaPublicado, { recursive: true })
-  const tmp = r.publicado + '.tmp'
-  await writeFile(tmp, contenido, 'utf8')
-  await rename(tmp, r.publicado)
+  await escribirAtomico(r.publicado, contenido)
 
   return salida.proyectos.length
 }

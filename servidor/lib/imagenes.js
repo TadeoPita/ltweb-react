@@ -67,15 +67,23 @@ export const URL_SUBIDAS = '/' + CARPETA
 /* Se carga una sola vez y se reusa. */
 let sharpPromesa
 
+function errorVisible(mensaje, statusCode) {
+  const error = new Error(mensaje)
+  error.statusCode = statusCode
+  error.expose = true
+  return error
+}
+
 async function cargarSharp() {
   sharpPromesa ??= import('sharp')
     .then((m) => m.default)
     .catch((err) => {
       console.error('[imagenes] no se pudo cargar sharp:', err.message)
       sharpPromesa = undefined // que el próximo intento vuelva a probar
-      throw new Error(
+      throw errorVisible(
         'El procesador de imágenes no está disponible en el servidor. ' +
           'Revisá que sharp esté instalado (npm ci) y volvé a desplegar.',
+        500,
       )
     })
   return sharpPromesa
@@ -108,9 +116,14 @@ export async function guardarImagen(raizPublica, buffer) {
   const dir = rutaSubidas(raizPublica)
   await mkdir(dir, { recursive: true })
 
-  const meta = await sharp(buffer).metadata()
+  let meta
+  try {
+    meta = await sharp(buffer).metadata()
+  } catch {
+    throw errorVisible('El archivo no es una imagen válida.', 400)
+  }
   if (!meta.width || !meta.height) {
-    throw new Error('El archivo no es una imagen válida.')
+    throw errorVisible('El archivo no es una imagen válida.', 400)
   }
 
   const base = randomUUID()
@@ -137,8 +150,10 @@ export async function borrarImagen(raizPublica, url) {
   for (const m of MEDIDAS) {
     try {
       await unlink(resolve(rutaSubidas(raizPublica), `${base}${m.sufijo}.webp`))
-    } catch {
-      /* Ya no estaba: no es un problema. */
+    } catch (err) {
+      /* Ya no estaba: no es un problema. Otros fallos se registran, pero no
+         revierten una operación cuyos metadatos ya se guardaron. */
+      if (err?.code !== 'ENOENT') console.error('[imagenes] no se pudo borrar:', err)
     }
   }
 }

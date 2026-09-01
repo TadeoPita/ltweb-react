@@ -12,16 +12,14 @@ import { PORTFOLIO } from './content'
  *    React arranca: no hay pedido de red, ni pantalla de carga, ni salto de
  *    maqueta. Este es el camino del sitio publicado.
  *
- * 2. /api/proyectos — el panel corriendo en `npm run dev` (ver
- *    scripts/panel-plugin.js). Es la fuente mientras se edita, para ver los
- *    cambios sin publicar cada vez.
+ * 2. /api/proyectos — la fuente del panel, tanto en desarrollo como en la app
+ *    Node publicada. Es el borrador y puede tener cambios aún no publicados.
  *
  * 3. PORTFOLIO de content.js — el contenido que viene con el proyecto, por si
  *    no hay ninguna de las dos.
  *
- * Las escrituras van todas a /api, o sea que solo funcionan con el servidor de
- * desarrollo levantado. Es a propósito: el sitio publicado son archivos
- * estáticos y no tiene —ni debe tener— forma de escribir nada.
+ * Las escrituras van todas a /api. En producción exigen la sesión del panel;
+ * la web pública nunca usa esos endpoints ni puede modificar el borrador.
  */
 
 let state = {
@@ -87,7 +85,11 @@ function datosPublicados() {
 }
 
 async function pedir(ruta, opciones = {}) {
-  const res = await fetch('/api' + ruta, opciones)
+  const headers = new Headers(opciones.headers)
+  if (typeof opciones.body === 'string' && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json')
+  }
+  const res = await fetch('/api' + ruta, { ...opciones, headers })
   if (!res.ok) {
     const cuerpo = await res.json().catch(() => ({}))
     throw new Error(cuerpo.error || `Falló ${ruta} (${res.status})`)
@@ -105,8 +107,21 @@ async function recargar() {
 
 let cargaInicial
 
+function esPanel() {
+  return typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')
+}
+
+function marcarError(err) {
+  state = { ...state, loading: false, error: err?.message || 'No se pudo cargar el portfolio.' }
+  emit()
+}
+
 async function cargar() {
-  const publicado = datosPublicados()
+  /* El panel siempre tiene que leer el borrador real. Si usara el snapshot
+     publicado, al recargar ocultaría cambios pendientes y también cualquier
+     problema de almacenamiento del servidor. */
+  const panel = esPanel()
+  const publicado = panel ? null : datosPublicados()
   if (publicado) {
     aplicar(publicado)
     return
@@ -114,7 +129,11 @@ async function cargar() {
 
   try {
     await recargar()
-  } catch {
+  } catch (err) {
+    if (panel) {
+      marcarError(err)
+      return
+    }
     /* Sin panel levantado y sin publicación previa: queda el contenido que
        viene con el proyecto, así el sitio nunca se ve vacío. */
     aplicar({ ajustes: {}, proyectos: PORTFOLIO })

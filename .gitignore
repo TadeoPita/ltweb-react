@@ -34,3 +34,11 @@ MI-CLAVE-DEL-PANEL.txt
 # del repositorio y se perderia todo lo cargado desde el panel.
 # Lo que si viaja es datos/semilla.json, que es el punto de partida.
 datos/proyectos.json
+
+# Lo que este codigo genera solo en tiempo de ejecucion: la copia publicada
+# (fuera del build a proposito, ver rutasProduccion en servidor/lib/datos.js),
+# los respaldos rotativos antes de cada guardado, y las imagenes subidas desde
+# el panel en la ubicacion nueva (antes vivian en /subidas a secas).
+datos/publicado/
+datos/respaldo-*.json
+datos/subidas/

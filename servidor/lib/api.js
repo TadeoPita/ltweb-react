@@ -1,6 +1,17 @@
+import { stat } from 'node:fs/promises'
+import { resolve, sep } from 'node:path'
 import { leerDatos, guardarDatos, publicar, idLibre, comoId } from './datos.js'
 import { guardarImagen, borrarImagen } from './imagenes.js'
 import { entrar, salir, sesionValida, leerCookieSesion, cookieSesion, cookieBorrada, ipDe, estadoDeLaClave } from './auth.js'
+
+/* ¿carpeta cae dentro de raiz? Mismo criterio que servidor/index.js: comparar
+   contra raiz + separador, no solo con startsWith(raiz), porque una carpeta
+   hermana con el mismo prefijo ("app" y "app-datos") pasaría el chequeo. */
+function dentroDe(raiz, carpeta) {
+  const a = resolve(raiz)
+  const b = resolve(carpeta)
+  return b === a || b.startsWith(a + sep)
+}
 
 /* Las rutas del panel.
  *
@@ -13,11 +24,54 @@ import { entrar, salir, sesionValida, leerCookieSesion, cookieSesion, cookieBorr
 /* Solo estos campos se pueden escribir. Aunque llegue algo de más en el
    cuerpo, no puede tocar una propiedad que no corresponde. */
 const CAMPOS = [
-  'name', 'type', 'url', 'size', 'label', 'category',
+  'name', 'type', 'image', 'url', 'size', 'label', 'category',
   'problem', 'solution', 'description', 'services',
 ]
 
 const LIMITE_IMAGEN = 25 * 1024 * 1024
+const ERRORES_STORAGE = new Set(['EACCES', 'EPERM', 'EROFS', 'ENOSPC', 'ENOTDIR', 'EISDIR'])
+
+let colaContenido = Promise.resolve()
+
+function errorHttp(statusCode, mensaje) {
+  const error = new Error(mensaje)
+  error.statusCode = statusCode
+  error.expose = true
+  return error
+}
+
+function encolarContenido(tarea) {
+  const actual = colaContenido.then(tarea, tarea)
+  /* La cola tiene que continuar aunque un pedido falle. La promesa que se
+     devuelve conserva el rechazo para que lo responda el catch de la API. */
+  colaContenido = actual.catch(() => {})
+  return actual
+}
+
+function mutaContenido(ruta, metodo) {
+  return metodo !== 'GET' && ruta !== '/entrar' && ruta !== '/salir'
+}
+
+function respuestaDeError(err) {
+  if (ERRORES_STORAGE.has(err?.code)) {
+    return {
+      codigo: err.code === 'ENOSPC' ? 507 : 500,
+      error:
+        err.code === 'ENOSPC'
+          ? 'El servidor se quedó sin espacio para guardar los cambios.'
+          : 'El servidor no puede escribir en el almacenamiento. Revisá STORAGE_DIR en Hostinger.',
+    }
+  }
+
+  if (err instanceof SyntaxError) return { codigo: 400, error: 'El JSON enviado no es válido.' }
+  if (err?.statusCode) {
+    return {
+      codigo: err.statusCode,
+      error: err.expose ? err.message : 'Error interno del servidor.',
+    }
+  }
+  return { codigo: 500, error: 'Error interno del servidor.' }
+}
 
 /* Comprueba de dónde viene un pedido que modifica algo.
  *
@@ -60,7 +114,7 @@ async function cuerpoJson(req) {
   let total = 0
   for await (const t of req) {
     total += t.length
-    if (total > 2 * 1024 * 1024) throw new Error('El cuerpo del pedido es demasiado grande.')
+    if (total > 2 * 1024 * 1024) throw errorHttp(413, 'El cuerpo del pedido es demasiado grande.')
     trozos.push(t)
   }
   const texto = Buffer.concat(trozos).toString('utf8')
@@ -72,7 +126,7 @@ async function cuerpoBinario(req) {
   let total = 0
   for await (const t of req) {
     total += t.length
-    if (total > LIMITE_IMAGEN) throw new Error('La imagen supera los 25 MB.')
+    if (total > LIMITE_IMAGEN) throw errorHttp(413, 'La imagen supera los 25 MB.')
     trozos.push(t)
   }
   return Buffer.concat(trozos)
@@ -93,6 +147,15 @@ export async function manejarApi(req, res, ctx) {
 
   const ruta = url.pathname.replace(/^\/api/, '').replace(/\/+$/, '') || '/'
   const metodo = req.method
+
+  if (mutaContenido(ruta, metodo)) {
+    return encolarContenido(() => manejarApiInterna(req, res, ctx, url, ruta, metodo))
+  }
+
+  return manejarApiInterna(req, res, ctx, url, ruta, metodo)
+}
+
+async function manejarApiInterna(req, res, ctx, url, ruta, metodo) {
   const { raiz, raizPublica, rutas: r, produccion, pedirSesion } = ctx
 
   try {
@@ -148,6 +211,39 @@ export async function manejarApi(req, res, ctx) {
       return responder(res, 200, await leerDatos(r)), true
     }
 
+    /* Diagnóstico del almacenamiento.
+     *
+     * Existe porque el síntoma "cargo un proyecto y no queda guardado" no se
+     * puede depurar mirando el sitio: hay que saber DÓNDE está escribiendo el
+     * servidor, y eso no se ve desde afuera. Sin acceso SSH a Hostinger, esta
+     * es la única forma de confirmar si carpetaDatos cayó dentro de la carpeta
+     * que el despliegue reemplaza.
+     *
+     * Pide sesión como todo lo de acá abajo: revela una ruta del servidor y
+     * cuántos proyectos hay, que no es para cualquiera. */
+    if (ruta === '/diagnostico' && metodo === 'GET') {
+      let proyectos = null
+      let publicadoExiste = false
+      try {
+        proyectos = (await leerDatos(r)).proyectos.length
+      } catch {
+        /* Si leerDatos falla, el resto del diagnóstico igual sirve. */
+      }
+      try {
+        await stat(r.publicado)
+        publicadoExiste = true
+      } catch {
+        /* No se publicó todavía, o el archivo no está donde se lo busca. */
+      }
+      return responder(res, 200, {
+        carpetaDatos: r.carpetaDatos,
+        dentroDelDespliegue: dentroDe(raiz, r.carpetaDatos),
+        proyectosGuardados: proyectos,
+        rutaPublicado: r.publicado,
+        publicadoExiste,
+      }), true
+    }
+
     if (ruta === '/proyectos' && metodo === 'POST') {
       const cuerpo = await cuerpoJson(req)
       const datos = await leerDatos(r)
@@ -180,7 +276,7 @@ export async function manejarApi(req, res, ctx) {
     if (ruta === '/importar' && metodo === 'POST') {
       const cuerpo = await cuerpoJson(req)
       const lista = cuerpo.proyectos ?? cuerpo.items ?? (Array.isArray(cuerpo) ? cuerpo : null)
-      if (!Array.isArray(lista)) throw new Error('No se encontró la lista de proyectos.')
+      if (!Array.isArray(lista)) throw errorHttp(400, 'No se encontró la lista de proyectos.')
       const datos = await leerDatos(r)
       datos.proyectos = lista.map((p, n) => ({
         ...p,
@@ -217,11 +313,14 @@ export async function manejarApi(req, res, ctx) {
       }
 
       if (!sub && metodo === 'DELETE') {
-        await borrarImagen(raizPublica, proyecto.image)
-        await borrarImagen(raizPublica, proyecto.beforeImage)
-        for (const g of proyecto.gallery ?? []) await borrarImagen(raizPublica, g?.url ?? g)
+        const imagenes = [
+          proyecto.image,
+          proyecto.beforeImage,
+          ...(proyecto.gallery ?? []).map((g) => g?.url ?? g),
+        ]
         datos.proyectos.splice(i, 1)
         await guardarDatos(r, datos)
+        for (const imagen of imagenes) await borrarImagen(raizPublica, imagen)
         return responder(res, 200, { ok: true }), true
       }
 
@@ -237,31 +336,49 @@ export async function manejarApi(req, res, ctx) {
 
       if (sub === '/portada' && metodo === 'POST') {
         const urlNueva = await guardarImagen(raizPublica, await cuerpoBinario(req))
-        await borrarImagen(raizPublica, proyecto.image)
+        const anterior = proyecto.image
         proyecto.image = urlNueva
-        await guardarDatos(r, datos)
+        try {
+          await guardarDatos(r, datos)
+        } catch (err) {
+          await borrarImagen(raizPublica, urlNueva)
+          throw err
+        }
+        await borrarImagen(raizPublica, anterior)
         return responder(res, 200, { url: urlNueva }), true
       }
 
       if (sub === '/antes' && metodo === 'POST') {
         const urlNueva = await guardarImagen(raizPublica, await cuerpoBinario(req))
-        await borrarImagen(raizPublica, proyecto.beforeImage)
+        const anterior = proyecto.beforeImage
         proyecto.beforeImage = urlNueva
-        await guardarDatos(r, datos)
+        try {
+          await guardarDatos(r, datos)
+        } catch (err) {
+          await borrarImagen(raizPublica, urlNueva)
+          throw err
+        }
+        await borrarImagen(raizPublica, anterior)
         return responder(res, 200, { url: urlNueva }), true
       }
 
       if (sub === '/antes' && metodo === 'DELETE') {
-        await borrarImagen(raizPublica, proyecto.beforeImage)
+        const anterior = proyecto.beforeImage
         proyecto.beforeImage = ''
         await guardarDatos(r, datos)
+        await borrarImagen(raizPublica, anterior)
         return responder(res, 200, { ok: true }), true
       }
 
       if (sub === '/galeria' && metodo === 'POST') {
         const urlNueva = await guardarImagen(raizPublica, await cuerpoBinario(req))
         proyecto.gallery = [...(proyecto.gallery ?? []), { url: urlNueva }]
-        await guardarDatos(r, datos)
+        try {
+          await guardarDatos(r, datos)
+        } catch (err) {
+          await borrarImagen(raizPublica, urlNueva)
+          throw err
+        }
         return responder(res, 200, { url: urlNueva }), true
       }
 
@@ -269,9 +386,10 @@ export async function manejarApi(req, res, ctx) {
         const indice = Number(url.searchParams.get('i'))
         const lista = proyecto.gallery ?? []
         if (Number.isInteger(indice) && lista[indice]) {
-          await borrarImagen(raizPublica, lista[indice]?.url ?? lista[indice])
+          const anterior = lista[indice]?.url ?? lista[indice]
           lista.splice(indice, 1)
           await guardarDatos(r, datos)
+          await borrarImagen(raizPublica, anterior)
         }
         return responder(res, 200, { ok: true }), true
       }
@@ -281,7 +399,8 @@ export async function manejarApi(req, res, ctx) {
     return true
   } catch (err) {
     console.error('[api]', err)
-    responder(res, 400, { error: err.message })
+    const respuesta = respuestaDeError(err)
+    responder(res, respuesta.codigo, { error: respuesta.error })
     return true
   }
 }
