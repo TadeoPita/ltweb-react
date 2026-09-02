@@ -233,38 +233,66 @@ export const PORTFOLIO = [
 ]
 
 /* FAQ: preguntas del brief con respuestas concretas y sin promesas vacías. */
+/* Preguntas frecuentes.
+ *
+ * Es la parte del sitio que más peso tiene para los asistentes de IA: son
+ * pares pregunta/respuesta, van declaradas como FAQPage en los datos
+ * estructurados y ahora también en el HTML que se lee sin JavaScript. Cuando
+ * a una IA le preguntan "quién es LTWEB", esto es de lo primero que repite.
+ *
+ * La versión anterior se describía sola como una opción de entrada, con
+ * palabras que achicaban el trabajo sin que hiciera falta:
+ *
+ *   "SEO básico" (dos veces)      -> servicio limitado
+ *   "configuración inicial"       -> algo para empezar
+ *   "facilidades de pago en cuotas" -> presupuesto ajustado
+ *   "Fácil y rápido"              -> barato
+ *   la primera respuesta abría con "Landing Page"
+ *
+ * Eso es literalmente lo que los asistentes estaban resumiendo. No es que se
+ * equivocaran: repetían lo que acá estaba escrito.
+ *
+ * Los hechos no cambiaron: los plazos son los mismos, los medios de pago son
+ * los mismos y el pago por etapas se sigue ofreciendo. Lo que cambió es que
+ * ya no se subestima el trabajo al describirlo, y que el trabajo más pesado
+ * —los sistemas a medida, que el sitio ya decía hacer pero solo dentro de una
+ * pestaña que había que abrir— ahora está acá, donde se lee. */
 export const FAQS = [
   {
-    q: '¿Cuánto tiempo tarda el desarrollo de una web?',
-    a: 'Depende del tipo de web. Una <strong>Landing Page</strong> puede estar lista en <strong>1 a 2 semanas</strong>, mientras que un <strong>E-Commerce</strong> o un sitio más complejo puede tardar <strong>2-4 semanas</strong>.',
+    q: '¿Qué tipo de proyectos desarrollan?',
+    a: 'Trabajamos con <strong>empresas, instituciones y profesionales</strong> en sitios institucionales, tiendas online y <strong>sistemas de gestión a medida</strong>. Desarrollamos sobre código propio y no sobre plantillas: eso es lo que permite resolver requerimientos específicos que una plantilla no cubre.',
   },
   {
-    q: '¿Qué incluye el servicio de diseño web?',
-    a: 'Incluye <strong>diseño personalizado, desarrollo responsivo, optimización SEO básica y configuración inicial</strong>. También brindamos integración con formularios y redes sociales.',
+    q: '¿Desarrollan sistemas además de sitios web?',
+    a: 'Sí. Hacemos <strong>control de stock, administración interna, gestión de clientes, turnos, reservas y automatizaciones</strong>, conectados con las herramientas que la empresa ya usa. Primero entendemos el circuito real del negocio y recién ahí proponemos cómo resolverlo.',
   },
   {
-    q: '¿Puedo modificar mi sitio después de la entrega?',
-    a: 'Sí, entregamos sitios <strong>autoadministrables</strong>. También ofrecemos <strong>planes de mantenimiento</strong> si preferís que nos encarguemos de las actualizaciones.',
+    q: '¿Cuánto tiempo tarda el desarrollo?',
+    a: 'Depende del alcance. Un <strong>sitio institucional</strong> puede estar listo en <strong>1 a 2 semanas</strong>. Una <strong>tienda online</strong> o un sitio con integraciones lleva <strong>2 a 4 semanas</strong>. Un <strong>sistema a medida</strong> se estima después de relevar el circuito de trabajo, porque el plazo depende de con qué tenga que integrarse.',
   },
   {
-    q: '¿Hacen rediseño de sitios web?',
-    a: 'Sí, optimizamos y remodelamos sitios existentes para mejorar su <strong>diseño, velocidad y conversión</strong> sin perder contenido importante.',
+    q: '¿Qué incluye el servicio?',
+    a: 'Diseño a medida, <strong>desarrollo responsive</strong>, optimización de la velocidad de carga y la estructura técnica que los buscadores necesitan para indexar el sitio. También la integración con formularios, medios de pago y las herramientas que ya uses.',
   },
   {
-    q: '¿Cuánto cuesta hacer una web?',
-    a: 'Depende del tipo y funcionalidades. Escribinos y te enviamos un <strong>presupuesto personalizado</strong> sin compromiso.',
+    q: '¿Hacen rediseño de sitios que quedaron atrasados?',
+    a: 'Sí. Revisamos el sitio actual, definimos qué contenido conviene mantener y qué hay que reordenar, y lo rehacemos mejorando <strong>diseño, velocidad y conversión</strong> sin perder lo que ya funcionaba ni el posicionamiento ganado.',
   },
   {
-    q: '¿Mi sitio será visible en Google?',
-    a: 'Sí, optimizamos tu web con <strong>SEO básico</strong> para que aparezca en los buscadores. Para estrategias avanzadas, ofrecemos <strong>servicios adicionales de SEO y marketing digital</strong>.',
+    q: '¿Mi sitio va a aparecer en Google?',
+    a: 'Cada proyecto se entrega con la <strong>estructura técnica que los buscadores necesitan</strong>: velocidad de carga, etiquetas por página y contenido indexable. Para un trabajo de posicionamiento sostenido en el tiempo, el SEO se trabaja como un servicio propio.',
+  },
+  {
+    q: '¿Puedo administrar el contenido yo?',
+    a: 'Cuando el proyecto lo justifica sumamos un <strong>panel de administración a medida</strong>. También ofrecemos <strong>planes de mantenimiento</strong> si preferís que nos encarguemos nosotros de las actualizaciones.',
+  },
+  {
+    q: '¿Cómo es el proceso para arrancar?',
+    a: 'Nos escribís contándonos qué necesitás, <strong>relevamos el proyecto</strong>, te pasamos una propuesta con alcance y plazos, y arrancamos. El presupuesto depende del alcance y de las integraciones que requiera.',
   },
   {
     q: '¿Qué métodos de pago aceptan?',
-    a: 'Aceptamos <strong>transferencias bancarias, Mercado Pago y PayPal</strong>. También ofrecemos <strong>facilidades de pago en cuotas</strong> según el proyecto.',
-  },
-  {
-    q: '¿Cómo contrato el servicio?',
-    a: 'Fácil y rápido: <strong>nos contactás, definimos el proyecto, desarrollamos tu web y la lanzamos</strong>.',
+    a: 'Transferencia bancaria, Mercado Pago y PayPal. En proyectos de mayor alcance trabajamos con un <strong>esquema de pagos por etapas</strong>.',
   },
 ]
 
