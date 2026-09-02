@@ -576,7 +576,7 @@ export default function AdminPage() {
             {items.length} proyectos · {items.filter((i) => i.home).length} visibles en el inicio · todos aparecen en /portfolio
           </p>
           <button
-            onClick={() => portfolioStore.addItem({ name: 'NUEVO PROYECTO', type: 'LANDING PAGE', image: '/images/pf-auralys.webp' })}
+            onClick={() => portfolioStore.addItem({ name: 'NUEVO PROYECTO', type: 'SITIO PROFESIONAL', image: '/images/pf-auralys.webp' })}
             className="flex items-center gap-2 rounded-lg bg-ink text-white px-4 py-2 text-sm font-semibold hover:bg-black cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Agregar proyecto

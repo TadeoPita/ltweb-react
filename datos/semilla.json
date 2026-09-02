@@ -8,7 +8,7 @@
     {
       "id": "auralys",
       "name": "AURALYS",
-      "type": "LANDING PAGE PRO",
+      "type": "SITIO PROFESIONAL",
       "image": "/images/pf-auralys.webp",
       "url": "https://auralyslaser.com",
       "size": "full",
@@ -26,7 +26,7 @@
     {
       "id": "hey",
       "name": "HEY INSTITUTE",
-      "type": "Pagina profesional",
+      "type": "SITIO INSTITUCIONAL",
       "image": "/images/pf-heyinstitute.webp",
       "url": "https://heyinstitute.com.ar",
       "size": "tall",
@@ -44,7 +44,7 @@
     {
       "id": "mch",
       "name": "MCH ODONTALGÍA LÁSER",
-      "type": "LANDING PAGE PRO",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/b6756fd3-b55c-4a55-9022-42262a24166c.webp",
       "url": "https://mchodontolaser.com.ar",
       "size": "tall",
@@ -53,7 +53,7 @@
       "blurred": false,
       "category": "Salud",
       "problem": "Necesitaban una web que reflejara la seriedad de una clínica y mostrara con claridad sus tratamientos.",
-      "solution": "Diseñamos una landing institucional con foco en tratamientos, equipo y contacto directo por WhatsApp.",
+      "solution": "Desarrollamos la **página web empresarial** de MCH Odontología Láser, con foco en tratamientos, equipo y **contacto directo por WhatsApp**.",
       "description": "",
       "services": "UX/UI, WordPress, Responsive",
       "gallery": [],
@@ -62,7 +62,7 @@
     {
       "id": "acevedo",
       "name": "ACEVEDO PERFORACIONES",
-      "type": "LANDING PAGE PRO",
+      "type": "SITIO PROFESIONAL",
       "image": "/images/pf-acevedo.webp",
       "url": "https://perforacionesacevedo.com.ar",
       "size": "normal",
@@ -80,7 +80,7 @@
     {
       "id": "corteza",
       "name": "CORTEZA",
-      "type": "E-COMMERCE",
+      "type": "TIENDA ONLINE",
       "image": "/images/pf-corteza.webp",
       "url": "https://corteza.com.ar",
       "size": "tall",
@@ -98,7 +98,7 @@
     {
       "id": "biovitality",
       "name": "BIOVITALITY",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/images/pf-biovitality.webp",
       "url": "https://biovitalitywc.com",
       "size": "normal",
@@ -116,7 +116,7 @@
     {
       "id": "fgmtech",
       "name": "FGM TECH",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/images/pf-fgmtech.webp",
       "url": "https://fgmtechlaser.com",
       "size": "full",
@@ -134,7 +134,7 @@
     {
       "id": "piccoli",
       "name": "PICCOLI QUESTION",
-      "type": "E-COMMERCE",
+      "type": "TIENDA ONLINE",
       "image": "/images/pf-piccoli.webp",
       "url": "https://piccoliquestion.com.ar",
       "size": "wide",
@@ -152,7 +152,7 @@
     {
       "id": "mostudio",
       "name": "MO STUDIO",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/e6d94029-4a9c-4b45-8b51-0051763ce15c.webp",
       "url": "https://mostudiomedia.com",
       "size": "tall",
@@ -170,7 +170,7 @@
     {
       "id": "mundalma",
       "name": "MUNDALMA",
-      "type": "LANDING PAGE PRO",
+      "type": "SITIO PROFESIONAL",
       "image": "/images/pf-mundalma.webp",
       "url": "https://mundalma.com.ar",
       "size": "full",
@@ -188,7 +188,7 @@
     {
       "id": "baldomero",
       "name": "CENTRO BALDOMERO",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/images/pf-baldomero.webp",
       "url": "https://centrobaldomero.com.ar",
       "size": "tall",
@@ -206,7 +206,7 @@
     {
       "id": "glamhair",
       "name": "GLAM HAIR",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/images/pf-glamhair.webp",
       "url": "https://glamhair.com.ar",
       "size": "tall",
@@ -224,7 +224,7 @@
     {
       "id": "turnera",
       "name": "Fono Diaz Vélez",
-      "type": "Pagina profesional ",
+      "type": "SITIO INSTITUCIONAL",
       "image": "/subidas/8121232d-7d3c-452a-b9d5-73cc478bbc72.webp",
       "url": "https://fonodiazvelez.com.ar/",
       "size": "normal",
@@ -242,7 +242,7 @@
     {
       "id": "modolaser",
       "name": "MODO LÁSER",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/images/pf-modolaser.webp",
       "url": "https://estancialaser.com",
       "size": "normal",
@@ -260,7 +260,7 @@
     {
       "id": "crucero",
       "name": "CRUCERO LÁSER",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/images/pf-crucero.webp",
       "url": "#",
       "size": "normal",
@@ -278,7 +278,7 @@
     {
       "id": "pmrzqy091",
       "name": "Mica Rodera Abogada",
-      "type": "Pagina profesional",
+      "type": "SITIO INSTITUCIONAL",
       "image": "/subidas/a90900aa-1426-4130-875f-4ab268f6cf8a.webp",
       "url": "https://abogadamicaelarodera.com.ar/",
       "size": "wide",
@@ -296,7 +296,7 @@
     {
       "id": "pmrzqy215",
       "name": "pehumafe",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/0507acd4-5a9c-400f-9b39-003346b42562.webp",
       "url": "https://pehumafe.com.ar",
       "size": "wide",
@@ -314,7 +314,7 @@
     {
       "id": "pmrzr6aet",
       "name": "acalo",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/e796963b-7abb-42b7-96ec-d7058fbcbe7a.webp",
       "url": "https://acalo.ar/",
       "size": "normal",
@@ -332,7 +332,7 @@
     {
       "id": "pmrzr6jcw",
       "name": "Om visual brand",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/e90b73f3-571e-4598-9520-d5c7b7701008.webp",
       "url": "https://omvisualbrand.com/",
       "size": "normal",
@@ -350,7 +350,7 @@
     {
       "id": "pmrzr6jsl",
       "name": "Rotiseria vicente",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/d876143d-4351-4e95-8e40-663561dbf1b9.webp",
       "url": "https://rotiseriavicente.com.ar/",
       "size": "normal",
@@ -368,7 +368,7 @@
     {
       "id": "pmrzr702r",
       "name": "mzeta solutions",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/69151c1a-df5d-4037-be54-d4377b11af67.webp",
       "url": "https://mzetasolutions.com.ar/",
       "size": "normal",
@@ -386,7 +386,7 @@
     {
       "id": "pmrzr727g",
       "name": "imagenes mch",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/40124601-c1d8-4f96-ab15-626ea9c27ede.webp",
       "url": "https://imagenesmch.com.ar/",
       "size": "normal",
@@ -404,7 +404,7 @@
     {
       "id": "pmrzr9rye",
       "name": "dr. diego croce",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/0854e260-9d6c-416d-9fb9-98892134d580.webp",
       "url": "https://drdiegocroce.com.ar/",
       "size": "normal",
@@ -422,7 +422,7 @@
     {
       "id": "pmrzrgv20",
       "name": "Mutisia",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/2cf2d7fa-e910-48bb-b2f1-a125753fb811.webp",
       "url": "https://cervezamutisia.com.ar/",
       "size": "full",
@@ -444,7 +444,7 @@
     {
       "id": "pmtccsl6o",
       "name": "BD / ARQUITECTURA SUSTENTABLE",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/1fb744e8-a846-466c-86ad-c07ff24427cc.webp",
       "url": "https://bdarquitecturasustentable.com/",
       "size": "full",
@@ -462,7 +462,7 @@
     {
       "id": "pmrzreh2z",
       "name": "diplomatura laser",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/d636363b-e495-416f-96fb-ea5e42e95e5b.webp",
       "url": "https://diplomaturalaser.com.ar",
       "size": "normal",
@@ -480,7 +480,7 @@
     {
       "id": "pmrzrfo29",
       "name": "cecilia saraceni",
-      "type": "LANDING PAGE",
+      "type": "SITIO PROFESIONAL",
       "image": "/subidas/a2b4a029-d0f6-4f54-96a1-107a8136c91c.webp",
       "url": "ceciliasaraceni.com.ar",
       "size": "normal",

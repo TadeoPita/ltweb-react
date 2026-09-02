@@ -247,7 +247,7 @@ export function CardPlazo() {
         <span className="font-display font-bold uppercase text-ink/45 leading-none text-lg">semanas</span>
       </div>
       <p className="mt-3 font-display font-bold uppercase text-ink/85 text-[15px] leading-tight">
-        Una landing lista
+        Una web lista
       </p>
       <p className="mt-1.5 font-body text-[13px] leading-relaxed text-ink/55">
         Un e-commerce o un sitio más grande, entre dos y cuatro semanas.

@@ -57,7 +57,7 @@ export default function Solutions() {
             {...blurUp(0.16)}
             className="font-body text-ink/60 text-base sm:text-lg leading-relaxed lg:pb-3"
           >
-            Tres áreas de trabajo que cubren desde una landing simple hasta soluciones a medida integradas con el resto de tu negocio.
+            Tres áreas de trabajo que cubren desde una web empresarial hasta sistemas a medida integrados con el resto de tu negocio.
           </motion.p>
         </div>
 

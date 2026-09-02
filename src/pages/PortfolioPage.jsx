@@ -15,7 +15,7 @@ export default function PortfolioPage() {
   useSeo({
     title: 'Proyectos — LTWEB',
     description:
-      'Todos los proyectos que diseñamos y desarrollamos: landing pages, tiendas online y sistemas a medida para empresas de Buenos Aires.',
+      'Todos los proyectos que diseñamos y desarrollamos: webs empresariales, tiendas online y sistemas personalizados para empresas de Argentina.',
     path: '/portfolio',
   })
 
@@ -47,7 +47,7 @@ export default function PortfolioPage() {
           transition={{ duration: 0.8, delay: 0.3 }}
           className="mt-6 text-center font-body text-white/50 text-base sm:text-lg max-w-2xl mx-auto"
         >
-          Todos los proyectos que diseñamos y desarrollamos: landing pages, e-commerce y experiencias a medida.
+          Todos los proyectos que diseñamos y desarrollamos: webs empresariales, tiendas online y sistemas a medida.
         </motion.p>
 
         <div className="mt-20">

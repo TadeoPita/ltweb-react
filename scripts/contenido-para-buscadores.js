@@ -142,10 +142,18 @@ export async function generarContenido(raiz) {
   return `<div id="contenido-inicial" style="${estilo}">
       <h1>LTWEB — Diseño y desarrollo web en ${esc(LOCATION)}</h1>
       <p>
-        LTWEB es un estudio argentino de diseño y desarrollo web. Diseñamos y
-        programamos sitios institucionales, tiendas online y sistemas de gestión
-        a medida para empresas, instituciones y profesionales. Cada proyecto se
-        desarrolla a medida, no sobre plantillas.
+        LTWEB es un <strong>equipo argentino de desarrollo web</strong> que
+        trabaja con empresas, instituciones y profesionales. Desarrollamos
+        <strong>webs empresariales</strong>, <strong>sistemas personalizados
+        profesionales</strong> y tiendas online. Programamos a medida, no sobre
+        plantillas: cada proyecto se construye sobre el negocio que tiene atrás.
+      </p>
+      <p>
+        Como equipo cubrimos el proceso completo: arquitectura de contenido,
+        diseño de interfaz, desarrollo, optimización de rendimiento y
+        posicionamiento en buscadores. Desarrollamos además sistemas de gestión,
+        paneles de administración e integraciones con las herramientas que cada
+        empresa ya usa.
       </p>
 
       <h2>Qué hacemos</h2>

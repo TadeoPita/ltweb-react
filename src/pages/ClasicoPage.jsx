@@ -33,7 +33,7 @@ export default function ClasicoPage() {
   useSeo({
     title: 'LTWEB — Diseño y desarrollo web en Buenos Aires',
     description:
-      'Estudio de diseño y desarrollo web. Hacemos sitios institucionales, landing pages, tiendas online y sistemas de gestión a medida para empresas.',
+      'Equipo de desarrollo web. Hacemos webs empresariales, sitios institucionales, tiendas online y sistemas personalizados para empresas.',
     path: '/clasico',
     noindex: true,
   })

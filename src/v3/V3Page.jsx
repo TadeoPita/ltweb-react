@@ -77,7 +77,7 @@ export default function V3Page() {
   useSeo({
     title: 'LTWEB — Diseño y desarrollo web en Buenos Aires',
     description:
-      'Estudio de diseño y desarrollo web. Hacemos sitios institucionales, landing pages, tiendas online y sistemas de gestión a medida para empresas.',
+      'Equipo de desarrollo web en Argentina. Creamos webs empresariales, sistemas personalizados profesionales y tiendas online. Desarrollo a medida, no plantillas.',
     path: '/',
   })
 
