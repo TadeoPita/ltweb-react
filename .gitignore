@@ -42,3 +42,10 @@ datos/proyectos.json
 datos/publicado/
 datos/respaldo-*.json
 datos/subidas/
+
+# Archivos de trabajo del relevamiento SEO. Se regeneran cuando haga falta y
+# el contenido real vive en el panel, no acá.
+relevamiento.json
+fichas-borrador.json
+fichas-para-importar.json
+FICHAS-SEO.md
