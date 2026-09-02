@@ -1,4 +1,4 @@
-import { stat } from 'node:fs/promises'
+import { readFile, stat } from 'node:fs/promises'
 import { resolve, sep } from 'node:path'
 import { leerDatos, guardarDatos, publicar, idLibre, comoId } from './datos.js'
 import { guardarImagen, borrarImagen } from './imagenes.js'
@@ -162,6 +162,46 @@ async function manejarApiInterna(req, res, ctx, url, ruta, metodo) {
     if (metodo !== 'GET' && !origenValido(req)) {
       return responder(res, 403, { error: 'Origen no permitido.' }), true
     }
+    // -----------------------------------------------------------------------
+    // Contenido publicado, público (sin sesión) — la usa el sitio entero.
+    //
+    // Vivía en /data/projects.js, servido como archivo estático desde index.js.
+    // El problema: en Hostinger, cualquier ruta que coincide con un archivo
+    // real en el disco la sirve el servidor web de la plataforma DIRECTO desde
+    // ahí, sin pasar nunca por nuestro proceso Node. Como el build siempre deja
+    // un dist/data/projects.js (la copia que vino con ese despliegue), esa era
+    // la que se servía siempre — nunca lo último publicado desde el panel, sin
+    // importar cuántas veces se publicara después.
+    //
+    // Se confirma comparando cabeceras: /api/sesion sale con las que pone
+    // nuestro código (Cache-Control: no-store). /data/projects.js salía con
+    // max-age=14400 y un Last-Modified que nuestro código nunca escribe —
+    // cabeceras de un servidor de archivos, no las nuestras.
+    //
+    // /api/publicado.js no tiene ese problema porque nunca existe un archivo
+    // en el disco con ese nombre: no hay nada que la plataforma pueda
+    // interceptar, así que el pedido llega siempre a este código. -----------
+
+    if (ruta === '/publicado.js' && metodo === 'GET') {
+      let contenido
+      try {
+        contenido = await readFile(r.publicado, 'utf8')
+      } catch {
+        /* Todavía no se publicó nada. La página sigue andando igual: el
+           front cae solo a /api/proyectos cuando este script no define
+           window.__LTWEB_DATOS__. */
+        contenido = '/* Todavía no se publicó nada desde el panel. */\n'
+      }
+      res.writeHead(200, {
+        'Content-Type': 'application/javascript; charset=utf-8',
+        /* Es justo lo contrario de lo que se cachearía por defecto: cada
+           publicación tiene que verse al instante, no dentro de 4 horas. */
+        'Cache-Control': 'no-cache, must-revalidate',
+      })
+      res.end(contenido)
+      return true
+    }
+
     // -----------------------------------------------------------------------
     // Acceso
     // -----------------------------------------------------------------------

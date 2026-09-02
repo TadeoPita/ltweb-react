@@ -149,10 +149,18 @@
          evita el pedido de red, la pantalla de carga y el salto de maqueta que
          había cuando llegaban después.
 
-         El archivo se llama siempre igual, así que para que publicar se vea
-         al instante lleva Cache-Control no-cache desde el .htaccess. Sin eso
-         quedaba atrapado en la regla que cachea todo .js por un año. -->
-    <script src="/data/projects.js"></script>
+         Es /api/publicado.js y no /data/projects.js a propósito. Ese era un
+         archivo real en el disco (dist/data/projects.js, parte de cada build),
+         y en Hostinger cualquier ruta que coincide con un archivo real la
+         sirve el servidor de la plataforma directo desde ahí — nunca llegaba a
+         nuestro servidor Node, así que publicar de nuevo no se veía nunca:
+         siempre quedaba la copia que trajo el último despliegue.
+
+         /api/publicado.js no es un archivo en ningún lado: lo genera
+         servidor/lib/api.js al vuelo, leyendo lo último publicado. No hay
+         nada que la plataforma pueda interceptar, así que el pedido llega
+         siempre a nuestro código. -->
+    <script src="/api/publicado.js"></script>
 
     <!-- Precarga de las primeras portadas del muro.
 
