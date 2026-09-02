@@ -70,61 +70,165 @@
         href="https://fonts.googleapis.com/css2?family=Phudu:wght@400;500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&family=Poppins:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap"
       />
     </noscript>
-    <!-- Datos estructurados de la empresa. Van en el HTML y no inyectados por
-         React a propósito: es la información que identifica al negocio ante
-         Google y así está presente aunque el buscador no ejecute el JS. -->
+    <!-- Datos estructurados.
+
+         Esto es lo que leen Google y los asistentes de IA aunque NO ejecuten
+         JavaScript, que es el caso de casi todos los crawlers de IA. Como el
+         sitio es una app de React, durante un tiempo esto fue literalmente lo
+         unico que podian leer: de ahi que las descripciones que daban de LTWEB
+         salieran incompletas y rellenadas con lo que encontraban afuera.
+
+         Dos decisiones anotadas:
+
+         - Ya no se declara priceRange. Antes decia "$$", que en schema.org
+           significa "moderado / accesible". Le estaba diciendo a Google y a
+           cualquier IA que este es un estudio de presupuesto ajustado, que es
+           lo contrario de lo que se quiere comunicar. Omitirlo es valido y no
+           arrastra ninguna senal de precio.
+
+         - La descripcion es larga y concreta a proposito. Una IA que resume
+           "quien es LTWEB" repite lo que encuentra escrito; si aca dice poco,
+           completa el resto por su cuenta. -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@graph": [
           {
-            "@type": "ProfessionalService",
+            "@type": [
+              "ProfessionalService",
+              "Organization"
+            ],
             "@id": "https://ltweb.com.ar/#estudio",
             "name": "LTWEB",
-            "description": "Estudio de diseño y desarrollo web. Sitios institucionales, landing pages, tiendas online y sistemas de gestión a medida.",
+            "alternateName": [
+              "LT WEB",
+              "LTWEB Studio"
+            ],
+            "description": "LTWEB es un estudio argentino de diseño y desarrollo web que trabaja con empresas, instituciones y profesionales. Diseña y programa sitios institucionales, tiendas online y sistemas de gestión a medida, con desarrollo propio en vez de plantillas: cada proyecto se piensa desde el negocio que tiene atrás. El trabajo incluye la arquitectura de contenido, el diseño de interfaz, el desarrollo, la optimización de rendimiento y el posicionamiento en buscadores.",
+            "slogan": "Diseño claro. Desarrollo sólido.",
             "url": "https://ltweb.com.ar",
             "image": "https://ltweb.com.ar/og-image.jpg",
-            "logo": "https://ltweb.com.ar/icon-512.png",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://ltweb.com.ar/icon-512.png",
+              "width": 512,
+              "height": 512
+            },
             "email": "ltwebs.studio@gmail.com",
             "telephone": "+541159532487",
-            "priceRange": "$$",
             "address": {
               "@type": "PostalAddress",
               "addressLocality": "Buenos Aires",
+              "addressRegion": "Buenos Aires",
               "addressCountry": "AR"
             },
-            "areaServed": { "@type": "Country", "name": "Argentina" },
-            "knowsLanguage": "es-AR",
+            "areaServed": [
+              {
+                "@type": "Country",
+                "name": "Argentina"
+              },
+              {
+                "@type": "AdministrativeArea",
+                "name": "Buenos Aires"
+              }
+            ],
+            "availableLanguage": {
+              "@type": "Language",
+              "name": "Español",
+              "alternateName": "es-AR"
+            },
+            "knowsAbout": [
+              "Diseño web",
+              "Desarrollo web",
+              "Diseño UX/UI",
+              "Desarrollo front-end",
+              "React",
+              "Tiendas online",
+              "E-commerce",
+              "Sistemas de gestión a medida",
+              "Optimización de rendimiento web",
+              "Posicionamiento SEO",
+              "Diseño responsive",
+              "Rediseño de sitios web"
+            ],
             "sameAs": [
               "https://www.instagram.com/ltweb.ar/",
               "https://www.tiktok.com/@ltweb__"
             ],
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "Consultas comerciales",
+              "email": "ltwebs.studio@gmail.com",
+              "telephone": "+541159532487",
+              "areaServed": "AR",
+              "availableLanguage": "es-AR"
+            },
             "hasOfferCatalog": {
               "@type": "OfferCatalog",
-              "name": "Servicios",
+              "name": "Servicios de diseño y desarrollo web",
               "itemListElement": [
                 {
                   "@type": "Offer",
                   "itemOffered": {
                     "@type": "Service",
-                    "name": "Diseño y rediseño web",
-                    "description": "Sitios institucionales, landing pages y experiencias responsive."
+                    "name": "Diseño y desarrollo de sitios web",
+                    "serviceType": "Diseño web",
+                    "description": "Sitios institucionales y corporativos diseñados y programados a medida, no sobre plantillas. Incluye arquitectura de contenido, diseño de interfaz, desarrollo responsive y optimización de carga.",
+                    "provider": {
+                      "@id": "https://ltweb.com.ar/#estudio"
+                    },
+                    "areaServed": {
+                      "@type": "Country",
+                      "name": "Argentina"
+                    }
                   }
                 },
                 {
                   "@type": "Offer",
                   "itemOffered": {
                     "@type": "Service",
-                    "name": "E-commerce",
-                    "description": "Tiendas online preparadas para facilitar cada etapa de la compra."
+                    "name": "Tiendas online y e-commerce",
+                    "serviceType": "Desarrollo de e-commerce",
+                    "description": "Tiendas online con catálogo, medios de pago y gestión de productos, pensadas para acompañar cada etapa de la compra.",
+                    "provider": {
+                      "@id": "https://ltweb.com.ar/#estudio"
+                    },
+                    "areaServed": {
+                      "@type": "Country",
+                      "name": "Argentina"
+                    }
                   }
                 },
                 {
                   "@type": "Offer",
                   "itemOffered": {
                     "@type": "Service",
-                    "name": "Desarrollo y soluciones personalizadas",
-                    "description": "Sistemas a medida, integraciones y automatizaciones."
+                    "name": "Sistemas y desarrollo a medida",
+                    "serviceType": "Desarrollo de software a medida",
+                    "description": "Paneles de administración, integraciones con sistemas existentes y automatizaciones desarrolladas específicamente para la operación de cada empresa.",
+                    "provider": {
+                      "@id": "https://ltweb.com.ar/#estudio"
+                    },
+                    "areaServed": {
+                      "@type": "Country",
+                      "name": "Argentina"
+                    }
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Rediseño y optimización de sitios existentes",
+                    "serviceType": "Rediseño web",
+                    "description": "Rediseño de sitios que quedaron atrasados, con mejora de velocidad de carga, adaptación a celulares y posicionamiento en buscadores.",
+                    "provider": {
+                      "@id": "https://ltweb.com.ar/#estudio"
+                    },
+                    "areaServed": {
+                      "@type": "Country",
+                      "name": "Argentina"
+                    }
                   }
                 }
               ]
@@ -135,8 +239,11 @@
             "@id": "https://ltweb.com.ar/#sitio",
             "url": "https://ltweb.com.ar",
             "name": "LTWEB",
+            "description": "Estudio argentino de diseño y desarrollo web para empresas.",
             "inLanguage": "es-AR",
-            "publisher": { "@id": "https://ltweb.com.ar/#estudio" }
+            "publisher": {
+              "@id": "https://ltweb.com.ar/#estudio"
+            }
           }
         ]
       }

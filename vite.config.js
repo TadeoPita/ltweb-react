@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { sitemapPlugin } from './scripts/sitemap-plugin.js'
 import { panelPlugin } from './scripts/panel-plugin.js'
+import { contenidoParaBuscadores } from './scripts/contenido-para-buscadores.js'
 
 export default defineConfig(({ mode }) => ({
   plugins: [
@@ -11,6 +12,9 @@ export default defineConfig(({ mode }) => ({
     sitemapPlugin(loadEnv(mode, process.cwd(), 'VITE_')),
     /* El panel. Solo en `npm run dev`: el sitio publicado no escribe nada. */
     panelPlugin(),
+    /* Vuelca el contenido real al HTML para quien no ejecuta JavaScript,
+       que es el caso de casi todos los crawlers de IA. Solo en build. */
+    contenidoParaBuscadores(),
   ],
   build: {
     /* Vaciar dist antes de cada build.
