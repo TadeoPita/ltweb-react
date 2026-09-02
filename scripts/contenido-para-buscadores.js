@@ -183,10 +183,28 @@ export async function generarContenido(raiz) {
 }
 
 /**
- * Plugin de Vite: inyecta el contenido dentro de #root en el build.
+ * Plugin de Vite: pone el contenido en el HTML del build.
  *
- * Solo en build. En desarrollo estorbaría, y ahí no hay ningún buscador
- * leyendo.
+ * VA DENTRO DE <noscript>, Y ESO SE PROBÓ POR LAS MALAS.
+ *
+ * La primera versión lo inyectaba adentro de #root, contando con que React lo
+ * reemplazara al montar. En pruebas locales funcionaba: el JavaScript
+ * terminaba de cargar en 253 ms y el primer pintado era a los 276 ms, así que
+ * el bloque nunca llegaba a verse.
+ *
+ * En el sitio publicado no. Ahí el JavaScript son ~470 KB por una conexión
+ * real, y el navegador pinta mucho antes de que React alcance a montar: el
+ * visitante veía varios segundos de texto plano sobre fondo negro antes de que
+ * apareciera el sitio. Parecía roto.
+ *
+ * Dentro de <noscript>, un navegador con JavaScript no lo dibuja nunca —cero
+ * parpadeo— y sigue estando en el HTML crudo para cualquiera que lo lea sin
+ * ejecutar nada, que es exactamente el caso de los crawlers de IA.
+ *
+ * Es además lo que <noscript> significa: esto es lo que se ve sin JavaScript.
+ * No es esconder nada para mostrarle otra cosa a los buscadores.
+ *
+ * Solo en build. En desarrollo no hay ningún buscador leyendo.
  */
 export function contenidoParaBuscadores() {
   return {
@@ -197,7 +215,7 @@ export function contenidoParaBuscadores() {
         const bloque = await generarContenido(process.cwd())
         const marcado = html.replace(
           '<div id="root"></div>',
-          `<div id="root">${bloque}</div>`,
+          `<div id="root"></div>\n    <noscript>\n      ${bloque}\n    </noscript>`,
         )
         if (marcado === html) {
           console.warn('[buscadores] no se encontró <div id="root"></div>; no se inyectó nada')
