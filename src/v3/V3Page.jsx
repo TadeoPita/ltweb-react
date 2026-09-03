@@ -11,7 +11,6 @@ import SocialSection from '../components/SocialSection'
 import { SwapyLayout, SwapySlot, SwapyItem } from './Swapy'
 import {
   CardMarca,
-  CardProyecto,
   CardPortfolio,
   CardAreas,
   CardRubros,
@@ -54,8 +53,12 @@ const RUBROS = ['Salud', 'Educación', 'Tecnología', 'Gastronomía', 'Servicios
 
 /* Anchos sobre una grilla de 12 columnas. El bento no es una grilla pareja:
    la irregularidad es lo que lo hace legible de un vistazo. */
-/* Once tarjetas en filas de doce columnas: 4+5+3, 3+4+5, 5+4+3 y una ultima
-   de 12 que cierra a lo ancho, asi no queda ningun hueco. */
+/* Nueve tarjetas en filas de doce columnas: 4+5+3, 3+4+5 y 5+4+3. Tres filas
+   exactas, sin ningun hueco.
+
+   Los dos ultimos anchos (6+6) quedaron de cuando el bento mostraba tambien
+   dos capturas de proyectos. Se dejan porque la grilla los toma por indice y
+   vuelven a usarse solos si algun dia se suma una tarjeta mas. */
 const ANCHOS = [
   'lg:col-span-4 sm:col-span-6 col-span-12 h-64',
   'lg:col-span-5 sm:col-span-6 col-span-12 h-64',
@@ -96,37 +99,29 @@ export default function V3Page() {
 
   const { items } = usePortfolio()
 
-  /* Dos proyectos en el bento, no tres: con tres, la grilla quedaba muy cargada
-     de capturas y las tarjetas de contenido perdian peso. Cuales aparecen sale
-     del interruptor "Mostrar en la home" de /admin, asi que se eligen desde el
-     panel sin tocar codigo. */
-  const destacados = useMemo(() => items.filter((p) => p.home && p.image).slice(0, 2), [items])
+  /* El bento ya no muestra capturas de proyectos.
 
-  const tarjetas = useMemo(() => {
-    const proyecto = (i) =>
-      destacados[i] ? (
-        <CardProyecto
-          id={destacados[i].id}
-          nombre={destacados[i].name}
-          tipo={destacados[i].type}
-          imagen={destacados[i].image}
-        />
-      ) : null
+     Tenia dos, pero las capturas ya aparecen en el muro del inicio y otra vez
+     en la seccion de proyectos, asi que en el bento repetian sin agregar nada
+     y le sacaban lugar a las tarjetas que si dicen algo del estudio.
 
-    return [
-      { id: 'marca', nodo: <CardMarca /> },
-      { id: 'p1', nodo: proyecto(0) },
-      { id: 'portfolio', nodo: <CardPortfolio cantidad={items.length} /> },
-      { id: 'areas', nodo: <CardAreas areas={AREAS} /> },
-      { id: 'panel', nodo: <CardPanel /> },
-      { id: 'rubros', nodo: <CardRubros rubros={RUBROS} /> },
-      { id: 'p2', nodo: proyecto(1) },
-      { id: 'plazo', nodo: <CardPlazo /> },
-      { id: 'directo', nodo: <CardDirecto /> },
-      { id: 'redes', nodo: <CardRedes /> },
-      { id: 'contacto', nodo: <CardContacto /> },
-    ].filter((t) => t.nodo)
-  }, [destacados, items.length])
+     La cuenta de proyectos sigue saliendo del portfolio real, no de una lista
+     fija. */
+  const tarjetas = useMemo(
+    () =>
+      [
+        { id: 'marca', nodo: <CardMarca /> },
+        { id: 'portfolio', nodo: <CardPortfolio cantidad={items.length} /> },
+        { id: 'areas', nodo: <CardAreas areas={AREAS} /> },
+        { id: 'panel', nodo: <CardPanel /> },
+        { id: 'rubros', nodo: <CardRubros rubros={RUBROS} /> },
+        { id: 'plazo', nodo: <CardPlazo /> },
+        { id: 'directo', nodo: <CardDirecto /> },
+        { id: 'redes', nodo: <CardRedes /> },
+        { id: 'contacto', nodo: <CardContacto /> },
+      ].filter((t) => t.nodo),
+    [items.length],
+  )
 
   const [mapa, setMapa] = useState(null)
   const mapaActual = mapa ?? utils.initSlotItemMap(tarjetas, 'id')

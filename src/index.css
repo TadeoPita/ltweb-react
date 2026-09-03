@@ -262,7 +262,7 @@ h3.font-display {
 }
 
 .muro-tarjeta img {
-  opacity: 0.8;
+  opacity: 0.95;
   transition: opacity 0.45s ease;
 }
 

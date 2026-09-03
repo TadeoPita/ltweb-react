@@ -118,16 +118,24 @@ export default function HeroWall() {
       className="muro relative flex min-h-screen items-center justify-center overflow-hidden bg-[#08080a]"
     >
       {/* El muro de proyectos */}
-      <div className="absolute inset-0 flex flex-col justify-center gap-4 opacity-70">
+      <div className="absolute inset-0 flex flex-col justify-center gap-4 opacity-90">
         <Fila proyectos={filas[0]} duracion={64} />
         <Fila proyectos={filas[1]} duracion={82} invertida />
         <Fila proyectos={filas[2]} duracion={72} />
       </div>
 
-      {/* Velo. No intercepta el cursor: las tarjetas de atrás siguen vivas. */}
+      {/* Velo. No intercepta el cursor: las tarjetas de atrás siguen vivas.
+
+          Se aclaró para que los proyectos del fondo se distingan más. Era
+          0.62 en el centro y 0.86 al 58%; ahora 0.42 y 0.70. El borde sigue
+          cerrando en negro sólido para que las filas no se corten a la vista.
+
+          El límite es la legibilidad del título, que va en blanco encima: con
+          estos valores el contraste sobre el centro del velo sigue muy por
+          arriba del mínimo que exige la norma. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(8,8,10,0.62)_0%,rgba(8,8,10,0.86)_58%,#08080a_100%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(8,8,10,0.42)_0%,rgba(8,8,10,0.70)_58%,#08080a_100%)]"
       />
 
       {/* Contenido, centrado */}
@@ -157,14 +165,14 @@ export default function HeroWall() {
         >
           La web que tu negocio
           <br />
-          <span className="text-white/55">merece.</span>
+          <span className="text-white/70">merece.</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto mt-8 max-w-lg font-body text-[15px] leading-relaxed text-white/55 sm:text-base"
+          className="mx-auto mt-8 max-w-lg font-body text-[15px] leading-relaxed text-white/80 sm:text-base"
         >
           Diseñamos y programamos webs, tiendas online y sistemas a medida. Cada proyecto se piensa
           desde cero sobre el negocio que tiene atrás.

@@ -267,19 +267,35 @@ export function CardContacto() {
       href={WHATSAPP_URL}
       target="_blank"
       rel="noreferrer"
-      className={`${BASE} group bg-lilac p-6 flex flex-col justify-between`}
+      /* Lila mas profundo que el del theme, solo en esta tarjeta.
+
+          El texto va en blanco, y sobre el lila claro (#a796f0) el contraste
+          es 2.54:1: por debajo incluso del minimo para titulos grandes, que es
+          3:1. Se leia mal de verdad, no era una cuestion de gusto.
+
+          Con #6b56c9 el mismo blanco da 5.53:1, que pasa hasta para el texto
+          chico de abajo. Es el mismo tono, mas oscuro.
+
+          Se cambia aca y no en --color-lilac porque ese token lo usa tambien
+          el subrayado de RevealText y el color de seleccion del texto, donde
+          el lila claro esta bien. */
+      className={`${BASE} group bg-[#6b56c9] p-6 flex flex-col justify-between`}
     >
+      {/* Texto e icono en blanco sobre el lila. El blanco puro contra este
+          fondo da un contraste bajo para texto chico, asi que el titulo va
+          entero y la linea de abajo apenas velada: se lee como jerarquia sin
+          perder legibilidad. */}
       <MessageCircle
-        className="h-6 w-6 text-ink/60 transition-transform duration-500 ease-out group-hover:-rotate-6"
+        className="h-6 w-6 text-white transition-transform duration-500 ease-out group-hover:-rotate-6"
         strokeWidth={1.8}
       />
       <div>
-        <p className="font-display font-bold uppercase text-ink/90 leading-[0.95] text-2xl">
+        <p className="font-display font-bold uppercase text-white leading-[0.95] text-2xl">
           Contanos
           <br />
           tu proyecto
         </p>
-        <span className="mt-3 inline-flex items-center gap-1.5 font-body text-[13.5px] font-semibold text-ink/65">
+        <span className="mt-3 inline-flex items-center gap-1.5 font-body text-[13.5px] font-semibold text-white/90">
           Escribinos por WhatsApp
           <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </span>
