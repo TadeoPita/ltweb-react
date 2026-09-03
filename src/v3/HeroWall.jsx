@@ -102,7 +102,16 @@ export default function HeroWall() {
      Ya no hace falta priorizar las del repositorio: las que venian de afuera
      se trajeron al proyecto y tienen las mismas tres medidas que el resto. */
   const filas = useMemo(() => {
-    const conImagen = items.filter((p) => p.image).slice(0, 12)
+    /* Cuales aparecen sale del interruptor "Mostrar en la home" de /admin, y
+       del orden en que estan cargados. Antes tomaba los primeros doce con
+       imagen sin mirar nada mas, asi que no habia forma de elegirlos sin
+       reordenar el portfolio entero.
+
+       Si ninguno esta marcado, se usan todos: mejor un muro con proyectos que
+       un fondo negro vacio. */
+    const marcados = items.filter((p) => p.home && p.image)
+    const disponibles = marcados.length ? marcados : items.filter((p) => p.image)
+    const conImagen = disponibles.slice(0, 12)
     if (!conImagen.length) return [[], [], []]
     const porFila = Math.ceil(conImagen.length / 3)
     return [
