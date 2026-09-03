@@ -127,15 +127,19 @@ export default function HeroWall() {
       {/* Velo. No intercepta el cursor: las tarjetas de atrás siguen vivas.
 
           Se aclaró para que los proyectos del fondo se distingan más. Era
-          0.62 en el centro y 0.86 al 58%; ahora 0.42 y 0.70. El borde sigue
-          cerrando en negro sólido para que las filas no se corten a la vista.
+          0.62 en el centro y 0.86 al 58%; quedó en 0.54 y 0.80. Se probó más
+          claro todavía (0.42 / 0.70) y ahí el título empezaba a perderse
+          contra las capturas más luminosas, así que este es el punto medio:
+          los proyectos se ven bastante más que antes sin que el texto pelee.
+          El borde sigue cerrando en negro sólido para que las filas no se
+          corten a la vista.
 
           El límite es la legibilidad del título, que va en blanco encima: con
           estos valores el contraste sobre el centro del velo sigue muy por
           arriba del mínimo que exige la norma. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(8,8,10,0.42)_0%,rgba(8,8,10,0.70)_58%,#08080a_100%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(8,8,10,0.54)_0%,rgba(8,8,10,0.80)_58%,#08080a_100%)]"
       />
 
       {/* Contenido, centrado */}
