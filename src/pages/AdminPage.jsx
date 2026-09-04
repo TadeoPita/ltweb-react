@@ -82,6 +82,16 @@ function ItemEditor({ item, index, total }) {
   const [blurred, setBlurred] = useDebouncedField(!!item.blurred, (v) => update({ blurred: v }), 0)
   const [home, setHome] = useDebouncedField(!!item.home, (v) => update({ home: v }), 0)
 
+  /* Interruptor propio para el muro del inicio, separado del de la home.
+     Son dos lugares distintos: la seccion de proyectos y el fondo del banner.
+     Sin definir cuenta como visible, para no esconder de golpe los proyectos
+     cargados antes de que existiera el campo. */
+  const [banner, setBanner] = useDebouncedField(
+    item.banner !== false,
+    (v) => update({ banner: v }),
+    0,
+  )
+
   // Campos de la ficha del proyecto (/proyecto/:id)
   const [category, setCategory] = useDebouncedField(item.category ?? '', (v) => update({ category: v }))
   const [problem, setProblem] = useDebouncedField(item.problem ?? '', (v) => update({ problem: v }))
@@ -197,6 +207,17 @@ function ItemEditor({ item, index, total }) {
           >
             {home ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
             Inicio
+          </button>
+          <button
+            title={banner ? 'Aparece en el fondo del banner' : 'No aparece en el fondo del banner'}
+            onClick={() => setBanner(!banner)}
+            className={
+              'flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold border transition-colors cursor-pointer ' +
+              (banner ? 'bg-ink text-white border-ink' : 'bg-white text-ink/50 border-black/15')
+            }
+          >
+            {banner ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+            Banner
           </button>
           <button title="Subir" onClick={() => portfolioStore.moveItem(item.id, -1)} disabled={index === 0} className="p-2 rounded-lg border border-black/10 disabled:opacity-30 hover:bg-black/5 cursor-pointer">
             <ArrowUp className="w-4 h-4" />
@@ -428,7 +449,7 @@ function VariantPicker({ title, hint, value, onChange, options = VARIANTS }) {
 }
 
 export default function AdminPage() {
-  const { items, variant, pageVariant, heroVariant, loading, error } = usePortfolio()
+  const { items, variant, pageVariant, heroVariant, loading, error, bannerCantidad } = usePortfolio()
   const [importOpen, setImportOpen] = useState(false)
   const [importText, setImportText] = useState('')
 
@@ -550,6 +571,31 @@ export default function AdminPage() {
             </button>
           </div>
         )}
+
+        {/* Cuantos proyectos se dibujan en el fondo del banner.
+
+            Doce era un numero fijo en el codigo. Menos de tres deja las filas
+            del muro sin material para el bucle, asi que ese es el minimo. */}
+        <div className="rounded-2xl bg-white border border-black/8 p-5 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="font-display font-bold uppercase">Proyectos en el fondo del inicio</p>
+            <p className="text-sm text-ink/50 font-body">
+              Cuántos se ven. Cuáles, con el botón “Banner” de cada proyecto —
+              hoy hay {items.filter((i) => i.banner !== false && i.image).length} marcados con imagen.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 min-w-[220px]">
+            <input
+              type="range"
+              min="3"
+              max="24"
+              value={bannerCantidad}
+              onChange={(e) => portfolioStore.setBannerCantidad(Number(e.target.value))}
+              className="flex-1 cursor-pointer accent-ink"
+            />
+            <span className="w-7 text-right font-display font-bold text-lg tabular-nums">{bannerCantidad}</span>
+          </div>
+        </div>
 
         <VariantPicker
           title="Diseño del hero (lo primero que se ve)"

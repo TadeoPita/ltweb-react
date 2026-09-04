@@ -292,7 +292,7 @@ async function manejarApiInterna(req, res, ctx, url, ruta, metodo) {
         name: cuerpo.name ?? 'NUEVO PROYECTO',
         type: cuerpo.type ?? 'LANDING PAGE',
         image: cuerpo.image ?? '',
-        url: '', size: 'normal', home: true, label: null, blurred: false,
+        url: '', size: 'normal', home: true, banner: true, label: null, blurred: false,
         category: '', problem: '', solution: '', description: '', services: '',
         gallery: [], beforeImage: '',
       }
@@ -304,6 +304,22 @@ async function manejarApiInterna(req, res, ctx, url, ruta, metodo) {
     if (ruta === '/ajustes' && metodo === 'PUT') {
       const cuerpo = await cuerpoJson(req)
       const datos = await leerDatos(r)
+
+      /* La cantidad del muro se acota acá y no solo en el panel.
+      
+         El deslizador ya va de 3 a 24, pero eso es la interfaz: un PUT hecho a
+         mano puede mandar cualquier cosa, y este número decide cuántas
+         imágenes dibuja el inicio. Es justo lo que traba el scroll —lo que
+         pesa es el mapa de bits descomprimido, no el archivo—, así que un
+         valor absurdo no rompe nada pero deja la home inusable en el
+         celular. Tres es el mínimo para que las filas del muro tengan con qué
+         hacer el bucle. */
+      if ('bannerCantidad' in cuerpo) {
+        const n = Math.round(Number(cuerpo.bannerCantidad))
+        if (!Number.isFinite(n)) throw errorHttp(400, 'bannerCantidad tiene que ser un número.')
+        cuerpo.bannerCantidad = Math.min(24, Math.max(3, n))
+      }
+
       datos.ajustes = { ...datos.ajustes, ...cuerpo }
       await guardarDatos(r, datos)
       return responder(res, 200, datos.ajustes), true
@@ -345,7 +361,7 @@ async function manejarApiInterna(req, res, ctx, url, ruta, metodo) {
       if (!sub && metodo === 'PATCH') {
         const cuerpo = await cuerpoJson(req)
         for (const campo of CAMPOS) if (campo in cuerpo) proyecto[campo] = cuerpo[campo]
-        for (const campo of ['home', 'blurred']) {
+        for (const campo of ['home', 'blurred', 'banner']) {
           if (campo in cuerpo) proyecto[campo] = Boolean(cuerpo[campo])
         }
         await guardarDatos(r, datos)

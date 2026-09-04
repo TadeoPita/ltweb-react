@@ -92,7 +92,7 @@ function Fila({ proyectos, invertida, duracion }) {
 }
 
 export default function HeroWall() {
-  const { items } = usePortfolio()
+  const { items, bannerCantidad: cantidad } = usePortfolio()
 
   /* Tres filas de cuatro. Antes entraban todos los proyectos con imagen: 27,
      y como cada fila se duplica para que el bucle no salte, eran 54 imagenes
@@ -102,16 +102,18 @@ export default function HeroWall() {
      Ya no hace falta priorizar las del repositorio: las que venian de afuera
      se trajeron al proyecto y tienen las mismas tres medidas que el resto. */
   const filas = useMemo(() => {
-    /* Cuales aparecen sale del interruptor "Mostrar en la home" de /admin, y
-       del orden en que estan cargados. Antes tomaba los primeros doce con
-       imagen sin mirar nada mas, asi que no habia forma de elegirlos sin
-       reordenar el portfolio entero.
+    /* Que proyectos van en el muro y cuantos, los dos se eligen desde /admin.
 
-       Si ninguno esta marcado, se usan todos: mejor un muro con proyectos que
+       El interruptor es propio del banner y no el de "Mostrar en la home":
+       son dos lugares distintos —el fondo del inicio y la seccion de
+       proyectos— y con un solo campo no se podia poner algo en uno sin
+       ponerlo tambien en el otro.
+
+       Si ninguno esta marcado se usan todos: mejor un muro con proyectos que
        un fondo negro vacio. */
-    const marcados = items.filter((p) => p.home && p.image)
+    const marcados = items.filter((p) => p.banner !== false && p.image)
     const disponibles = marcados.length ? marcados : items.filter((p) => p.image)
-    const conImagen = disponibles.slice(0, 12)
+    const conImagen = disponibles.slice(0, Math.max(3, cantidad))
     if (!conImagen.length) return [[], [], []]
     const porFila = Math.ceil(conImagen.length / 3)
     return [
@@ -119,7 +121,7 @@ export default function HeroWall() {
       conImagen.slice(porFila, porFila * 2),
       conImagen.slice(porFila * 2),
     ].map((f) => (f.length ? f : conImagen.slice(0, 4)))
-  }, [items])
+  }, [items, cantidad])
 
   return (
     <section

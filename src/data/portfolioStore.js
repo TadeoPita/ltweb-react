@@ -26,6 +26,7 @@ let state = {
   variant: 'gallery',
   pageVariant: 'classic',
   heroVariant: 'centered',
+  bannerCantidad: 12,
   items: [],
   loading: true,
   error: null,
@@ -50,6 +51,9 @@ function normalizar(p) {
     url: p.url ?? '',
     size: p.size ?? 'normal',
     home: p.home !== false,
+    /* Sin definir cuenta como visible: los proyectos cargados antes de que
+       existiera este campo no tienen por que desaparecer del muro. */
+    banner: p.banner !== false,
     label: p.label || undefined,
     blurred: Boolean(p.blurred),
     category: p.category ?? '',
@@ -69,6 +73,7 @@ function aplicar({ ajustes, proyectos }) {
     variant: ajustes?.variant ?? 'gallery',
     pageVariant: ajustes?.pageVariant ?? 'classic',
     heroVariant: ajustes?.heroVariant ?? 'centered',
+    bannerCantidad: Number(ajustes?.bannerCantidad) || 12,
     items: proyectos.map(normalizar),
     loading: false,
     error: null,
@@ -173,6 +178,11 @@ export const portfolioStore = {
     await recargar()
   },
 
+  async setBannerCantidad(bannerCantidad) {
+    await pedir('/ajustes', { method: 'PUT', body: JSON.stringify({ bannerCantidad }) })
+    await recargar()
+  },
+
   async setHeroVariant(heroVariant) {
     await pedir('/ajustes', { method: 'PUT', body: JSON.stringify({ heroVariant }) })
     await recargar()
@@ -267,6 +277,7 @@ export const portfolioStore = {
           variant: state.variant,
           pageVariant: state.pageVariant,
           heroVariant: state.heroVariant,
+          bannerCantidad: state.bannerCantidad,
         },
         proyectos: state.items,
       },

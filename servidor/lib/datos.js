@@ -16,7 +16,14 @@ import { randomUUID } from 'node:crypto'
  * data/projects.js, que se genera al publicar.
  */
 
-const AJUSTES_POR_DEFECTO = { variant: 'gallery', pageVariant: 'classic', heroVariant: 'centered' }
+/* bannerCantidad: cuantos proyectos se dibujan en el muro del inicio. Doce
+   era un numero fijo en el codigo; ahora se elige desde el panel. */
+const AJUSTES_POR_DEFECTO = {
+  variant: 'gallery',
+  pageVariant: 'classic',
+  heroVariant: 'centered',
+  bannerCantidad: 12,
+}
 
 /* Dónde se guarda el contenido.
  *
@@ -232,6 +239,14 @@ export async function publicar(r) {
       url: p.url ?? '',
       size: p.size ?? 'normal',
       home: p.home !== false,
+      /* Que proyectos van en el muro del inicio. Es un interruptor aparte de
+         "home" porque son dos lugares distintos: uno es la seccion de
+         proyectos y el otro el fondo del banner. Con un solo campo no se
+         podia poner algo en el fondo sin ponerlo tambien en la seccion.
+
+         Sin definir se toma como true, para que los proyectos cargados antes
+         de que existiera este campo no desaparezcan del muro. */
+      banner: p.banner !== false,
       label: p.label || null,
       blurred: Boolean(p.blurred),
       category: p.category ?? '',
