@@ -267,18 +267,26 @@ export function CardContacto() {
       href={WHATSAPP_URL}
       target="_blank"
       rel="noreferrer"
-      /* El pastel morado del theme, el mismo juego que las tarjetas vecinas.
+      /* Violeta pastel, al mismo peso que las tarjetas vecinas.
 
-          Antes era un lila saturado (#6b56c9), que era la unica nota fuerte
-          del bento y se comia a las de al lado. Este tono la devuelve al peso
-          visual del resto: azul, verde y naranja pastel.
+          Empezo siendo un lila saturado (#6b56c9): era la unica nota fuerte
+          del bento y se comia a las de al lado. Pero el --color-pastel-purple
+          del theme (#f0dbff) se fue al otro extremo —tan lavado que tira a
+          rosado y deja de leerse como violeta.
 
-          Con el fondo claro el texto vuelve a tinta. El blanco de antes no era
-          una decision de estilo sino la consecuencia de tener el fondo oscuro:
-          sobre este pastel daria 1.4:1 y no se leeria nada. En tinta da
-          14:1. */
+          Este queda en el medio y con la misma distancia entre canales que
+          --color-pastel-blue y --color-pastel-orange, asi que pesa igual que
+          sus vecinas en vez de desaparecer o gritar.
+
+          Va suelto y no como token porque --color-pastel-purple lo usa tambien
+          About.jsx, donde ese tono lavado esta bien.
+
+          Con el fondo claro el texto va en tinta. El blanco que tenia antes no
+          era una decision de estilo sino la consecuencia del fondo oscuro:
+          sobre este violeta daria 1.7:1 y no se leeria. En tinta el titulo da
+          11.5:1 y la linea de abajo 5.3:1. */
       className={`${BASE} group p-6 flex flex-col justify-between`}
-      style={{ backgroundColor: 'var(--color-pastel-purple)' }}
+      style={{ backgroundColor: '#d7c6f7' }}
     >
       <MessageCircle
         className="h-6 w-6 text-ink/80 transition-transform duration-500 ease-out group-hover:-rotate-6"
