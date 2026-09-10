@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
@@ -84,13 +84,30 @@ export function ProjectLightboxProvider({ children }) {
   /* `layoutId` es el de la card concreta que se tocó; el visor se expande
      desde esa. Si no viene (por ejemplo desde la galería de la ficha), el
      visor entra sin origen y simplemente aparece. */
+  /* La foto tiene un `exit` que la desvanece, y hace falta para el cambio de
+     foto con las flechas. Pero ese mismo `exit` se dispara tambien al cerrar,
+     y ahi sobra: la foto se apagaba en 250 ms mientras la caja seguia viajando
+     de vuelta a la card, y como la card de origen se mantiene en opacity 0
+     hasta que termina la salida, quedaba un tramo sin NADA visible y despues
+     el golpe de la card reapareciendo.
+
+     Con esta bandera el desvanecido queda solo donde sirve. Es un ref y no un
+     estado porque se lee durante el render que dispara la salida: se marca
+     antes del setProject, asi que ese render ya la ve puesta, y un estado
+     llegaria un render tarde. */
+  const cerrando = useRef(false)
+
   const open = useCallback((p, startIndex = 0, layoutId = null) => {
+    cerrando.current = false
     setProject(p)
     setActiveId(layoutId)
     setIndex(startIndex)
   }, [])
 
-  const close = useCallback(() => setProject(null), [])
+  const close = useCallback(() => {
+    cerrando.current = true
+    setProject(null)
+  }, [])
 
   const photos = useMemo(() => photosOf(project), [project])
   const many = photos.length > 1
@@ -181,7 +198,10 @@ export function ProjectLightboxProvider({ children }) {
                     alt={project.name}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    /* Al cerrar se sale en opacity 1: la foto acompana toda la
+                       vuelta hasta la card en vez de apagarse a mitad de
+                       camino. Al cambiar de foto se desvanece como siempre. */
+                    exit={cerrando.current ? { opacity: 1 } : { opacity: 0 }}
                     transition={{ duration: 0.25 }}
                     /* El desenfoque de "proximamente" tiene que seguir puesto
                        aca. La card lo aplicaba y el visor no, asi que abrir la
