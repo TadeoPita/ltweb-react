@@ -148,16 +148,54 @@ export function ProjectLightboxProvider({ children }) {
                 transition={LAYOUT_SPRING}
                 className="relative z-10 max-w-5xl w-full max-h-[78vh] rounded-2xl overflow-hidden bg-ink-2 shadow-[0_40px_90px_rgba(0,0,0,0.6)]"
               >
-                <AnimatePresence mode="wait">
+                {/* initial={false} apaga el fundido SOLO en la primera foto.
+
+                    Antes se desvanecia tambien al abrir, y ese era el momento
+                    raro: el contenedor tiene fondo oscuro propio, asi que
+                    mientras la caja viajaba desde la card se veia un rectangulo
+                    negro morfando y la foto recien aparecia al final, en vez de
+                    viajar con el. Como este AnimatePresence se vuelve a montar
+                    en cada apertura, initial={false} significa exactamente "sin
+                    fundido al abrir"; al cambiar de foto la key cambia y el
+                    fundido sigue funcionando igual que siempre. */}
+                <AnimatePresence mode="wait" initial={false}>
                   <motion.img
                     key={photos[index]}
+                    /* `layout` es lo que evita que la foto se deforme mientras
+                       el contenedor viaja desde la card.
+
+                       El contenedor morfa entre dos cajas de proporciones muy
+                       distintas: la card es un recorte casi cuadrado (455x464)
+                       y el visor es apaisado (1023x529). Framer hace ese
+                       recorrido con un transform, y un transform del padre
+                       estira a los hijos salvo que el hijo tambien participe
+                       del layout. Medido sin esto: el contenedor arranca en
+                       scaleX 0.409 con scaleY 1, y la foto pasa de proporcion
+                       0.82 a 1.94 —un 57% de deformacion— o sea que se veia
+                       aplastada y se desestiraba sola.
+
+                       Con `layout`, Framer le aplica la escala inversa cuadro
+                       a cuadro y la foto conserva su proporcion todo el viaje. */
+                    layout
                     src={photos[index]}
                     alt={project.name}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.25 }}
-                    className="w-full max-h-[78vh] object-contain"
+                    /* El desenfoque de "proximamente" tiene que seguir puesto
+                       aca. La card lo aplicaba y el visor no, asi que abrir la
+                       foto mostraba el trabajo entero: justo lo que el
+                       desenfoque existe para no hacer todavia.
+
+                       scale-105 con el overflow-hidden del contenedor es el
+                       mismo truco que usan las cards: el desenfoque deja los
+                       bordes transparentes y agrandando un poco quedan fuera
+                       del recorte. */
+                    className={
+                      'w-full max-h-[78vh] object-contain' +
+                      (project.blurred ? ' blur-[6px] scale-105' : '')
+                    }
                   />
                 </AnimatePresence>
               </motion.div>
