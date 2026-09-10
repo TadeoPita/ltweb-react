@@ -1,15 +1,15 @@
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { sitemapPlugin } from './scripts/sitemap-plugin.js'
 import { panelPlugin } from './scripts/panel-plugin.js'
 import { contenidoParaBuscadores } from './scripts/contenido-para-buscadores.js'
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(() => ({
   plugins: [
     react(),
     tailwindcss(),
-    sitemapPlugin(loadEnv(mode, process.cwd(), 'VITE_')),
+    sitemapPlugin(),
     /* El panel. Solo en `npm run dev`: el sitio publicado no escribe nada. */
     panelPlugin(),
     /* Vuelca el contenido real al HTML para quien no ejecuta JavaScript,

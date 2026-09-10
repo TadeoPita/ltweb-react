@@ -1,4 +1,4 @@
-import { writeFileSync } from 'node:fs'
+import { writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 const SITE = 'https://ltweb.com.ar'
@@ -17,7 +17,7 @@ const SITE = 'https://ltweb.com.ar'
 
    Si la API no responde (build sin red o sin variables de entorno), se
    escriben igual las rutas fijas en vez de romper el deploy. */
-export function sitemapPlugin(env) {
+export function sitemapPlugin() {
   return {
     name: 'ltweb-sitemap',
     apply: 'build',
@@ -28,19 +28,29 @@ export function sitemapPlugin(env) {
         { loc: `${SITE}/portfolio`, priority: '0.8', changefreq: 'weekly' },
       ]
 
+      /* Los proyectos salen de datos/semilla.json, la misma fuente que usa el
+         bloque de contenido para buscadores.
+
+         Antes esto consultaba Supabase. Cuando migramos el contenido a un
+         archivo propio, Supabase dejo de existir y la consulta empezo a fallar
+         siempre: el catch escribia el sitemap con las dos rutas fijas y el
+         build seguia como si nada. O sea que durante todo ese tiempo le
+         estuvimos diciendo a Google que el sitio tiene dos paginas, y las
+         fichas de proyecto no entraron nunca al indice por esta via.
+
+         Es el peor tipo de falla: silenciosa y con respaldo, asi que nada se
+         rompia a la vista. */
       try {
-        const res = await fetch(
-          `${env.VITE_SUPABASE_URL}/rest/v1/portfolio_items` +
-            '?select=id,category,problem,solution,description&order=position',
-          {
-            headers: {
-              apikey: env.VITE_SUPABASE_ANON_KEY,
-              Authorization: `Bearer ${env.VITE_SUPABASE_ANON_KEY}`,
-            },
-          },
-        )
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const items = await res.json()
+        const ruta = resolve('datos/semilla.json')
+        if (!existsSync(ruta)) throw new Error('no existe datos/semilla.json')
+
+        const datos = JSON.parse(readFileSync(ruta, 'utf8'))
+        const items = Array.isArray(datos.proyectos) ? datos.proyectos : []
+
+        /* Solo los que tienen ficha escrita. Los vacios muestran "estamos
+           preparando el detalle" y mandar paginas asi al indice juega en
+           contra: siguen accesibles desde /portfolio, pero no las
+           promocionamos. */
         const conFicha = items.filter((p) =>
           [p.category, p.problem, p.solution, p.description].some((v) => v && v.trim()),
         )
@@ -52,11 +62,11 @@ export function sitemapPlugin(env) {
           })
         }
         console.log(
-          `[sitemap] ${urls.length} URLs (${conFicha.length} fichas de proyecto con contenido, ` +
+          `[sitemap] ${urls.length} URLs (${conFicha.length} fichas con contenido, ` +
             `${items.length - conFicha.length} sin cargar quedaron afuera)`,
         )
       } catch (err) {
-        console.warn(`[sitemap] no se pudo leer la base (${err.message}); solo rutas fijas`)
+        console.warn(`[sitemap] no se pudieron leer los proyectos (${err.message}); solo rutas fijas`)
       }
 
       const xml =
