@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { sitemapPlugin } from './scripts/sitemap-plugin.js'
 import { panelPlugin } from './scripts/panel-plugin.js'
 import { contenidoParaBuscadores } from './scripts/contenido-para-buscadores.js'
+import { limpiarHtml } from './scripts/limpiar-html.js'
 
 export default defineConfig(() => ({
   plugins: [
@@ -15,6 +16,7 @@ export default defineConfig(() => ({
     /* Vuelca el contenido real al HTML para quien no ejecuta JavaScript,
        que es el caso de casi todos los crawlers de IA. Solo en build. */
     contenidoParaBuscadores(),
+    limpiarHtml(),
   ],
   build: {
     /* Vaciar dist antes de cada build.
