@@ -1,121 +1,152 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, ArrowRight, ArrowUpRight, X } from 'lucide-react'
 import { EASE } from '../lib/motion'
+import { mediana } from '../lib/imagen'
 
-/* Visor de fotos estilo iOS: la imagen crece desde el lugar exacto donde
-   estaba la card y al cerrarse vuelve a ese mismo lugar. Eso lo resuelve
-   `layoutId` de Framer: la card y el visor comparten el mismo id, así que
-   Framer interpola posición y tamaño entre ambos. El fondo entra con blur.
-
-   El contexto deja que cualquier variante del portfolio abra el visor sin
-   tener que pasar props por toda la jerarquía. */
-
-/* Misma física de ida y de vuelta: si la apertura y el cierre usan curvas
-   distintas, el movimiento se siente cortado. Un spring suave da el
-   arranque y la frenada progresivos del efecto de iOS. */
-const LAYOUT_SPRING = { type: 'spring', stiffness: 260, damping: 30, mass: 0.9 }
+const RESORTE = { type: 'spring', stiffness: 260, damping: 30, mass: 0.9 }
+const RADIO = 16
 
 const LightboxContext = createContext(null)
 
 export function useLightbox() {
   const ctx = useContext(LightboxContext)
-  // Si algún día se renderiza una variante fuera del provider, no rompe:
-  // simplemente no hay visor y el link navega a la ficha como siempre.
   return ctx ?? { open: null, openId: null }
 }
 
-/* Junta la portada y la galería en una sola lista de fotos. */
 function photosOf(project) {
   if (!project) return []
   const extra = (project.gallery ?? []).map((g) => g.url)
   return [project.image, ...extra].filter(Boolean)
 }
 
-/* Props que necesita una card del portfolio para participar del visor.
+function rectDe(id) {
+  if (!id) return null
+  const el = document.querySelector(`[data-foto-id="${id}"]`)
+  if (!el) return null
+  const r = el.getBoundingClientRect()
+  if (!r.width || !r.height) return null
+  return { left: r.left, top: r.top, width: r.width, height: r.height }
+}
 
-   El link a /proyecto/:id se mantiene (sirve para ctrl+click, "abrir en
-   pestaña nueva" y para los buscadores), pero el click común lo intercepta
-   y abre el visor en su lugar. */
-/* `scope` distingue el contexto donde se dibuja la card. Hace falta porque
-   algunas variantes montan la misma lista dos veces (por ejemplo la galería
-   arma la pista de desktop y la pila de mobile, y CSS oculta una de las dos):
-   con dos elementos vivos compartiendo layoutId, Framer elige uno como
-   "líder" y deja el otro en opacity 0. Con el scope cada uno tiene su id y el
-   visor usa el de la card que realmente se tocó. */
+function rectCentrado() {
+  const ancho = Math.min(window.innerWidth * 0.5, 560)
+  const alto = Math.min(window.innerHeight * 0.4, 340)
+  return { left: (window.innerWidth - ancho) / 2, top: (window.innerHeight - alto) / 2, width: ancho, height: alto }
+}
+
 export function useProjectCard(project, scope = 'default') {
   const { open, openId } = useLightbox()
-  const layoutId = `project-photo-${scope}-${project.id}`
-  const isOpen = openId === layoutId
+  const id = `project-photo-${scope}-${project.id}`
+  const isOpen = openId === id
 
   function onClick(e) {
     if (!open) return
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
     e.preventDefault()
-    open(project, 0, layoutId)
+    open(project, 0, id)
   }
 
   return {
-    /* Va en la raíz de la card. */
     onClick,
-    /* Va en el contenedor de la imagen, NUNCA en la raíz de la card: la card
-       tiene su propia animación de entrada y, en el mosaico, una inclinación
-       3D. La proyección de layout de Framer pelea con las dos: la entrada
-       quedaba trabada en opacity 0 y al abrir el visor se veía un salto. */
     imageProps: {
-      layoutId,
-      transition: LAYOUT_SPRING,
-      // Mientras el visor muestra esta foto la ocultamos, si no se duplica.
-      style: isOpen ? { opacity: 0 } : undefined,
+      'data-foto-id': id,
+      style: { opacity: isOpen ? 0 : 1, transition: 'opacity 0.18s ease' },
     },
   }
 }
 
 export function ProjectLightboxProvider({ children }) {
+  const reducir = useReducedMotion()
   const [project, setProject] = useState(null)
   const [index, setIndex] = useState(0)
-  /* La card de origen se oculta mientras dura la transición, si no se ve
-     duplicada. No alcanza con mirar `project`: al cerrar hay que esperar a
-     que termine la animación de salida, por eso se limpia en onExitComplete. */
   const [activeId, setActiveId] = useState(null)
+  const [fase, setFase] = useState('cerrado')
+  const [origen, setOrigen] = useState(null)
+  const faseRef = useRef('cerrado')
+  const idOrigen = useRef(null)
+  faseRef.current = fase
 
-  /* `layoutId` es el de la card concreta que se tocó; el visor se expande
-     desde esa. Si no viene (por ejemplo desde la galería de la ficha), el
-     visor entra sin origen y simplemente aparece. */
-  /* La foto tiene un `exit` que la desvanece, y hace falta para el cambio de
-     foto con las flechas. Pero ese mismo `exit` se dispara tambien al cerrar,
-     y ahi sobra: la foto se apagaba en 250 ms mientras la caja seguia viajando
-     de vuelta a la card, y como la card de origen se mantiene en opacity 0
-     hasta que termina la salida, quedaba un tramo sin NADA visible y despues
-     el golpe de la card reapareciendo.
-
-     Con esta bandera el desvanecido queda solo donde sirve. Es un ref y no un
-     estado porque se lee durante el render que dispara la salida: se marca
-     antes del setProject, asi que ese render ya la ve puesta, y un estado
-     llegaria un render tarde. */
-  const cerrando = useRef(false)
-
-  const open = useCallback((p, startIndex = 0, layoutId = null) => {
-    cerrando.current = false
+  const open = useCallback((p, startIndex = 0, id = null) => {
+    idOrigen.current = id
+    setOrigen(rectDe(id) ?? rectCentrado())
     setProject(p)
-    setActiveId(layoutId)
     setIndex(startIndex)
+    setAsentado(false)
+    setFase('origen')
+  }, [])
+
+  const alTerminarLayout = useCallback(() => {
+    if (faseRef.current === 'abierto') setAsentado(true)
+    if (faseRef.current !== 'volviendo') return
+    setProject(null)
+    setOrigen(null)
+    setFase('cerrado')
+  }, [])
+
+  useEffect(() => {
+    if (fase !== 'origen') return
+    let segundo
+    const primero = requestAnimationFrame(() => {
+      segundo = requestAnimationFrame(() => {
+        setFase('abierto')
+        setActiveId(idOrigen.current)
+      })
+    })
+    return () => {
+      cancelAnimationFrame(primero)
+      cancelAnimationFrame(segundo)
+    }
+  }, [fase])
+
+  const terminar = useCallback(() => {
+    if (faseRef.current !== 'volviendo') return
+    setProject(null)
+    setOrigen(null)
+    setFase('cerrado')
   }, [])
 
   const close = useCallback(() => {
-    cerrando.current = true
-    setProject(null)
+    if (faseRef.current !== 'abierto') return
+    setOrigen(rectDe(idOrigen.current) ?? rectCentrado())
+    setActiveId(null)
+    setFase('volviendo')
   }, [])
+
+  useEffect(() => {
+    if (fase !== 'volviendo') return
+    const id = setTimeout(terminar, reducir ? 80 : 1100)
+    return () => clearTimeout(id)
+  }, [fase, terminar, reducir])
 
   const photos = useMemo(() => photosOf(project), [project])
   const many = photos.length > 1
+  const [grandes, setGrandes] = useState(() => new Set())
+  const [asentado, setAsentado] = useState(false)
+
+  useEffect(() => {
+    const url = photos[index]
+    if (!url || grandes.has(url) || !asentado) return
+    let viva = true
+    const img = new Image()
+    img.src = url
+    const listo = () => {
+      if (viva) setGrandes((g) => new Set(g).add(url))
+    }
+    if (img.decode) img.decode().then(listo, listo)
+    else img.onload = listo
+    return () => {
+      viva = false
+    }
+  }, [photos, index, grandes, asentado])
+
+  const fuente = photos[index] ? (grandes.has(photos[index]) ? photos[index] : mediana(photos[index])) : null
 
   const next = useCallback(() => setIndex((i) => (i + 1) % photos.length), [photos.length])
   const prev = useCallback(() => setIndex((i) => (i - 1 + photos.length) % photos.length), [photos.length])
 
-  // Teclado: Escape cierra, flechas navegan.
   useEffect(() => {
     if (!project) return
     function onKey(e) {
@@ -127,7 +158,6 @@ export function ProjectLightboxProvider({ children }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [project, many, close, next, prev])
 
-  // Bloquea el scroll del fondo mientras el visor está abierto.
   useEffect(() => {
     if (!project) return
     const previous = document.body.style.overflow
@@ -140,165 +170,151 @@ export function ProjectLightboxProvider({ children }) {
   const value = useMemo(() => ({ open, openId: activeId }), [open, activeId])
 
   const hasSite = project?.url && project.url !== '#'
+  const abierto = fase === 'abierto'
+  const enOrigen = fase === 'origen' || fase === 'volviendo'
+  const movimiento = reducir ? { duration: 0 } : RESORTE
+  const listo = abierto && asentado
+  const controles = listo
+    ? { opacity: 1, y: 0, transition: { duration: 0.3, ease: EASE } }
+    : { opacity: 0, y: 8, transition: { duration: 0.15 } }
 
   return (
     <LightboxContext.Provider value={value}>
       {children}
 
       {createPortal(
-        <AnimatePresence onExitComplete={() => setActiveId(null)}>
-          {project && (
-            <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-8">
-              {/* Fondo con desenfoque */}
-              <motion.div
-                initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-                animate={{ opacity: 1, backdropFilter: 'blur(20px)' }}
-                exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
-                transition={{ duration: 0.35, ease: EASE }}
-                onClick={close}
-                className="absolute inset-0 bg-black/70"
-              />
+        project && origen ? (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-8" data-fase={fase}>
+            <motion.div
+              initial={false}
+              animate={{ opacity: abierto ? 1 : 0 }}
+              transition={{ duration: 0.3, ease: EASE }}
+              onClick={close}
+              className="absolute inset-0 bg-black/75"
+              style={{ pointerEvents: abierto ? 'auto' : 'none' }}
+            />
+            <motion.div
+              aria-hidden
+              initial={false}
+              animate={{ opacity: abierto && asentado ? 1 : 0 }}
+              transition={{ duration: abierto ? 0.4 : 0.12, ease: EASE }}
+              className="pointer-events-none absolute inset-0 backdrop-blur-xl"
+            />
 
-              {/* Imagen: comparte layoutId con la card de origen */}
-              <motion.div
-                layoutId={activeId ?? undefined}
-                transition={LAYOUT_SPRING}
-                className="relative z-10 max-w-5xl w-full max-h-[78vh] rounded-2xl overflow-hidden bg-ink-2 shadow-[0_40px_90px_rgba(0,0,0,0.6)]"
-              >
-                {/* initial={false} apaga el fundido SOLO en la primera foto.
+            <motion.div
+              layout
+              transition={movimiento}
+              onLayoutAnimationComplete={alTerminarLayout}
+              initial={false}
+              animate={{ opacity: abierto ? 1 : fase === 'volviendo' ? 0 : 0 }}
+              style={{
+                borderRadius: RADIO,
+                opacity: fase === 'origen' ? 0 : undefined,
+                transition: fase === 'volviendo' ? 'opacity 0.32s ease 0.28s' : 'opacity 0.2s ease',
+                ...(enOrigen
+                  ? { position: 'fixed', left: origen.left, top: origen.top, width: origen.width, height: origen.height }
+                  : {}),
+              }}
+              className={
+                'z-10 overflow-hidden bg-ink-2 shadow-[0_40px_90px_rgba(0,0,0,0.6)] ' +
+                (enOrigen ? '' : 'relative w-full max-w-5xl max-h-[78vh]')
+              }
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.img
+                  key={fuente}
+                  layout
+                  src={fuente}
+                  alt={project.name}
+                  draggable={false}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className={
+                    (enOrigen ? 'h-full w-full object-contain' : 'w-full max-h-[78vh] object-contain') +
+                    (project.blurred ? ' blur-[6px] scale-105' : '')
+                  }
+                />
+              </AnimatePresence>
+            </motion.div>
 
-                    Antes se desvanecia tambien al abrir, y ese era el momento
-                    raro: el contenedor tiene fondo oscuro propio, asi que
-                    mientras la caja viajaba desde la card se veia un rectangulo
-                    negro morfando y la foto recien aparecia al final, en vez de
-                    viajar con el. Como este AnimatePresence se vuelve a montar
-                    en cada apertura, initial={false} significa exactamente "sin
-                    fundido al abrir"; al cambiar de foto la key cambia y el
-                    fundido sigue funcionando igual que siempre. */}
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.img
-                    key={photos[index]}
-                    /* `layout` es lo que evita que la foto se deforme mientras
-                       el contenedor viaja desde la card.
+            <motion.button
+              initial={false}
+              animate={listo ? { opacity: 1, scale: 1, transition: { duration: 0.25 } } : { opacity: 0, scale: 0.8, transition: { duration: 0.15 } }}
+              onClick={close}
+              aria-label="Cerrar"
+              className="absolute top-5 right-5 z-20 flex items-center justify-center w-11 h-11 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-colors cursor-pointer"
+              style={{ pointerEvents: abierto ? 'auto' : 'none' }}
+            >
+              <X className="w-5 h-5" />
+            </motion.button>
 
-                       El contenedor morfa entre dos cajas de proporciones muy
-                       distintas: la card es un recorte casi cuadrado (455x464)
-                       y el visor es apaisado (1023x529). Framer hace ese
-                       recorrido con un transform, y un transform del padre
-                       estira a los hijos salvo que el hijo tambien participe
-                       del layout. Medido sin esto: el contenedor arranca en
-                       scaleX 0.409 con scaleY 1, y la foto pasa de proporcion
-                       0.82 a 1.94 —un 57% de deformacion— o sea que se veia
-                       aplastada y se desestiraba sola.
+            {many && (
+              <>
+                <motion.button
+                  initial={false}
+                  animate={listo ? { opacity: 1, transition: { duration: 0.25 } } : { opacity: 0, transition: { duration: 0.15 } }}
+                  onClick={prev}
+                  aria-label="Foto anterior"
+                  className="absolute left-3 sm:left-6 z-20 flex items-center justify-center w-11 h-11 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-colors cursor-pointer"
+                  style={{ pointerEvents: abierto ? 'auto' : 'none' }}
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </motion.button>
+                <motion.button
+                  initial={false}
+                  animate={listo ? { opacity: 1, transition: { duration: 0.25 } } : { opacity: 0, transition: { duration: 0.15 } }}
+                  onClick={next}
+                  aria-label="Foto siguiente"
+                  className="absolute right-3 sm:right-6 z-20 flex items-center justify-center w-11 h-11 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-colors cursor-pointer"
+                  style={{ pointerEvents: abierto ? 'auto' : 'none' }}
+                >
+                  <ArrowRight className="w-5 h-5" />
+                </motion.button>
+              </>
+            )}
 
-                       Con `layout`, Framer le aplica la escala inversa cuadro
-                       a cuadro y la foto conserva su proporcion todo el viaje. */
-                    layout
-                    src={photos[index]}
-                    alt={project.name}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    /* Al cerrar se sale en opacity 1: la foto acompana toda la
-                       vuelta hasta la card en vez de apagarse a mitad de
-                       camino. Al cambiar de foto se desvanece como siempre. */
-                    exit={cerrando.current ? { opacity: 1 } : { opacity: 0 }}
-                    transition={{ duration: 0.25 }}
-                    /* El desenfoque de "proximamente" tiene que seguir puesto
-                       aca. La card lo aplicaba y el visor no, asi que abrir la
-                       foto mostraba el trabajo entero: justo lo que el
-                       desenfoque existe para no hacer todavia.
-
-                       scale-105 con el overflow-hidden del contenedor es el
-                       mismo truco que usan las cards: el desenfoque deja los
-                       bordes transparentes y agrandando un poco quedan fuera
-                       del recorte. */
-                    className={
-                      'w-full max-h-[78vh] object-contain' +
-                      (project.blurred ? ' blur-[6px] scale-105' : '')
-                    }
-                  />
-                </AnimatePresence>
-              </motion.div>
-
-              {/* Cerrar */}
-              <motion.button
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1, transition: { delay: 0.2 } }}
-                exit={{ opacity: 0, scale: 0.8, transition: { duration: 0.15 } }}
-                onClick={close}
-                aria-label="Cerrar"
-                className="absolute top-5 right-5 z-20 flex items-center justify-center w-11 h-11 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </motion.button>
-
-              {/* Flechas */}
-              {many && (
-                <>
-                  <motion.button
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1, transition: { delay: 0.25 } }}
-                    exit={{ opacity: 0, transition: { duration: 0.15 } }}
-                    onClick={prev}
-                    aria-label="Foto anterior"
-                    className="absolute left-3 sm:left-6 z-20 flex items-center justify-center w-11 h-11 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-colors cursor-pointer"
-                  >
-                    <ArrowLeft className="w-5 h-5" />
-                  </motion.button>
-                  <motion.button
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1, transition: { delay: 0.25 } }}
-                    exit={{ opacity: 0, transition: { duration: 0.15 } }}
-                    onClick={next}
-                    aria-label="Foto siguiente"
-                    className="absolute right-3 sm:right-6 z-20 flex items-center justify-center w-11 h-11 rounded-full bg-white/10 backdrop-blur border border-white/20 text-white hover:bg-white/20 transition-colors cursor-pointer"
-                  >
-                    <ArrowRight className="w-5 h-5" />
-                  </motion.button>
-                </>
-              )}
-
-              {/* Pie: nombre, contador y accesos */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0, transition: { delay: 0.22, duration: 0.4, ease: EASE } }}
-                exit={{ opacity: 0, y: 12, transition: { duration: 0.15 } }}
-                className="absolute inset-x-0 bottom-0 z-20 p-5 sm:p-8 flex flex-wrap items-end justify-between gap-4 pointer-events-none"
-              >
-                <div className="pointer-events-auto">
-                  <h3 className="font-display font-bold uppercase text-white text-xl sm:text-3xl leading-tight">
-                    {project.name}
-                  </h3>
-                  <p className="font-display font-semibold uppercase text-[#7db6e8] text-xs sm:text-sm mt-1">
-                    {project.type}
-                    {many && <span className="ml-3 text-white/40">{index + 1} / {photos.length}</span>}
-                  </p>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2 pointer-events-auto">
-                  <Link
-                    to={`/proyecto/${project.id}`}
-                    onClick={close}
-                    className="rounded-full bg-white/10 backdrop-blur border border-white/20 text-white font-body font-semibold text-sm px-5 py-2.5 hover:bg-white/20 transition-colors"
-                  >
-                    Ver ficha completa
-                  </Link>
-                  {hasSite && (
-                    <a
-                      href={project.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-1.5 rounded-full bg-white text-ink font-body font-semibold text-sm px-5 py-2.5 hover:bg-white/90 transition-colors"
-                    >
-                      Visitar sitio
-                      <ArrowUpRight className="w-4 h-4" />
-                    </a>
+            <motion.div
+              initial={false}
+              animate={controles}
+              className="absolute inset-x-0 bottom-0 z-20 p-5 sm:p-8 flex flex-wrap items-end justify-between gap-4 pointer-events-none"
+            >
+              <div className={abierto ? 'pointer-events-auto' : ''}>
+                <h3 className="font-display font-bold uppercase text-white text-xl sm:text-3xl leading-tight">{project.name}</h3>
+                <p className="font-display font-semibold uppercase text-[#7db6e8] text-xs sm:text-sm mt-1">
+                  {project.type}
+                  {many && (
+                    <span className="ml-3 text-white/40">
+                      {index + 1} / {photos.length}
+                    </span>
                   )}
-                </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>,
+                </p>
+              </div>
+
+              <div className={'flex flex-wrap items-center gap-2 ' + (abierto ? 'pointer-events-auto' : '')}>
+                <Link
+                  to={`/proyecto/${project.id}`}
+                  onClick={close}
+                  className="rounded-full bg-white/10 backdrop-blur border border-white/20 text-white font-body font-semibold text-sm px-5 py-2.5 hover:bg-white/20 transition-colors"
+                >
+                  Ver ficha completa
+                </Link>
+                {hasSite && (
+                  <a
+                    href={project.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1.5 rounded-full bg-white text-ink font-body font-semibold text-sm px-5 py-2.5 hover:bg-white/90 transition-colors"
+                  >
+                    Visitar sitio
+                    <ArrowUpRight className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        ) : null,
         document.body,
       )}
     </LightboxContext.Provider>

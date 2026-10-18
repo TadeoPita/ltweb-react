@@ -14,16 +14,17 @@ import {
   CardPortfolio,
   CardAreas,
   CardRubros,
-  CardPanel,
   CardPlazo,
   CardDirecto,
   CardRedes,
   CardContacto,
+  CardSistemas,
 } from './BentoCards'
 import { WHATSAPP_URL, FAQS } from '../data/content'
 import { useSeo, useJsonLd } from '../lib/seo'
 import { usePortfolio } from '../data/portfolioStore'
 import { EASE } from '../lib/motion'
+
 
 /* v3 — propuesta de rediseño completo.
 
@@ -48,7 +49,14 @@ const TITULO_COLOR_2 = 'text-[#26262b]'
 const BAJADA =
   'Diseñamos y programamos webs, tiendas online y sistemas a la medida de cada negocio. Vos contás qué necesitás y nosotros lo resolvemos de punta a punta.'
 
-const AREAS = ['Diseño y rediseño web', 'Tiendas online', 'Sistemas a medida']
+const AREAS = [
+  'Diseño y rediseño web',
+  'Tiendas online',
+  'Sistemas a medida',
+  'Videos',
+  'Chatbots para WhatsApp, Instagram y Facebook',
+  'Meta Ads',
+]
 const RUBROS = ['Salud', 'Educación', 'Tecnología', 'Gastronomía', 'Servicios profesionales', 'Comercio']
 
 /* Anchos sobre una grilla de 12 columnas. El bento no es una grilla pareja:
@@ -113,7 +121,7 @@ export default function V3Page() {
         { id: 'marca', nodo: <CardMarca /> },
         { id: 'portfolio', nodo: <CardPortfolio cantidad={items.length} /> },
         { id: 'areas', nodo: <CardAreas areas={AREAS} /> },
-        { id: 'panel', nodo: <CardPanel /> },
+        { id: 'sistemas', nodo: <CardSistemas /> },
         { id: 'rubros', nodo: <CardRubros rubros={RUBROS} /> },
         { id: 'plazo', nodo: <CardPlazo /> },
         { id: 'directo', nodo: <CardDirecto /> },
