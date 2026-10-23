@@ -21,6 +21,7 @@ import {
   Megaphone,
   MessageCircle,
   Package,
+  Rocket,
   ShoppingBag,
   SlidersHorizontal,
   Zap,
@@ -227,6 +228,10 @@ export function CardProyecto({ id, nombre, tipo, imagen }) {
 export function CardPortfolio({ cantidad }) {
   const navegar = useNavigate()
   const clic = usarClicSinArrastre(() => navegar('/portfolio'))
+  /* En pantallas táctiles no hay hover: el abanico se abre solo cuando la
+     tarjeta entra en pantalla, así las portadas se ven igual. */
+  const [tactil] = useState(() => typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches)
+  const abrir = tactil ? { whileInView: 'hover', viewport: { amount: 0.7 } } : { whileHover: 'hover' }
 
   return (
     <MotionLink
@@ -234,7 +239,7 @@ export function CardPortfolio({ cantidad }) {
       {...clic}
       to="/portfolio"
       initial="reposo"
-      whileHover="hover"
+      {...abrir}
       className={`${BASE} group block p-6 flex flex-col justify-center`}
       style={{ backgroundColor: 'var(--color-pastel-blue)' }}
     >
@@ -251,7 +256,7 @@ export function CardPortfolio({ cantidad }) {
         Ver el portfolio
         <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
       </span>
-      <div aria-hidden className="pointer-events-none absolute -bottom-3 right-8 hidden h-20 w-48 sm:block">
+      <div aria-hidden className="pointer-events-none absolute -bottom-3 -right-2 h-20 w-48 sm:right-8">
         {PORTADAS.map((p, i) => (
           <motion.img
             key={p}
@@ -403,40 +408,73 @@ export function CardRedes() {
 /* Plazo de entrega.
 
    El dato sale de la respuesta del FAQ, así que no es un número inventado
-   para llenar la tarjeta: es el mismo que damos cuando nos preguntan. */
+   para llenar la tarjeta: es el mismo que damos cuando nos preguntan.
+
+   Antes tenía el número, dos textos y una barra de catorce bloques con
+   etiquetas. Ahora es un almanaque de dos semanas: los días se van tachando
+   y uno de la segunda se prende con el cohete del logo. El plazo se entiende
+   sin leer nada más. */
+const DIAS = 14
+const DIA_ONLINE = 10
+
 export function CardPlazo() {
+  const reducir = useReducedMotion()
+  const paso = (i) => (reducir ? 0 : 0.2 + i * 0.07)
+
   return (
     <motion.div
-      {...blurStagger(0.04)}
-      className={`${BASE} group border border-black/[0.07] bg-white p-6 flex flex-col justify-center`}
+      initial={reducir ? 'despues' : 'antes'}
+      whileInView="despues"
+      viewport={{ once: true, amount: 0.6 }}
+      className={`${BASE} group border border-black/[0.07] bg-white p-6 flex flex-col justify-between`}
     >
-      <div className="flex items-baseline gap-1.5">
-        <span className="font-display font-bold text-[#26262b] leading-none text-5xl transition-transform duration-500 ease-out group-hover:-translate-y-1">
-          1-2
-        </span>
-        <span className="font-display font-bold uppercase text-ink/45 leading-none text-lg">semanas</span>
+      <div aria-hidden className="grid max-w-[250px] grid-cols-7 gap-1.5">
+        {Array.from({ length: DIAS }, (_, i) => {
+          const online = i === DIA_ONLINE - 1
+          const tachado = i < DIA_ONLINE - 1
+          return (
+            <motion.span
+              key={i}
+              variants={{
+                antes: { backgroundColor: 'rgba(22,22,22,0.05)' },
+                despues: {
+                  backgroundColor: online ? '#a796f0' : 'rgba(22,22,22,0.05)',
+                  transition: { delay: paso(i), duration: 0.3 },
+                },
+              }}
+              className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[6px]"
+            >
+              {tachado && (
+                <motion.i
+                  variants={{
+                    antes: { scaleX: 0 },
+                    despues: { scaleX: 1, transition: { delay: paso(i), duration: 0.18, ease: EASE } },
+                  }}
+                  className="absolute h-[1.5px] w-[62%] -rotate-45 rounded-full bg-ink/45"
+                />
+              )}
+              {online && (
+                <motion.span
+                  variants={{
+                    antes: { scale: 0, opacity: 0 },
+                    despues: { scale: 1, opacity: 1, transition: { ...RESORTE, delay: paso(i) + 0.15 } },
+                  }}
+                  className="transition-transform duration-500 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                >
+                  <Rocket className="h-3.5 w-3.5 text-ink" strokeWidth={2.2} />
+                </motion.span>
+              )}
+            </motion.span>
+          )
+        })}
       </div>
-      <p className="mt-3 font-display font-bold uppercase text-ink/85 text-[15px] leading-tight">
-        Una web lista
-      </p>
-      <p className="mt-1.5 font-body text-[13px] leading-relaxed text-ink/55">
-        Un e-commerce o un sitio más grande, entre dos y cuatro semanas.
-      </p>
-      <div className="mt-4 flex gap-[3px]" aria-hidden>
-        {Array.from({ length: 14 }, (_, i) => (
-          <motion.span
-            key={i}
-            variants={{
-              hidden: { scaleY: 0.2, opacity: 0.2 },
-              visible: { scaleY: 1, opacity: i < 7 ? 1 : 0.4, transition: { delay: i * 0.05, duration: 0.45, ease: EASE } },
-            }}
-            className="h-4 flex-1 origin-bottom rounded-[2px] bg-ink"
-          />
-        ))}
-      </div>
-      <div className="mt-1.5 flex justify-between font-body text-[10px] font-medium uppercase tracking-[0.12em] text-ink/35">
-        <span>Semana 1</span>
-        <span>Semana 2</span>
+
+      <div>
+        <div className="flex items-baseline gap-1.5">
+          <span className="font-display font-bold text-[#26262b] leading-none text-5xl">1-2</span>
+          <span className="font-display font-bold uppercase text-ink/45 leading-none text-lg">semanas</span>
+        </div>
+        <p className="mt-2 font-body text-[13px] leading-relaxed text-ink/55">Del primer mensaje a tu web online.</p>
       </div>
     </motion.div>
   )

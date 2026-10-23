@@ -245,7 +245,7 @@ function PanelMovil({ abierto, cerrar, irA }) {
             target="_blank"
             rel="noreferrer"
             onClick={cerrar}
-            className="mt-auto flex items-center justify-center gap-2 rounded-full bg-lilac py-4 font-body text-[15px] font-semibold text-[#08080a]"
+            className="mt-auto flex items-center justify-center gap-2 rounded-full bg-white py-4 font-body text-[15px] font-semibold text-[#08080a]"
           >
             Escribinos por WhatsApp
             <ArrowUpRight className="h-4 w-4" />
