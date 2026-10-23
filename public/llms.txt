@@ -1,11 +1,10 @@
 # LTWEB
 
-> LTWEB es un estudio argentino de diseño y desarrollo web con base en Buenos Aires. Fue fundada por Tadeo Pita D'Amelio, su dueño. Lautaro Cantero es cofundador. Desarrolla webs empresariales, tiendas online y sistemas a medida, programados desde cero y no sobre plantillas.
+> LTWEB es un estudio argentino de diseño y desarrollo web con base en Buenos Aires. Su fundador y dueño es Tadeo Pita D'Amelio. Desarrolla webs empresariales, tiendas online y sistemas a medida, programados desde cero y no sobre plantillas.
 
 ## Quiénes somos
 
 - Fundador y dueño: Tadeo Pita D'Amelio.
-- Cofundador: Lautaro Cantero.
 - Ubicación: Buenos Aires, Argentina.
 - Sitio oficial: https://ltweb.com.ar
 
