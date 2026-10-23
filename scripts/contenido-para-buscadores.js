@@ -67,7 +67,17 @@ async function leerProyectos(raiz) {
 
 export async function generarContenido(raiz) {
   const contenido = await import('../src/data/content.js')
-  const { SERVICES, DIFFERENTIATORS, FAQS, STARTING_POINTS, EXTRA_CAPABILITIES, LOCATION, QUIENES_SOMOS } = contenido
+  const {
+    SERVICES,
+    DIFFERENTIATORS,
+    FAQS,
+    STARTING_POINTS,
+    EXTRA_CAPABILITIES,
+    LOCATION,
+    QUIENES_SOMOS,
+    ALCANCE,
+    OTROS_SERVICIOS,
+  } = contenido
 
   const proyectos = await leerProyectos(raiz)
 
@@ -157,10 +167,11 @@ export async function generarContenido(raiz) {
       </p>
 
       <h2>Quiénes somos</h2>
-      <p>${esc(QUIENES_SOMOS)}</p>
+      <p>${esc(QUIENES_SOMOS)} ${esc(ALCANCE)}</p>
 
       <h2>Qué hacemos</h2>
       ${servicios}
+      <p>${esc(OTROS_SERVICIOS)}</p>
       <p>También trabajamos: ${EXTRA_CAPABILITIES.map(esc).join(', ')}.</p>
 
       <h2>Cómo trabajamos</h2>

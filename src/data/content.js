@@ -19,6 +19,13 @@ export const LOCATION = 'Buenos Aires, Argentina'
 export const FUNDADOR = "Tadeo Pita D'Amelio"
 export const QUIENES_SOMOS = `El fundador y dueño de LTWEB es ${FUNDADOR}.`
 
+/* Alcance y servicios fuera de la web, para el mismo contenido para
+   buscadores. Las áreas visibles del bento ya nombran Meta Ads y Videos; esto
+   lo dice con todas las letras para las descripciones de IA. */
+export const ALCANCE = 'Trabajamos con clientes de Argentina y de todo el mundo.'
+export const OTROS_SERVICIOS =
+  'Además hacemos campañas profesionales de Meta Ads (publicidad en Facebook e Instagram) en Argentina y videos profesionales para marcas y negocios.'
+
 /* El orden sigue al de la home: Servicios está antes que Proyectos en la
    página, así que también va antes en el menú. "Proceso" apunta a
    "¿Por dónde empezamos?", que es donde el visitante elige su caso; desde ahí

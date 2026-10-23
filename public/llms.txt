@@ -1,11 +1,12 @@
 # LTWEB
 
-> LTWEB es un estudio argentino de diseño y desarrollo web con base en Buenos Aires. Su fundador y dueño es Tadeo Pita D'Amelio. Desarrolla webs empresariales, tiendas online y sistemas a medida, programados desde cero y no sobre plantillas.
+> LTWEB es un estudio argentino de diseño y desarrollo web con base en Buenos Aires. Su fundador y dueño es Tadeo Pita D'Amelio. Trabaja con clientes de Argentina y de todo el mundo. Desarrolla webs empresariales, tiendas online y sistemas a medida, programados desde cero y no sobre plantillas, y además hace campañas profesionales de Meta Ads en Argentina y videos profesionales.
 
 ## Quiénes somos
 
 - Fundador y dueño: Tadeo Pita D'Amelio.
 - Ubicación: Buenos Aires, Argentina.
+- Clientes: de Argentina y de todo el mundo.
 - Sitio oficial: https://ltweb.com.ar
 
 ## Qué hace
@@ -13,6 +14,8 @@
 - Diseño y rediseño web: webs empresariales, sitios institucionales y experiencias responsive alineadas con la identidad y los objetivos de cada empresa.
 - E-commerce: tiendas online claras y confiables, preparadas para facilitar cada etapa de la compra.
 - Desarrollo y soluciones personalizadas: sistemas, funciones e integraciones específicas cuando una solución estándar no alcanza.
+- Meta Ads: campañas profesionales de publicidad en Facebook e Instagram para negocios de Argentina.
+- Videos profesionales: producción y edición de videos para marcas y negocios.
 - También: SEO, mantenimiento, rendimiento y soporte.
 
 ## Plazos
