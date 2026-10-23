@@ -40,6 +40,8 @@ const TIPOS = {
   '.xml': 'application/xml; charset=utf-8',
   '.txt': 'text/plain; charset=utf-8',
   '.webmanifest': 'application/manifest+json',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
 }
 
 /* Los archivos de assets/ llevan un hash en el nombre: si cambia el contenido
@@ -79,17 +81,61 @@ function rutaSegura(base, pedida) {
   return completa === base || completa.startsWith(base + sep) ? completa : null
 }
 
-async function servirArchivo(res, ruta, urlOriginal) {
+/* Los videos se piden por partes.
+ *
+ * Safari en iPhone no reproduce un video si el servidor no responde a los
+ * pedidos con rango (Range: bytes=...): primero pide los dos primeros bytes
+ * para ver si puede saltar, y si recibe el archivo entero en vez de un 206,
+ * el reproductor se queda en negro. Los demás navegadores también lo usan para
+ * adelantar y para no bajar el video completo antes de empezar.
+ *
+ * Devuelve { inicio, fin } si el rango es válido, null si no hay rango, o
+ * false si el rango pedido no entra en el archivo. */
+function leerRango(cabecera, tamano) {
+  if (!cabecera) return null
+  const m = /^bytes=(\d*)-(\d*)$/.exec(cabecera.trim())
+  if (!m || (m[1] === '' && m[2] === '')) return null
+  let inicio, fin
+  if (m[1] === '') {
+    // bytes=-500: los últimos 500 bytes
+    inicio = Math.max(0, tamano - Number(m[2]))
+    fin = tamano - 1
+  } else {
+    inicio = Number(m[1])
+    fin = m[2] === '' ? tamano - 1 : Math.min(Number(m[2]), tamano - 1)
+  }
+  if (inicio > fin || inicio >= tamano) return false
+  return { inicio, fin }
+}
+
+async function servirArchivo(res, ruta, urlOriginal, req) {
   try {
     const info = await stat(ruta)
     if (!info.isFile()) return false
 
-    res.writeHead(200, {
+    const cabeceras = {
       'Content-Type': TIPOS[extname(ruta).toLowerCase()] ?? 'application/octet-stream',
-      'Content-Length': info.size,
       'Cache-Control': cacheDe(urlOriginal),
       'X-Content-Type-Options': 'nosniff',
-    })
+      'Accept-Ranges': 'bytes',
+    }
+
+    const rango = leerRango(req?.headers.range, info.size)
+    if (rango === false) {
+      res.writeHead(416, { ...cabeceras, 'Content-Range': `bytes */${info.size}` }).end()
+      return true
+    }
+    if (rango) {
+      res.writeHead(206, {
+        ...cabeceras,
+        'Content-Range': `bytes ${rango.inicio}-${rango.fin}/${info.size}`,
+        'Content-Length': rango.fin - rango.inicio + 1,
+      })
+      createReadStream(ruta, { start: rango.inicio, end: rango.fin }).pipe(res)
+      return true
+    }
+
+    res.writeHead(200, { ...cabeceras, 'Content-Length': info.size })
     createReadStream(ruta).pipe(res)
     return true
   } catch {
@@ -148,7 +194,7 @@ const servidor = createServer(async (req, res) => {
 
     // --- El sitio ---
     const ruta = rutaSegura(DIST, camino)
-    if (ruta && (await servirArchivo(res, ruta, camino))) return
+    if (ruta && (await servirArchivo(res, ruta, camino, req))) return
 
     /* Cualquier otra cosa la resuelve React. Es lo que hace que entrar directo
        a /portfolio o recargar una ficha funcione en vez de dar 404. */

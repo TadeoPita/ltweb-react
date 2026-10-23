@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { utils } from 'swapy'
 import { ArrowRight } from 'lucide-react'
@@ -25,6 +25,9 @@ import { useSeo, useJsonLd } from '../lib/seo'
 import { usePortfolio } from '../data/portfolioStore'
 import { EASE } from '../lib/motion'
 
+/* Reseñas en video. Va en su propio chunk: el componente y framer del
+   carrusel se piden recién cuando la home los necesita. */
+const Testimonios = lazy(() => import('../components/Testimonios'))
 
 /* v3 — propuesta de rediseño completo.
 
@@ -187,6 +190,10 @@ export default function V3Page() {
       </section>
 
       <Portfolio />
+
+      <Suspense fallback={null}>
+        <Testimonios />
+      </Suspense>
 
       <FAQ />
 
