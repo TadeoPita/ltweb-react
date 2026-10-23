@@ -27,6 +27,7 @@ const SECCIONES = [
   { label: 'Inicio', href: '/#inicio-v3' },
   { label: 'El estudio', href: '/#bento-v3' },
   { label: 'Proyectos', href: '/#proyectos' },
+  { label: 'Reseñas', href: '/#testimonios' },
   { label: 'FAQ', href: '/#faq' },
 ]
 

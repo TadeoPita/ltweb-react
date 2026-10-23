@@ -5,22 +5,22 @@ import {
   animate,
   motion,
   useInView,
-  useMotionTemplate,
   useMotionValue,
   useReducedMotion,
-  useSpring,
   useTransform,
 } from 'framer-motion'
 import { usarClicSinArrastre } from './usarClicSinArrastre'
 import {
   ArrowUpRight,
   Bot,
+  CalendarCheck,
   Clapperboard,
   Cpu,
   Globe,
   Instagram,
   Megaphone,
   MessageCircle,
+  Package,
   ShoppingBag,
   SlidersHorizontal,
   Zap,
@@ -163,34 +163,13 @@ function Charla() {
   )
 }
 
-/* Marca. Usa el cohete del logo, el mismo que está en el favicon. */
+/* Marca. Usa el cohete del logo, el mismo que está en el favicon.
+
+   Tenía un brillo lila que seguía al cursor por dentro de la tarjeta; se
+   sacó. Al pasar el mouse solo gira la estrella de la esquina. */
 export function CardMarca() {
-  const x = useMotionValue(50)
-  const y = useMotionValue(50)
-  const sx = useSpring(x, { stiffness: 140, damping: 22 })
-  const sy = useSpring(y, { stiffness: 140, damping: 22 })
-  const brillo = useMotionTemplate`radial-gradient(240px circle at ${sx}% ${sy}%, rgba(167,150,240,0.32), transparent 70%)`
-
-  const alMover = (e) => {
-    const r = e.currentTarget.getBoundingClientRect()
-    x.set(((e.clientX - r.left) / r.width) * 100)
-    y.set(((e.clientY - r.top) / r.height) * 100)
-  }
-
   return (
-    <div
-      onPointerMove={alMover}
-      onPointerLeave={() => {
-        x.set(50)
-        y.set(50)
-      }}
-      className={`${BASE} group bg-[#1c1c20] p-6 flex flex-col justify-between`}
-    >
-      <motion.div
-        aria-hidden
-        style={{ background: brillo }}
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-      />
+    <div className={`${BASE} group bg-[#1c1c20] p-6 flex flex-col justify-between`}>
       <img draggable={false} src="/images/logo-blanco.webp" alt="LT WEB" className="relative h-7 w-auto self-start" />
       <motion.div {...blurStagger(0.08)} className="relative">
         <motion.p variants={blurChild} className="font-display font-bold uppercase text-white/95 leading-[0.95] text-2xl">
@@ -504,206 +483,79 @@ export function CardContacto() {
   )
 }
 
-const MODULOS = [
-  { id: 'turnos', etiqueta: 'Turnos' },
-  { id: 'stock', etiqueta: 'Stock' },
-  { id: 'pedidos', etiqueta: 'Pedidos' },
+/* Sistemas personalizados.
+
+   Antes tenía pestañas con tres mini paneles (turnos, stock, pedidos), cada
+   uno con sus botones. Mostraba mucho y se leía cargado. Ahora cuenta una sola
+   idea: el sistema trabaja solo y te avisa. Un aviso a la vez, como una
+   notificación del celular, y el que se va queda apilado atrás. Tocarla pasa
+   al siguiente. */
+const AVISOS = [
+  { icono: CalendarCheck, titulo: 'Turno reservado', texto: 'Martes 10:30 · desde la web', color: '#5b46b8' },
+  { icono: Package, titulo: 'Quedan 6 buzos', texto: 'Stock bajo, conviene reponer', color: '#c2410c' },
+  { icono: ShoppingBag, titulo: 'Pedido #1043 listo', texto: 'Ya le avisamos a Lucía', color: '#2c6e52' },
 ]
-const HORAS = ['09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30']
-const PRODUCTOS = [
-  { n: 'Remeras', q: 24, max: 40 },
-  { n: 'Buzos', q: 6, max: 30 },
-  { n: 'Gorras', q: 15, max: 20 },
-]
-const PEDIDOS = [
-  { id: 1042, n: 'Mesa 4 · 2 pizzas' },
-  { id: 1043, n: 'Delivery · Lucía' },
-  { id: 1044, n: 'Mostrador · 1 combo' },
-]
-const ESTADOS = ['Nuevo', 'En preparación', 'Entregado']
-const COLOR_ESTADO = { Nuevo: '#5b46b8', 'En preparación': '#c2410c', Entregado: '#2c6e52' }
-
-function Turnos() {
-  const [ocupados, setOcupados] = useState(() => new Set([1, 2, 5]))
-  const alternar = (i) =>
-    setOcupados((prev) => {
-      const n = new Set(prev)
-      if (n.has(i)) n.delete(i)
-      else n.add(i)
-      return n
-    })
-
-  return (
-    <div>
-      <div className="grid grid-cols-4 gap-1.5">
-        {HORAS.map((h, i) => {
-          const ocupado = ocupados.has(i)
-          return (
-            <motion.button
-              key={h}
-              type="button"
-              onClick={() => alternar(i)}
-              whileTap={{ scale: 0.92 }}
-              animate={{ backgroundColor: ocupado ? '#161616' : 'rgba(255,255,255,0.8)', color: ocupado ? '#ffffff' : '#161616' }}
-              transition={{ type: 'spring', stiffness: 420, damping: 28 }}
-              aria-pressed={ocupado}
-              aria-label={`Turno de las ${h}`}
-              className="cursor-pointer rounded-md py-[5px] font-body text-[10.5px] font-semibold tabular-nums ring-1 ring-black/[0.06]"
-            >
-              {h}
-            </motion.button>
-          )
-        })}
-      </div>
-      <p className="mt-2 font-body text-[10.5px] text-ink/50">
-        <span className="font-semibold tabular-nums text-ink/80">{ocupados.size}</span> de {HORAS.length} turnos ocupados hoy
-      </p>
-    </div>
-  )
-}
-
-function Stock() {
-  const [cant, setCant] = useState(PRODUCTOS.map((p) => p.q))
-  const mover = (i, d) => setCant((c) => c.map((v, k) => (k === i ? Math.max(0, Math.min(PRODUCTOS[k].max, v + d)) : v)))
-
-  return (
-    <div className="flex flex-col gap-[7px]">
-      {PRODUCTOS.map((p, i) => {
-        const bajo = cant[i] <= 8
-        return (
-          <div key={p.n} className="flex items-center gap-2">
-            <span className="w-[52px] font-body text-[10.5px] font-semibold text-ink/80">{p.n}</span>
-            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-black/[0.08]">
-              <motion.div
-                animate={{ width: `${(cant[i] / p.max) * 100}%`, backgroundColor: bajo ? '#c2410c' : '#161616' }}
-                transition={{ type: 'spring', stiffness: 200, damping: 26 }}
-                className="h-full rounded-full"
-              />
-            </div>
-            <span className="w-5 text-right font-body text-[10.5px] tabular-nums text-ink/70">{cant[i]}</span>
-            <span className="flex gap-0.5">
-              <button
-                type="button"
-                onClick={() => mover(i, -1)}
-                aria-label={`Quitar una unidad de ${p.n}`}
-                className="flex h-5 w-5 cursor-pointer items-center justify-center rounded bg-white/80 font-body text-[12px] leading-none ring-1 ring-black/[0.08] hover:bg-white"
-              >
-                −
-              </button>
-              <button
-                type="button"
-                onClick={() => mover(i, 1)}
-                aria-label={`Agregar una unidad de ${p.n}`}
-                className="flex h-5 w-5 cursor-pointer items-center justify-center rounded bg-white/80 font-body text-[12px] leading-none ring-1 ring-black/[0.08] hover:bg-white"
-              >
-                +
-              </button>
-            </span>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
-
-function Pedidos() {
-  const [estado, setEstado] = useState([0, 1, 2])
-  const avanzar = (i) => setEstado((e) => e.map((v, k) => (k === i ? (v + 1) % ESTADOS.length : v)))
-
-  return (
-    <div className="flex flex-col gap-1.5">
-      {PEDIDOS.map((p, i) => (
-        <button
-          key={p.id}
-          type="button"
-          onClick={() => avanzar(i)}
-          aria-label={`Pedido ${p.id}, ${ESTADOS[estado[i]]}. Tocar para avanzar el estado`}
-          className="flex cursor-pointer items-center gap-2 rounded-md bg-white/75 px-2 py-1 text-left ring-1 ring-black/[0.06] transition-colors hover:bg-white"
-        >
-          <span className="font-body text-[9.5px] tabular-nums text-ink/40">#{p.id}</span>
-          <span className="flex-1 truncate font-body text-[10.5px] font-semibold text-ink/80">{p.n}</span>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.span
-              key={estado[i]}
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.18 }}
-              style={{ backgroundColor: COLOR_ESTADO[ESTADOS[estado[i]]] }}
-              className="rounded-full px-1.5 py-[2px] font-body text-[8.5px] font-semibold text-white"
-            >
-              {ESTADOS[estado[i]]}
-            </motion.span>
-          </AnimatePresence>
-        </button>
-      ))}
-    </div>
-  )
-}
 
 export function CardSistemas() {
   const raiz = useRef(null)
   const enVista = useInView(raiz, { amount: 0.5 })
   const reducir = useReducedMotion()
-  const [modulo, setModulo] = useState(0)
+  const [paso, setPaso] = useState(0)
   const ultimaAccion = useRef(0)
 
   useEffect(() => {
     if (!enVista || reducir) return
     const id = setInterval(() => {
-      if (performance.now() - ultimaAccion.current < 6000) return
-      setModulo((m) => (m + 1) % MODULOS.length)
-    }, 4500)
+      if (performance.now() - ultimaAccion.current < 5000) return
+      setPaso((p) => p + 1)
+    }, 3200)
     return () => clearInterval(id)
   }, [enVista, reducir])
 
+  const siguiente = () => {
+    ultimaAccion.current = performance.now()
+    setPaso((p) => p + 1)
+  }
+
+  const aviso = AVISOS[paso % AVISOS.length]
+  const Icono = aviso.icono
+
   return (
-    <div
-      ref={raiz}
-      onPointerDown={() => {
-        ultimaAccion.current = performance.now()
-      }}
-      className={`${BASE} p-5 flex flex-col`}
-      style={{ backgroundColor: 'var(--color-pastel-green)' }}
-    >
-      <div className="flex h-7 items-center gap-1 rounded-lg bg-white/70 p-[3px] ring-1 ring-black/[0.06]" role="tablist" aria-label="Módulos de ejemplo">
-        {MODULOS.map((m, i) => (
-          <button
-            key={m.id}
-            type="button"
-            role="tab"
-            aria-selected={i === modulo}
-            onClick={() => setModulo(i)}
-            className={
-              'relative flex h-full flex-1 cursor-pointer items-center justify-center rounded-md font-body text-[10.5px] font-semibold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ink ' +
-              (i === modulo ? 'text-white' : 'text-ink/65 hover:text-ink')
-            }
+    <div ref={raiz} className={`${BASE} p-6 flex flex-col justify-between`} style={{ backgroundColor: 'var(--color-pastel-green)' }}>
+      <button
+        type="button"
+        onClick={siguiente}
+        aria-label={`Aviso de ejemplo: ${aviso.titulo}. Tocar para ver otro`}
+        className="relative h-[78px] cursor-pointer rounded-xl text-left outline-none focus-visible:ring-2 focus-visible:ring-ink"
+      >
+        <span aria-hidden className="absolute inset-x-4 top-3 h-[64px] rounded-xl bg-white/45 ring-1 ring-black/[0.04]" />
+        <AnimatePresence initial={false}>
+          <motion.span
+            key={paso}
+            aria-hidden
+            initial={{ opacity: 0, y: -16, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 12, scale: 0.92 }}
+            transition={reducir ? { duration: 0 } : RESORTE}
+            className="absolute inset-x-0 top-0 flex items-center gap-3 rounded-xl bg-white px-3 py-2.5 shadow-[0_8px_20px_-12px_rgba(0,0,0,0.35)] ring-1 ring-black/[0.05]"
           >
-            {i === modulo && <motion.span layoutId="modulo-activo" transition={RESORTE} className="absolute inset-0 rounded-md bg-ink" />}
-            <span className="relative">{m.etiqueta}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="relative mt-2 min-h-[78px]">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={modulo}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.22 }}
-          >
-            {modulo === 0 && <Turnos />}
-            {modulo === 1 && <Stock />}
-            {modulo === 2 && <Pedidos />}
-          </motion.div>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg" style={{ backgroundColor: aviso.color }}>
+              <Icono className="h-[18px] w-[18px] text-white" strokeWidth={2} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="flex items-baseline justify-between gap-2">
+                <span className="truncate font-body text-[13px] font-semibold text-ink">{aviso.titulo}</span>
+                <span className="shrink-0 font-body text-[10.5px] text-ink/40">ahora</span>
+              </span>
+              <span className="mt-0.5 block truncate font-body text-[12px] text-ink/55">{aviso.texto}</span>
+            </span>
+          </motion.span>
         </AnimatePresence>
-      </div>
+      </button>
 
-      <div className="mt-auto pt-2">
+      <div>
         <p className="font-display text-[15px] font-bold uppercase leading-tight text-ink/90">Sistemas personalizados</p>
-        <p className="mt-1 font-body text-[12px] leading-snug text-ink/60">Turnos, stock, pedidos. Hecho a medida.</p>
+        <p className="mt-2 font-body text-[13.5px] leading-relaxed text-ink/60">Turnos, stock y pedidos que se ordenan solos.</p>
       </div>
     </div>
   )
