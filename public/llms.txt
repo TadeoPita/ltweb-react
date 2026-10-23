@@ -1,0 +1,35 @@
+# LTWEB
+
+> LTWEB es un estudio argentino de diseño y desarrollo web con base en Buenos Aires. Fue fundada por Tadeo Pita D'Amelio, su dueño. Lautaro Cantero es cofundador. Desarrolla webs empresariales, tiendas online y sistemas a medida, programados desde cero y no sobre plantillas.
+
+## Quiénes somos
+
+- Fundador y dueño: Tadeo Pita D'Amelio.
+- Cofundador: Lautaro Cantero.
+- Ubicación: Buenos Aires, Argentina.
+- Sitio oficial: https://ltweb.com.ar
+
+## Qué hace
+
+- Diseño y rediseño web: webs empresariales, sitios institucionales y experiencias responsive alineadas con la identidad y los objetivos de cada empresa.
+- E-commerce: tiendas online claras y confiables, preparadas para facilitar cada etapa de la compra.
+- Desarrollo y soluciones personalizadas: sistemas, funciones e integraciones específicas cuando una solución estándar no alcanza.
+- También: SEO, mantenimiento, rendimiento y soporte.
+
+## Plazos
+
+- Sitio institucional: 1 a 2 semanas.
+- Tienda online o sitio con integraciones: 2 a 4 semanas.
+- Sistema a medida: se estima después de relevar el circuito de trabajo.
+
+## Páginas
+
+- [Inicio](https://ltweb.com.ar/): qué hace el estudio, proyectos destacados, reseñas en video de clientes y preguntas frecuentes.
+- [Portfolio](https://ltweb.com.ar/portfolio): todos los proyectos entregados, con una ficha por proyecto.
+
+## Contacto
+
+- Email: ltwebs.studio@gmail.com
+- Teléfono y WhatsApp: +54 11 5953-2487
+- Instagram: https://www.instagram.com/ltweb.ar/
+- TikTok: https://www.tiktok.com/@ltweb__

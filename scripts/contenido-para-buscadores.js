@@ -67,7 +67,7 @@ async function leerProyectos(raiz) {
 
 export async function generarContenido(raiz) {
   const contenido = await import('../src/data/content.js')
-  const { SERVICES, DIFFERENTIATORS, FAQS, STARTING_POINTS, EXTRA_CAPABILITIES, LOCATION } = contenido
+  const { SERVICES, DIFFERENTIATORS, FAQS, STARTING_POINTS, EXTRA_CAPABILITIES, LOCATION, QUIENES_SOMOS } = contenido
 
   const proyectos = await leerProyectos(raiz)
 
@@ -155,6 +155,9 @@ export async function generarContenido(raiz) {
         paneles de administración e integraciones con las herramientas que cada
         empresa ya usa.
       </p>
+
+      <h2>Quiénes somos</h2>
+      <p>${esc(QUIENES_SOMOS)}</p>
 
       <h2>Qué hacemos</h2>
       ${servicios}

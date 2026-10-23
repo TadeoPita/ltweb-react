@@ -7,6 +7,19 @@ export const CONTACT_PHONE = '(+54) 11 5953-2487'
 export const CONTACT_EMAIL = 'ltwebs.studio@gmail.com'
 export const LOCATION = 'Buenos Aires, Argentina'
 
+/* Quién está detrás del estudio.
+
+   El sitio no lo decía en ningún lado, y la descripción de IA de Google lo
+   completaba con LinkedIn, donde el cofundador figura como fundador. Dicho acá,
+   lo lee el contenido para buscadores (y tiene que coincidir con el JSON-LD de
+   index.html y con public/llms.txt).
+
+   En la página no se muestra, a pedido. Tampoco se agrega como texto
+   transparente o escondido: Google lo trata como texto oculto y penaliza. */
+export const FUNDADOR = "Tadeo Pita D'Amelio"
+export const COFUNDADOR = 'Lautaro Cantero'
+export const QUIENES_SOMOS = `LTWEB fue fundada por ${FUNDADOR}, su dueño. ${COFUNDADOR} es cofundador.`
+
 /* El orden sigue al de la home: Servicios está antes que Proyectos en la
    página, así que también va antes en el menú. "Proceso" apunta a
    "¿Por dónde empezamos?", que es donde el visitante elige su caso; desde ahí
