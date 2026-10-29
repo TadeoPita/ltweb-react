@@ -30,4 +30,15 @@ export const TESTIMONIOS = [
        pisa, así que el tramo puede arrancar con ella hablando. */
     vistaPrevia: [0, 4.5],
   },
+  {
+    id: 'mundalma',
+    nombre: 'Mundalma',
+    detalle: 'Astrología y tarot',
+    video: '/testimonios/mundalma.mp4',
+    poster: '/testimonios/mundalma.jpg',
+    frase: 'Otro nivel',
+    /* Subtítulos al medio, como en Fono Díaz Vélez. Arranca en 0,7 s para
+       que la entrada animada del principio no se repita en cada vuelta. */
+    vistaPrevia: [0.7, 4.4],
+  },
 ]
