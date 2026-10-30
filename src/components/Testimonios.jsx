@@ -212,7 +212,6 @@ function Tarjeta({
       />
       {esActivo && (
         <video
-          key={sonando ? 'sonido' : 'vista'}
           ref={videoRef}
           src={t.video}
           poster={t.poster}
@@ -392,6 +391,18 @@ function Carrusel({ lista }) {
     setPausado(false)
     if (i === activo) {
       progreso.set(0)
+      /* Es el mismo video que ya se ve en la vista previa: se rebobina y se
+         le saca el mute acá, dentro del toque, porque Safari solo deja sonar
+         un video en respuesta directa a un gesto. Así arranca al instante, sin
+         volver a pedir el archivo. */
+      const v = videoRef.current
+      if (v) {
+        v.currentTime = 0
+        v.loop = false
+        v.muted = false
+        const p = v.play()
+        if (p) p.catch(() => {})
+      }
       setSonando(true)
     } else {
       setSonando(true)

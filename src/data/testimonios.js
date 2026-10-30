@@ -17,7 +17,9 @@ export const TESTIMONIOS = [
     video: '/testimonios/mutisia.mp4',
     poster: '/testimonios/mutisia.jpg',
     frase: 'Súper recomendable',
-    vistaPrevia: [0, 3.7],
+    /* El inicio tiene el mismo diseño que las demás (la web arriba y él
+       abajo); el tramo arranca en 0,6 s para no repetir la entrada. */
+    vistaPrevia: [0.6, 3.9],
   },
   {
     id: 'fonodiazvelez',
