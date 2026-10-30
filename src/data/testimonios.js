@@ -8,7 +8,11 @@
    vistaPrevia es el tramo (en segundos) que se repite sin sonido mientras
    nadie toca la tarjeta. Conviene un tramo sin subtítulos: abajo de la tarjeta
    va el nombre del cliente y se pisarían. Sin este dato se repite el video
-   entero. */
+   entero.
+
+   previa es un clip aparte, corto y sin sonido, que se repite en lugar del
+   tramo de vista previa. Sirve cuando el video no arranca con el mismo diseño
+   que los demás: la tarjeta se ve pareja y el video real queda intacto. */
 export const TESTIMONIOS = [
   {
     id: 'mutisia',
@@ -17,9 +21,9 @@ export const TESTIMONIOS = [
     video: '/testimonios/mutisia.mp4',
     poster: '/testimonios/mutisia.jpg',
     frase: 'Súper recomendable',
-    /* El inicio tiene el mismo diseño que las demás (la web arriba y él
-       abajo); el tramo arranca en 0,6 s para no repetir la entrada. */
-    vistaPrevia: [0.6, 3.9],
+    /* El video arranca con una placa naranja de texto; la portada y la vista
+       previa muestran la web arriba y a Didier abajo, como las demás. */
+    previa: '/testimonios/mutisia-previa.mp4',
   },
   {
     id: 'fonodiazvelez',

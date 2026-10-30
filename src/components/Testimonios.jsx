@@ -154,6 +154,7 @@ function Tarjeta({
   reducir,
   progreso,
   videoRef,
+  previaRef,
   barrasRef,
   alTocar,
   alTerminar,
@@ -232,6 +233,24 @@ function Tarjeta({
           className="absolute inset-0 h-full w-full object-cover"
         />
       )}
+      {esActivo && t.previa && (
+        /* Vista previa aparte: un clip corto y mudo que se repite mientras
+           nadie toca la tarjeta. Al tocarla se oculta y suena el video real
+           desde el principio, que no se modifica. */
+        <video
+          ref={previaRef}
+          src={t.previa}
+          muted
+          loop
+          playsInline
+          preload={cerca ? 'auto' : 'none'}
+          aria-hidden
+          className={
+            'absolute inset-0 h-full w-full object-cover transition-opacity duration-200 ' +
+            (sonando ? 'opacity-0' : 'opacity-100')
+          }
+        />
+      )}
 
       <div className="pointer-events-none absolute inset-0 transition-opacity duration-300 group-hover:opacity-40">
         <motion.div style={{ opacity: sombra }} className="absolute inset-0 bg-[#0b0b12]" />
@@ -308,6 +327,7 @@ function Carrusel({ lista }) {
   const [pausado, setPausado] = useState(false)
 
   const videoRef = useRef(null)
+  const previaRef = useRef(null)
   const barrasRef = useRef([])
   const halo = useRef(null)
   const control = useRef(null)
@@ -434,19 +454,34 @@ function Carrusel({ lista }) {
     if (!enVista && sonando) setSonando(false)
   }, [enVista, sonando])
 
+  /* Con vista previa aparte, el video real espera quieto (y ya cargado) hasta
+     que tocan la tarjeta; mientras tanto se repite el clip corto. */
+  const conPrevia = Boolean(lista[activo].previa)
+
   useEffect(() => {
     const v = videoRef.current
     if (!v) return
     v.muted = !sonando
     v.loop = !sonando
-    if (!enVista || pausado || (!sonando && reducir)) {
+    if (!enVista || pausado || (!sonando && (reducir || conPrevia))) {
       v.pause()
       return
     }
     if (sonando) conectar(v)
     const p = v.play()
     if (p) p.catch(() => {})
-  }, [activo, sonando, pausado, enVista, reducir])
+  }, [activo, sonando, pausado, enVista, reducir, conPrevia])
+
+  useEffect(() => {
+    const v = previaRef.current
+    if (!v) return
+    if (!enVista || sonando || reducir) {
+      v.pause()
+      return
+    }
+    const p = v.play()
+    if (p) p.catch(() => {})
+  }, [activo, sonando, enVista, reducir])
 
   useEffect(() => {
     if (!enVista) return
@@ -621,6 +656,7 @@ function Carrusel({ lista }) {
               reducir={reducir}
               progreso={progreso}
               videoRef={videoRef}
+              previaRef={previaRef}
               barrasRef={barrasRef}
               alTocar={alTocar}
               alTerminar={alTerminar}
