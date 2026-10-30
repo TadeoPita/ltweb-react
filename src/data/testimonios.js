@@ -48,8 +48,8 @@ export const TESTIMONIOS = [
     video: '/testimonios/micaelarodera.mp4',
     poster: '/testimonios/micaelarodera.jpg',
     frase: 'Muy conforme',
-    /* Subtítulos al medio. El tramo termina antes de que la web pase a la
-       placa verde, así la vuelta no corta una animación a la mitad. */
-    vistaPrevia: [0.6, 6.3],
+    /* Subtítulos al medio. El tramo muestra su web y la placa de Meta Ads
+       entera, y vuelve antes de que la placa se cierre. */
+    vistaPrevia: [0.6, 7.1],
   },
 ]
