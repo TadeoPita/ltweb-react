@@ -41,4 +41,15 @@ export const TESTIMONIOS = [
        que la entrada animada del principio no se repita en cada vuelta. */
     vistaPrevia: [0.7, 4.4],
   },
+  {
+    id: 'micaelarodera',
+    nombre: 'Micaela Rodera',
+    detalle: 'Abogada · Derecho migratorio',
+    video: '/testimonios/micaelarodera.mp4',
+    poster: '/testimonios/micaelarodera.jpg',
+    frase: 'Muy conforme',
+    /* Subtítulos al medio. El tramo muestra su web y la placa de Meta Ads
+       entera, y vuelve antes de que la placa se cierre. */
+    vistaPrevia: [0.6, 7.1],
+  },
 ]
