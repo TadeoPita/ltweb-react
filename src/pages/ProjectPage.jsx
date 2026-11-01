@@ -9,6 +9,7 @@ import BeforeAfter from '../components/BeforeAfter'
 import { WHATSAPP_URL } from '../data/content'
 import NotFoundPage from './NotFoundPage'
 import { textoPortada } from '../lib/imagen'
+import { descripcionProyecto, tituloProyecto } from '../lib/titulos'
 
 const ease = [0.22, 1, 0.36, 1]
 
@@ -63,15 +64,12 @@ export default function ProjectPage() {
   /* La ficha aporta su propio título, descripción e imagen: así cada
      proyecto se comparte con su propia portada en vez de la genérica. */
   useSeo({
-    title: project ? `${project.name} — Proyecto de LTWEB` : 'Proyecto — LTWEB',
-    description:
-      project?.solution?.replace(/\*\*/g, '') ||
-      project?.problem?.replace(/\*\*/g, '') ||
-      'Un proyecto diseñado y desarrollado por LTWEB.',
+    title: project ? tituloProyecto(project) : 'Proyecto — LTWEB',
+    description: project ? descripcionProyecto(project) : 'Un proyecto diseñado y desarrollado por LTWEB.',
     image: project?.image,
     path: `/proyecto/${id}`,
     type: 'article',
-    noindex: !tieneFicha,
+    noindex: !tieneFicha || Boolean(project?.blurred),
   })
 
   /* El breadcrumb le dice a Google dónde vive esta página, y aparece como

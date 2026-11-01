@@ -85,6 +85,7 @@ export function useJsonLd(data) {
 
   useEffect(() => {
     if (!json) return
+    document.head.querySelectorAll('script[data-servidor="ld"]').forEach((s) => s.remove())
     const tag = document.createElement('script')
     tag.type = 'application/ld+json'
     tag.dataset.dynamic = 'true'

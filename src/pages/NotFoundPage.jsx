@@ -33,7 +33,7 @@ export default function NotFoundPage() {
     my.set(e.clientY - rect.top - rect.height / 2)
   }
 
-  useSeo({ title: '404 — LTWEB', description: 'La página que buscás no existe o fue movida.' })
+  useSeo({ title: 'Página no encontrada — LTWEB', description: 'La página que buscás no existe o fue movida.', noindex: true })
 
   useEffect(() => {
     window.scrollTo(0, 0)

@@ -5,6 +5,7 @@ import { resolve, join, normalize, extname, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { manejarApi } from './lib/api.js'
 import { rutasProduccion } from './lib/datos.js'
+import { redireccion, renderizar } from './lib/paginas.js'
 
 /* El servidor.
  *
@@ -147,6 +148,12 @@ const servidor = createServer(async (req, res) => {
   const url = new URL(req.url, 'http://localhost')
   const camino = url.pathname
 
+  const destino = redireccion(String(req.headers.host || '').toLowerCase(), camino, url.search)
+  if (destino) {
+    res.writeHead(301, { Location: destino, 'Cache-Control': 'public, max-age=3600' }).end()
+    return
+  }
+
   // Cabeceras de seguridad para todo lo que salga de acá.
   res.setHeader('X-Frame-Options', 'DENY')
   res.setHeader('X-Content-Type-Options', 'nosniff')
@@ -198,9 +205,18 @@ const servidor = createServer(async (req, res) => {
 
     /* Cualquier otra cosa la resuelve React. Es lo que hace que entrar directo
        a /portfolio o recargar una ficha funcione en vez de dar 404. */
-    if (await servirArchivo(res, join(DIST, 'index.html'), '/index.html')) return
+    if (/\.[a-z0-9]{2,5}$/i.test(camino)) {
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('No encontrado')
+      return
+    }
 
-    res.writeHead(404).end('No encontrado')
+    const pagina = await renderizar(camino, { dist: DIST, rutas: RUTAS, raiz: RAIZ })
+    res.writeHead(pagina.estado, {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'no-cache, must-revalidate',
+      'X-Content-Type-Options': 'nosniff',
+    })
+    res.end(req.method === 'HEAD' ? undefined : pagina.html)
   } catch (err) {
     console.error('[servidor]', err)
     if (!res.headersSent) res.writeHead(500).end('Error del servidor')
