@@ -335,7 +335,8 @@ function Carrusel({ lista }) {
   const inicioPan = useRef(0)
   const inicioCadena = useRef(0)
   const anterior = useRef(0)
-  const audio = useRef({ ctx: null, analizador: null, fuentes: new WeakMap() })
+  const enCursoRef = useRef(false)
+  enCursoRef.current = enCurso
   const desbloqueados = useRef(new WeakSet())
   const estado = useRef({ activo: 0, sonando: false, pausado: false })
   estado.current = { activo, sonando, pausado }
@@ -377,46 +378,11 @@ function Carrusel({ lista }) {
     animarA(destino)
   }
 
-  const prepararAudio = () => {
-    if (!ESCRITORIO) return
-    const a = audio.current
-    if (a.ctx) {
-      if (a.ctx.state === 'suspended') a.ctx.resume()
-      return
-    }
-    const Contexto = window.AudioContext || window.webkitAudioContext
-    if (!Contexto) return
-    try {
-      const ctx = new Contexto()
-      const analizador = ctx.createAnalyser()
-      analizador.fftSize = 64
-      analizador.smoothingTimeConstant = 0.72
-      analizador.connect(ctx.destination)
-      a.ctx = ctx
-      a.analizador = analizador
-    } catch {
-      a.ctx = null
-    }
-  }
-
-  const conectar = (video) => {
-    const a = audio.current
-    if (!a.ctx || !video || a.fuentes.has(video)) return
-    try {
-      const fuente = a.ctx.createMediaElementSource(video)
-      fuente.connect(a.analizador)
-      a.fuentes.set(video, fuente)
-    } catch {
-      a.fuentes.set(video, null)
-    }
-  }
-
   const reproducir = (k, desdeCero) => {
     const rv = reales.current[k]
     if (!rv) return
     if (desdeCero) rv.currentTime = 0
     rv.muted = false
-    conectar(rv)
     const p = rv.play()
     if (p)
       p.catch((err) => {
@@ -451,7 +417,6 @@ function Carrusel({ lista }) {
   }
 
   const escuchar = (i) => {
-    prepararAudio()
     desbloquear(i)
     const rv = reales.current[i]
     if (rv) desbloqueados.current.add(rv)
@@ -582,22 +547,19 @@ function Carrusel({ lista }) {
     }
     let id
     let suave = 0
-    const datos = new Uint8Array(32)
     const paso = (tiempo) => {
       const v = reales.current[estado.current.activo]
       if (v && v.duration) progreso.set(v.currentTime / v.duration)
 
       const sonandoAhora = v && !v.paused
-      const analizador = audio.current.analizador
-      let bandas = [0, 0, 0, 0]
-      if (sonandoAhora && analizador) {
-        analizador.getByteFrequencyData(datos)
-        bandas = [datos[1], datos[2], (datos[3] + datos[4]) / 2, (datos[5] + datos[6] + datos[7]) / 3].map(
-          (b) => Math.pow(b / 255, 2.6),
-        )
-      } else if (sonandoAhora) {
-        bandas = [0, 1, 2, 3].map((k) => 0.35 + 0.25 * Math.sin(tiempo / (130 + k * 41) + k * 1.7))
+      if (sonandoAhora && v.readyState >= 3 && !enCursoRef.current) {
+        enCursoRef.current = true
+        setEnCurso(true)
+        setArranco(true)
       }
+      const bandas = sonandoAhora
+        ? [0, 1, 2, 3].map((k) => 0.35 + 0.25 * Math.sin(tiempo / (130 + k * 41) + k * 1.7))
+        : [0, 0, 0, 0]
 
       barrasRef.current.forEach((el, k) => {
         if (el) el.style.transform = `scaleY(${Math.min(1, 0.2 + bandas[k] * 1.05)})`
@@ -616,13 +578,6 @@ function Carrusel({ lista }) {
       reposar()
     }
   }, [enVista, vivo, progreso])
-
-  useEffect(() => {
-    const a = audio.current
-    return () => {
-      if (a.ctx) a.ctx.close().catch(() => {})
-    }
-  }, [])
 
   const pasoDeArrastre = medida.ancho * DISPOSICION[medida.movil ? 'movil' : 'escritorio'].x[1]
 
@@ -741,12 +696,12 @@ function Carrusel({ lista }) {
             const esActivo = i === activo
             const distancia = Math.abs(envolver(i - activo, n))
             const precargarReal = esActivo
-              ? sonando
+              ? sonando || (ESCRITORIO && cerca)
                 ? 'auto'
                 : cerca
                   ? 'metadata'
                   : 'none'
-              : sonando && distancia === 1
+              : (sonando || (ESCRITORIO && cerca)) && distancia === 1
                 ? 'metadata'
                 : 'none'
             return (
