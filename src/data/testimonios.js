@@ -1,18 +1,3 @@
-/* Reseñas en video de clientes reales.
-
-   Cada video es vertical (9:16) y lleva los subtítulos quemados abajo, así que
-   la tarjeta respeta esa proporción para no cortarlos. Para sumar otro cliente
-   alcanza con agregar un objeto acá: el carrusel se arma solo y las flechas
-   aparecen recién cuando hay más de uno.
-
-   vistaPrevia es el tramo (en segundos) que se repite sin sonido mientras
-   nadie toca la tarjeta. Conviene un tramo sin subtítulos: abajo de la tarjeta
-   va el nombre del cliente y se pisarían. Sin este dato se repite el video
-   entero.
-
-   previa es un clip aparte, corto y sin sonido, que se repite en lugar del
-   tramo de vista previa. Sirve cuando el video no arranca con el mismo diseño
-   que los demás: la tarjeta se ve pareja y el video real queda intacto. */
 export const TESTIMONIOS = [
   {
     id: 'mutisia',
@@ -20,10 +5,8 @@ export const TESTIMONIOS = [
     detalle: 'Cervecería artesanal · Neuquén',
     video: '/testimonios/mutisia.mp4',
     poster: '/testimonios/mutisia.jpg',
-    frase: 'Súper recomendable',
-    /* El video arranca con una placa naranja de texto; la portada y la vista
-       previa muestran la web arriba y a Didier abajo, como las demás. */
     previa: '/testimonios/mutisia-previa.mp4',
+    frase: 'Súper recomendable',
   },
   {
     id: 'fonodiazvelez',
@@ -31,10 +14,8 @@ export const TESTIMONIOS = [
     detalle: 'Centro fonoaudiológico · Buenos Aires',
     video: '/testimonios/fonodiazvelez.mp4',
     poster: '/testimonios/fonodiazvelez.jpg',
+    previa: '/testimonios/fonodiazvelez-previa.mp4',
     frase: 'Súper valioso',
-    /* En este video los subtítulos van al medio, no abajo: el nombre no los
-       pisa, así que el tramo puede arrancar con ella hablando. */
-    vistaPrevia: [0, 4.5],
   },
   {
     id: 'mundalma',
@@ -42,10 +23,8 @@ export const TESTIMONIOS = [
     detalle: 'Astrología y tarot',
     video: '/testimonios/mundalma.mp4',
     poster: '/testimonios/mundalma.jpg',
+    previa: '/testimonios/mundalma-previa.mp4',
     frase: 'Otro nivel',
-    /* Subtítulos al medio, como en Fono Díaz Vélez. Arranca en 0,7 s para
-       que la entrada animada del principio no se repita en cada vuelta. */
-    vistaPrevia: [0.7, 4.4],
   },
   {
     id: 'micaelarodera',
@@ -53,9 +32,7 @@ export const TESTIMONIOS = [
     detalle: 'Abogada · Derecho migratorio',
     video: '/testimonios/micaelarodera.mp4',
     poster: '/testimonios/micaelarodera.jpg',
+    previa: '/testimonios/micaelarodera-previa.mp4',
     frase: 'Muy conforme',
-    /* Subtítulos al medio. El tramo muestra su web y la placa de Meta Ads
-       entera, y vuelve antes de que la placa se cierre. */
-    vistaPrevia: [0.6, 7.1],
   },
 ]

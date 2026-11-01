@@ -53,7 +53,7 @@ export function useProjectCard(project, scope = 'default') {
     onClick,
     imageProps: {
       'data-foto-id': id,
-      style: { opacity: isOpen ? 0 : 1, transition: 'opacity 0.18s ease' },
+      style: { opacity: isOpen ? 0 : 1, transition: isOpen ? 'opacity 0.15s ease 0.12s' : 'opacity 0.2s ease' },
     },
   }
 }
@@ -142,7 +142,7 @@ export function ProjectLightboxProvider({ children }) {
     }
   }, [photos, index, grandes, asentado])
 
-  const fuente = photos[index] ? (grandes.has(photos[index]) ? photos[index] : mediana(photos[index])) : null
+  const conGrande = Boolean(photos[index] && grandes.has(photos[index]) && mediana(photos[index]) !== photos[index])
 
   const next = useCallback(() => setIndex((i) => (i + 1) % photos.length), [photos.length])
   const prev = useCallback(() => setIndex((i) => (i - 1 + photos.length) % photos.length), [photos.length])
@@ -193,24 +193,30 @@ export function ProjectLightboxProvider({ children }) {
               className="absolute inset-0 bg-black/75"
               style={{ pointerEvents: abierto ? 'auto' : 'none' }}
             />
-            <motion.div
-              aria-hidden
-              initial={false}
-              animate={{ opacity: abierto && asentado ? 1 : 0 }}
-              transition={{ duration: abierto ? 0.4 : 0.12, ease: EASE }}
-              className="pointer-events-none absolute inset-0 backdrop-blur-xl"
-            />
+            {asentado && (
+              <motion.div
+                aria-hidden
+                initial={{ opacity: 0 }}
+                animate={{ opacity: abierto ? 1 : 0 }}
+                transition={{ duration: abierto ? 0.4 : 0.12, ease: EASE }}
+                className="pointer-events-none absolute inset-0 backdrop-blur-xl"
+              />
+            )}
 
             <motion.div
               layout
               transition={movimiento}
               onLayoutAnimationComplete={alTerminarLayout}
-              initial={false}
-              animate={{ opacity: abierto ? 1 : fase === 'volviendo' ? 0 : 0 }}
+              initial={{ opacity: 0 }}
+              animate={
+                abierto
+                  ? { opacity: 1, transition: { duration: 0.15, ease: 'easeOut' } }
+                  : fase === 'volviendo'
+                    ? { opacity: 0, transition: { duration: 0.3, delay: 0.3, ease: 'easeIn' } }
+                    : { opacity: 0, transition: { duration: 0 } }
+              }
               style={{
                 borderRadius: RADIO,
-                opacity: fase === 'origen' ? 0 : undefined,
-                transition: fase === 'volviendo' ? 'opacity 0.32s ease 0.28s' : 'opacity 0.2s ease',
                 ...(enOrigen
                   ? { position: 'fixed', left: origen.left, top: origen.top, width: origen.width, height: origen.height }
                   : {}),
@@ -221,21 +227,39 @@ export function ProjectLightboxProvider({ children }) {
               }
             >
               <AnimatePresence mode="wait" initial={false}>
-                <motion.img
-                  key={fuente}
+                <motion.div
+                  key={photos[index]}
                   layout
-                  src={fuente}
-                  alt={project.name}
-                  draggable={false}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25 }}
-                  className={
-                    (enOrigen ? 'h-full w-full object-contain' : 'w-full max-h-[78vh] object-contain') +
-                    (project.blurred ? ' blur-[6px] scale-105' : '')
-                  }
-                />
+                  className={enOrigen ? 'relative h-full w-full' : 'relative w-full'}
+                >
+                  <img
+                    src={mediana(photos[index])}
+                    alt={project.name}
+                    draggable={false}
+                    className={
+                      (enOrigen ? 'h-full w-full object-contain' : 'block w-full max-h-[78vh] object-contain') +
+                      (project.blurred ? ' blur-[6px] scale-105' : '')
+                    }
+                  />
+                  {conGrande && (
+                    <motion.img
+                      src={photos[index]}
+                      alt=""
+                      aria-hidden
+                      draggable={false}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3, ease: 'easeOut' }}
+                      className={
+                        'absolute inset-0 h-full w-full object-contain' + (project.blurred ? ' blur-[6px] scale-105' : '')
+                      }
+                    />
+                  )}
+                </motion.div>
               </AnimatePresence>
             </motion.div>
 
