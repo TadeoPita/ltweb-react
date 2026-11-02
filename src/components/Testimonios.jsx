@@ -9,6 +9,7 @@ import {
   useTransform,
 } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Pause, Play, VolumeX } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { TESTIMONIOS } from '../data/testimonios'
 import { EASE } from '../lib/motion'
 
@@ -744,6 +745,15 @@ function Carrusel({ lista }) {
           <BotonFlecha direccion="siguiente" alTocar={() => mover(1)} />
         </div>
       )}
+
+      <div className="relative mt-5 flex justify-center">
+        <Link
+          to={`/resenas/${actual.id}`}
+          className="font-body text-[13px] text-ink/55 underline decoration-ink/20 underline-offset-4 transition-colors hover:text-ink hover:decoration-ink/60"
+        >
+          Ver la reseña de {actual.nombre} con transcripción
+        </Link>
+      </div>
 
       <p className="sr-only" aria-live="polite">
         {`Testimonio ${activo + 1} de ${n}: ${actual.nombre}`}

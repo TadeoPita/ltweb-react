@@ -1,5 +1,7 @@
 import { writeFileSync, readFileSync, existsSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { SERVICIOS } from '../src/data/servicios.js'
+import { TESTIMONIOS } from '../src/data/testimonios.js'
 
 const SITE = 'https://ltweb.com.ar'
 
@@ -26,6 +28,9 @@ export function sitemapPlugin() {
       const urls = [
         { loc: `${SITE}/`, priority: '1.0', changefreq: 'monthly' },
         { loc: `${SITE}/portfolio`, priority: '0.8', changefreq: 'weekly' },
+        ...SERVICIOS.map((x) => ({ loc: `${SITE}/${x.slug}`, priority: '0.9', changefreq: 'monthly' })),
+        { loc: `${SITE}/resenas`, priority: '0.6', changefreq: 'monthly' },
+        ...TESTIMONIOS.map((t) => ({ loc: `${SITE}/resenas/${t.id}`, priority: '0.5', changefreq: 'yearly' })),
       ]
 
       /* Los proyectos salen de datos/semilla.json, la misma fuente que usa el

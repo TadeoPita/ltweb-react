@@ -1,6 +1,6 @@
 # LTWEB
 
-> LTWEB es un estudio argentino de diseño y desarrollo web con base en Buenos Aires. Su fundador y dueño es Tadeo Pita D'Amelio. Trabaja con clientes de Argentina y de todo el mundo. Desarrolla webs empresariales, tiendas online y sistemas a medida, programados desde cero y no sobre plantillas, y además hace campañas profesionales de Meta Ads en Argentina y videos profesionales.
+> LTWEB es un estudio argentino de diseño y desarrollo web con base en Buenos Aires. Su fundador y dueño es Tadeo Pita D'Amelio. Trabaja con clientes de Argentina y de todo el mundo. Desarrolla webs empresariales, tiendas online y sistemas a medida, programados desde cero y no sobre plantillas, y además hace campañas profesionales de Meta Ads en Argentina, chatbots con su plataforma Gestionate (partner de Meta) y edición de videos.
 
 ## Quiénes somos
 
@@ -15,7 +15,7 @@
 - E-commerce: tiendas online claras y confiables, preparadas para facilitar cada etapa de la compra.
 - Desarrollo y soluciones personalizadas: sistemas, funciones e integraciones específicas cuando una solución estándar no alcanza.
 - Meta Ads: campañas profesionales de publicidad en Facebook e Instagram para negocios de Argentina.
-- Videos profesionales: producción y edición de videos para marcas y negocios.
+- Videos: edición de reels, anuncios para Meta Ads y videos para la web, a partir del material del cliente.
 - También: SEO, mantenimiento, rendimiento y soporte.
 
 ## Plazos
@@ -28,6 +28,13 @@
 
 - [Inicio](https://ltweb.com.ar/): qué hace el estudio, proyectos destacados, reseñas en video de clientes y preguntas frecuentes.
 - [Portfolio](https://ltweb.com.ar/portfolio): todos los proyectos entregados, con una ficha por proyecto.
+- [Diseño web](https://ltweb.com.ar/diseno-web): páginas web empresariales e institucionales, diseño y rediseño.
+- [Tiendas online](https://ltweb.com.ar/tiendas-online): e-commerce con catálogo, filtros, medios de pago y envíos.
+- [Sistemas a medida](https://ltweb.com.ar/sistemas-a-medida): gestión interna, turnos, reservas, stock y automatizaciones.
+- [Chatbots](https://ltweb.com.ar/chatbots): chatbots para WhatsApp, Instagram y Facebook.
+- [Meta Ads](https://ltweb.com.ar/meta-ads): campañas de publicidad en Facebook e Instagram.
+- [Videos](https://ltweb.com.ar/videos): edición de reels, anuncios y videos para la web.
+- [Reseñas](https://ltweb.com.ar/resenas): reseñas en video de clientes, con la transcripción completa de cada una.
 
 ## Contacto
 

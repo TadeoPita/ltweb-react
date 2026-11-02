@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import V3Nav from './v3/V3Nav'
 import Ending from './v3/Ending'
 import NotFoundPage from './pages/NotFoundPage'
+import { SERVICIOS } from './data/servicios'
 
 /* Rutas partidas del bundle principal. Antes todo viajaba en un solo archivo
    de 817 KB: el visitante que entra a la home se bajaba también el panel de
@@ -16,6 +17,9 @@ const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
 const ProjectPage = lazy(() => import('./pages/ProjectPage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const AdminPage = lazy(() => import('./pages/AdminPage'))
+const ServicioPage = lazy(() => import('./pages/ServicioPage'))
+const ResenasPage = lazy(() => import('./pages/ResenasPage'))
+const ResenaPage = lazy(() => import('./pages/ResenaPage'))
 
 /* Propuesta de rediseño completo, en su propia ruta para poder compararla con
    la publicada sin tocarla. Va aparte del bundle: no la carga nadie que entre
@@ -58,6 +62,11 @@ function AppRoutes() {
           <Route path="/clasico" element={<ClasicoPage />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="/proyecto/:id" element={<ProjectPage />} />
+          {SERVICIOS.map((s) => (
+            <Route key={s.slug} path={`/${s.slug}`} element={<ServicioPage servicio={s} />} />
+          ))}
+          <Route path="/resenas" element={<ResenasPage />} />
+          <Route path="/resenas/:id" element={<ResenaPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route
             path="/admin"

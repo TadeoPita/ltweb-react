@@ -1,15 +1,16 @@
 import { useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, ArrowUpRight } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, Play } from 'lucide-react'
 import { usePortfolio } from '../data/portfolioStore'
 import { useLightbox } from '../components/ProjectLightbox'
 import { useSeo, useJsonLd } from '../lib/seo'
 import BeforeAfter from '../components/BeforeAfter'
 import { WHATSAPP_URL } from '../data/content'
+import { TESTIMONIOS } from '../data/testimonios'
 import NotFoundPage from './NotFoundPage'
 import { textoPortada } from '../lib/imagen'
-import { descripcionProyecto, tituloProyecto } from '../lib/titulos'
+import { descripcionProyecto, tituloProyecto, urlSitio } from '../lib/titulos'
 
 const ease = [0.22, 1, 0.36, 1]
 
@@ -117,7 +118,9 @@ export default function ProjectPage() {
     .map((s) => s.trim())
     .filter(Boolean)
 
-  const hasLiveSite = project.url && project.url !== '#'
+  const sitioEnVivo = urlSitio(project)
+  const hasLiveSite = Boolean(sitioEnVivo)
+  const resena = TESTIMONIOS.find((t) => t.proyecto === project.id)
 
   return (
     <main className="bg-ink-2 min-h-screen pt-36 pb-32">
@@ -287,7 +290,7 @@ export default function ProjectPage() {
 
             {hasLiveSite && (
               <motion.a
-                href={project.url}
+                href={sitioEnVivo}
                 target="_blank"
                 rel="noreferrer"
                 whileHover={{ scale: 1.03 }}
@@ -312,6 +315,23 @@ export default function ProjectPage() {
             >
               Quiero algo así
             </motion.a>
+
+            {resena && (
+              <Link
+                to={`/resenas/${resena.id}`}
+                className="group mt-6 flex items-center gap-3 border-t border-white/10 pt-6"
+              >
+                <span className="relative h-14 w-11 shrink-0 overflow-hidden rounded-md">
+                  <img src={resena.poster} alt="" loading="lazy" className="h-full w-full object-cover" />
+                  <span className="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <Play className="h-4 w-4 fill-white text-white" />
+                  </span>
+                </span>
+                <span className="font-body text-sm text-white/70 transition-colors group-hover:text-white">
+                  Mirá la reseña en video de {resena.nombre}
+                </span>
+              </Link>
+            )}
           </motion.aside>
         </div>
       </div>

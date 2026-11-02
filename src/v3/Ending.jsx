@@ -7,6 +7,7 @@ import {
   CONTACT_EMAIL,
   LOCATION,
 } from '../data/content'
+import { SERVICIOS } from '../data/servicios'
 
 /* Pie del sitio.
 
@@ -27,7 +28,7 @@ const SECCIONES = [
   { label: 'Inicio', href: '/#inicio-v3' },
   { label: 'El estudio', href: '/#bento-v3' },
   { label: 'Proyectos', href: '/#proyectos' },
-  { label: 'Reseñas', href: '/#testimonios' },
+  { label: 'Reseñas', href: '/resenas' },
   { label: 'FAQ', href: '/#faq' },
 ]
 
@@ -62,7 +63,7 @@ export default function Ending() {
           </p>
         </div>
 
-        <div className="mt-12 grid gap-12 md:grid-cols-[1fr_1fr_1.2fr_1.6fr]">
+        <div className="mt-12 grid gap-12 sm:grid-cols-2 lg:grid-cols-[1fr_1.1fr_1fr_1.2fr_1.6fr]">
           {/* Secciones */}
           <div>
             <h3 className={titulo}>Secciones</h3>
@@ -72,6 +73,19 @@ export default function Ending() {
                   <a href={l.href} className={enlace}>
                     {l.label}
                   </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className={titulo}>Servicios</h3>
+            <ul className="mt-5 flex flex-col gap-3">
+              {SERVICIOS.map((s) => (
+                <li key={s.slug}>
+                  <Link to={`/${s.slug}`} className={enlace}>
+                    {s.nombre}
+                  </Link>
                 </li>
               ))}
             </ul>

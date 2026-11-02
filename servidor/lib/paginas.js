@@ -1,6 +1,10 @@
 import { readFile, stat } from 'node:fs/promises'
 import { join } from 'node:path'
-import { descripcionProyecto, nombreProyecto, proyectoConFicha, tituloProyecto } from '../../src/lib/titulos.js'
+import { descripcionProyecto, nombreProyecto, proyectoConFicha, tituloProyecto, urlSitio } from '../../src/lib/titulos.js'
+import { DESCRIPCION_RESENAS, descripcionResena, esquemaResena, esquemaResenas, esquemaServicio } from '../../src/lib/esquemas.js'
+import { SERVICIOS, whatsappCon } from '../../src/data/servicios.js'
+import { TESTIMONIOS } from '../../src/data/testimonios.js'
+import { TRANSCRIPCIONES } from '../../src/data/transcripciones.js'
 
 export const SITIO = 'https://ltweb.com.ar'
 const IMAGEN_DEFECTO = `${SITIO}/og-image.jpg`
@@ -156,7 +160,7 @@ function paginaProyecto(p, proyectos) {
   const servicios = texto(p.services)
     ? `<h2>Servicios</h2>\n      <p>${esc(texto(p.services))}</p>`
     : ''
-  const sitio = p.url && p.url !== '#' ? `<p><a href="${esc(p.url)}" rel="noopener">Visitar el sitio de ${esc(nombre)}</a></p>` : ''
+  const sitio = urlSitio(p) ? `<p><a href="${esc(urlSitio(p))}" rel="noopener">Visitar el sitio de ${esc(nombre)}</a></p>` : ''
 
   return {
     estado: 200,
@@ -197,6 +201,97 @@ function paginaProyecto(p, proyectos) {
         },
       ],
     },
+  }
+}
+
+function enlacesServicios(excepto) {
+  return SERVICIOS.filter((s) => s.slug !== excepto)
+    .map((s) => `<li><a href="/${s.slug}">${esc(s.nombre)}</a></li>`)
+    .join('\n          ')
+}
+
+function paginaServicio(s, proyectos) {
+  const casos = s.proyectos
+    .map((id) => proyectos.find((p) => p && p.id === id))
+    .filter((p) => p && !p.blurred && proyectoConFicha(p))
+    .map((p) => `<li><a href="/proyecto/${esc(p.id)}">${esc(nombreProyecto(p))}</a> — ${esc(descripcionProyecto(p))}</li>`)
+  const resena = s.resena && TESTIMONIOS.find((t) => t.id === s.resena)
+  if (resena) casos.unshift(`<li><a href="/resenas/${resena.id}">Reseña en video de ${esc(resena.nombre)}</a></li>`)
+  const lista = (items, render) => items.map(render).join('\n          ')
+
+  return {
+    estado: 200,
+    titulo: s.titulo,
+    descripcion: s.descripcion,
+    canonica: `${SITIO}/${s.slug}`,
+    cuerpo: bloque(`<p><a href="/">LTWEB</a></p>
+      <p>${esc(s.volanta)}</p>
+      <h1>${esc(s.h1)}</h1>
+      <p>${esc(s.intro)}</p>
+      <h2>Qué incluye</h2>
+      <ul>
+          ${lista(s.incluye, (x) => `<li><strong>${esc(x.t)}</strong>: ${esc(x.d)}</li>`)}
+      </ul>
+      <h2>Cómo trabajamos</h2>
+      <ol>
+          ${lista(s.proceso, (x) => `<li><strong>${esc(x.t)}</strong>: ${esc(x.d)}</li>`)}
+      </ol>
+      ${casos.length ? `<h2>Casos reales</h2>\n      <ul>\n          ${casos.join('\n          ')}\n      </ul>` : ''}
+      <h2>Preguntas frecuentes</h2>
+      ${lista(s.faqs, (f) => `<h3>${esc(f.q)}</h3>\n      <p>${esc(f.a)}</p>`)}
+      <p><a href="${esc(whatsappCon(s.mensaje))}">Consultar por WhatsApp</a></p>
+      <h2>Otros servicios</h2>
+      <ul>
+          ${enlacesServicios(s.slug)}
+      </ul>`),
+    jsonld: esquemaServicio(s),
+  }
+}
+
+function paginaResenas() {
+  return {
+    estado: 200,
+    titulo: 'Reseñas en video de nuestros clientes — LTWEB',
+    descripcion: DESCRIPCION_RESENAS,
+    canonica: `${SITIO}/resenas`,
+    cuerpo: bloque(`<p><a href="/">LTWEB</a></p>
+      <h1>Lo que dicen nuestros clientes</h1>
+      <p>${esc(DESCRIPCION_RESENAS)}</p>
+      <ul>
+          ${TESTIMONIOS.map((t) => `<li><a href="/resenas/${t.id}">${esc(t.nombre)}</a> — ${esc(t.detalle)}: «${esc(t.frase)}»</li>`).join('\n          ')}
+      </ul>`),
+    jsonld: esquemaResenas(TESTIMONIOS),
+  }
+}
+
+function paginaResena(t, proyectos) {
+  const parrafos = TRANSCRIPCIONES[t.id] || []
+  const proyecto = proyectos.find((p) => p && p.id === t.proyecto && !p.blurred)
+  const conFicha = proyecto && proyectoConFicha(proyecto) ? proyecto : null
+  const otras = TESTIMONIOS.filter((o) => o.id !== t.id)
+    .map((o) => `<li><a href="/resenas/${o.id}">${esc(o.nombre)}</a></li>`)
+    .join('\n          ')
+
+  return {
+    estado: 200,
+    titulo: `Reseña de ${t.nombre}: «${t.frase}» | LTWEB`,
+    descripcion: descripcionResena(t),
+    canonica: `${SITIO}/resenas/${t.id}`,
+    imagen: absoluta(t.poster),
+    tipo: 'video.other',
+    cuerpo: bloque(`<p><a href="/resenas">Reseñas</a></p>
+      <h1>${esc(t.nombre)}</h1>
+      <p>Reseña en video · ${esc(t.detalle)}</p>
+      <video src="${esc(t.video)}" poster="${esc(t.poster)}" controls playsinline preload="metadata" style="width:100%;max-width:380px"></video>
+      <p>«${esc(t.frase)}»</p>
+      <h2>Lo que nos contó</h2>
+      ${parrafos.map((x) => `<p>${esc(x)}</p>`).join('\n      ')}
+      ${conFicha ? `<p><a href="/proyecto/${esc(conFicha.id)}">Ver el proyecto de ${esc(nombreProyecto(conFicha))}</a></p>` : ''}
+      <h2>Otras reseñas</h2>
+      <ul>
+          ${otras}
+      </ul>`),
+    jsonld: esquemaResena(t, parrafos, conFicha),
   }
 }
 
@@ -270,6 +365,21 @@ export async function renderizar(camino, { dist, rutas, raiz }) {
     return { estado: 200, html: aplicar(plantilla, paginaPortfolio(proyectos)) }
   }
 
+  const servicio = SERVICIOS.find((s) => camino === `/${s.slug}`)
+  if (servicio) {
+    const proyectos = await leerProyectos(rutas, raiz)
+    return { estado: 200, html: aplicar(plantilla, paginaServicio(servicio, proyectos)) }
+  }
+
+  if (camino === '/resenas') return { estado: 200, html: aplicar(plantilla, paginaResenas()) }
+
+  const resena = /^\/resenas\/([^/]+)$/.exec(camino)
+  const testimonio = resena && TESTIMONIOS.find((t) => t.id === resena[1])
+  if (testimonio) {
+    const proyectos = await leerProyectos(rutas, raiz)
+    return { estado: 200, html: aplicar(plantilla, paginaResena(testimonio, proyectos)) }
+  }
+
   const ficha = /^\/proyecto\/([^/]+)$/.exec(camino)
   if (ficha) {
     let id
@@ -290,8 +400,11 @@ export async function renderizar(camino, { dist, rutas, raiz }) {
   return { estado: pagina.estado, html: aplicar(plantilla, pagina) }
 }
 
+const SITEMAPS_VIEJOS = /^\/(sitemap_index|wp-sitemap|(page|post|category|portfolio|attachment|author|post_tag|elementor_library|e-landing-page)-sitemap\d*|wp-sitemap-[\w-]+)\.xml$/
+
 export function redireccion(host, camino, busqueda) {
   if (host === 'www.ltweb.com.ar') return `${SITIO}${camino}${busqueda}`
+  if (SITEMAPS_VIEJOS.test(camino)) return '/sitemap.xml'
   if (camino === '/v3' || camino === '/index.html') return `/${busqueda}`
   if (camino.length > 1 && camino.endsWith('/') && !camino.startsWith('/api/')) {
     return `${camino.replace(/\/+$/, '')}${busqueda}`

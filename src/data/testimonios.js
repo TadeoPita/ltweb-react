@@ -6,6 +6,9 @@ export const TESTIMONIOS = [
     video: '/testimonios/mutisia.mp4',
     poster: '/testimonios/mutisia.jpg',
     previa: '/testimonios/mutisia-previa.mp4',
+    proyecto: 'pmrzrgv20',
+    fecha: '2026-10-30',
+    duracion: 'PT47S',
     frase: 'Súper recomendable',
   },
   {
@@ -15,6 +18,9 @@ export const TESTIMONIOS = [
     video: '/testimonios/fonodiazvelez.mp4',
     poster: '/testimonios/fonodiazvelez.jpg',
     previa: '/testimonios/fonodiazvelez-previa.mp4',
+    proyecto: 'turnera',
+    fecha: '2026-10-23',
+    duracion: 'PT57S',
     frase: 'Súper valioso',
   },
   {
@@ -24,6 +30,9 @@ export const TESTIMONIOS = [
     video: '/testimonios/mundalma.mp4',
     poster: '/testimonios/mundalma.jpg',
     previa: '/testimonios/mundalma-previa.mp4',
+    proyecto: 'mundalma',
+    fecha: '2026-10-29',
+    duracion: 'PT19S',
     frase: 'Otro nivel',
   },
   {
@@ -33,6 +42,9 @@ export const TESTIMONIOS = [
     video: '/testimonios/micaelarodera.mp4',
     poster: '/testimonios/micaelarodera.jpg',
     previa: '/testimonios/micaelarodera-previa.mp4',
+    proyecto: 'pmrzqy091',
+    fecha: '2026-10-30',
+    duracion: 'PT55S',
     frase: 'Muy conforme',
   },
 ]

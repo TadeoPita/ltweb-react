@@ -31,3 +31,9 @@ export function descripcionProyecto(p) {
   const texto = base || `${enFrase(p?.type) || 'Sitio web'} diseñado y desarrollado por LTWEB para ${nombreProyecto(p)}.`
   return texto.length <= 158 ? texto : texto.slice(0, 157).replace(/\s+\S*$/, '') + '…'
 }
+
+export function urlSitio(p) {
+  const u = limpiar(p?.url)
+  if (!u || u === '#') return ''
+  return /^https?:\/\//i.test(u) ? u : `https://${u.replace(/^\/+/, '')}`
+}

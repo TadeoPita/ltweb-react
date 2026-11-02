@@ -26,7 +26,7 @@ export const QUIENES_SOMOS = `El fundador y dueño de LTWEB es ${FUNDADOR}.`
    lo dice con todas las letras para las descripciones de IA. */
 export const ALCANCE = 'Trabajamos con clientes de Argentina y de todo el mundo.'
 export const OTROS_SERVICIOS =
-  'Además hacemos campañas profesionales de Meta Ads (publicidad en Facebook e Instagram) en Argentina y videos profesionales para marcas y negocios.'
+  'Además hacemos campañas profesionales de Meta Ads (publicidad en Facebook e Instagram) en Argentina y edición de videos para marcas y negocios.'
 
 /* El orden sigue al de la home: Servicios está antes que Proyectos en la
    página, así que también va antes en el menú. "Proceso" apunta a
@@ -313,7 +313,7 @@ export const FAQS = [
   },
   {
     q: '¿Qué métodos de pago aceptan?',
-    a: 'Transferencia bancaria, Mercado Pago y PayPal. En proyectos de mayor alcance trabajamos con un <strong>esquema de pagos por etapas</strong>.',
+    a: 'Transferencia bancaria, Mercado Pago y PayPal. En proyectos de mayor alcance, como sistemas y apps a medida, se puede pagar <strong>por etapas o con pagos mensuales</strong>.',
   },
 ]
 

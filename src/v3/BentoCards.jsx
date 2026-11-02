@@ -27,6 +27,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { WHATSAPP_URL, INSTAGRAM_URL } from '../data/content'
+import { SERVICIO_POR_AREA } from '../data/servicios'
 import { chica } from '../lib/imagen'
 import { EASE, blurChild, blurStagger } from '../lib/motion'
 
@@ -277,6 +278,24 @@ export function CardPortfolio({ cantidad }) {
   )
 }
 
+function FilaArea({ area }) {
+  const navegar = useNavigate()
+  const destino = `/${SERVICIO_POR_AREA[area] ?? ''}`
+  const clic = usarClicSinArrastre(() => navegar(destino))
+  const Icono = ICONOS_AREAS[area] ?? Globe
+  return (
+    <Link draggable={false} to={destino} {...clic} className="group/fila flex items-center gap-2 py-[3px]">
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-paper text-ink/60 transition-colors duration-300 group-hover/fila:bg-ink group-hover/fila:text-white">
+        <Icono className="h-3 w-3" strokeWidth={2.2} />
+      </span>
+      <span className="font-display text-[12px] font-bold uppercase leading-[1.1] text-ink/85 transition-transform duration-300 ease-out group-hover/fila:translate-x-0.5">
+        {area}
+      </span>
+      <ArrowUpRight className="ml-auto h-3 w-3 shrink-0 text-ink/25 transition-colors duration-300 group-hover/fila:text-ink" />
+    </Link>
+  )
+}
+
 /* Las tres áreas de trabajo, en lista. */
 export function CardAreas({ areas }) {
   return (
@@ -285,19 +304,11 @@ export function CardAreas({ areas }) {
         Qué hacemos
       </p>
       <motion.ul {...blurStagger(0.06)} className="mt-2.5 flex flex-col divide-y divide-black/[0.06]">
-        {areas.map((a) => {
-          const Icono = ICONOS_AREAS[a] ?? Globe
-          return (
-            <motion.li key={a} variants={blurChild} className="group/fila flex items-center gap-2 py-[3px]">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-paper text-ink/60 transition-colors duration-300 group-hover/fila:bg-ink group-hover/fila:text-white">
-                <Icono className="h-3 w-3" strokeWidth={2.2} />
-              </span>
-              <span className="font-display text-[12px] font-bold uppercase leading-[1.1] text-ink/85 transition-transform duration-300 ease-out group-hover/fila:translate-x-0.5">
-                {a}
-              </span>
-            </motion.li>
-          )
-        })}
+        {areas.map((a) => (
+          <motion.li key={a} variants={blurChild}>
+            <FilaArea area={a} />
+          </motion.li>
+        ))}
       </motion.ul>
     </div>
   )
