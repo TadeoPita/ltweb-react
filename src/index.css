@@ -19,6 +19,13 @@
   --color-pastel-orange: #ffe2c4;
   --color-pastel-purple: #f0dbff;
   --color-pastel-gray: #f0efef;
+
+  /* Identidad visual 2026. Entra en detalles, no en los fondos: los negros y
+     los claros del sitio quedan como estaban. Estos colores reemplazan los
+     acentos lila y violeta de antes. */
+  --color-celeste: #9cd9ff;
+  --color-brillante: #3e87fa;
+  --color-indigo-marca: #223498;
 }
 
 html {
@@ -57,8 +64,21 @@ h3.font-display {
 }
 
 ::selection {
-  background: var(--color-lilac);
+  background: var(--color-brillante);
   color: #fff;
+}
+
+/* /clasico es el archivo de la home anterior: tiene que verse como era. El
+   portfolio, el FAQ y las redes se comparten con la home nueva, así que acá
+   se les devuelven los acentos de antes. */
+.clasico {
+  --color-celeste: #7db6e8;
+  --color-brillante: #3b2a8f;
+  --color-indigo-marca: #5a2ea6;
+}
+
+.clasico ::selection {
+  background: var(--color-lilac);
 }
 
 /* Bug de Chrome/Safari: un elemento con overflow-hidden + border-radius

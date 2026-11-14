@@ -87,7 +87,7 @@ export default function SocialSection() {
             
             className="block mx-auto w-full max-w-md border-0 border-ink rounded-[22px] overflow-hidden"
           >
-            <img src="/images/instagram-phone.webp" alt="Instagram de LT WEB" loading="lazy" className="w-full h-auto rounded-[22px]" />
+            <img src="/images/instagram-phone.webp" alt="Instagram de LTWEB" loading="lazy" className="w-full h-auto rounded-[22px]" />
           </motion.a>
 
           {/* Chips derecha */}
@@ -105,7 +105,7 @@ export default function SocialSection() {
 
         <TextReveal
           as="p"
-          text="Conéctate con LT WEB y descubre las últimas tendencias en diseño web, estrategias digitales y optimización online. ¡No te pierdas nuestras novedades! 🚀"
+          text="Conéctate con LTWEB y descubre las últimas tendencias en diseño web, estrategias digitales y optimización online. ¡No te pierdas nuestras novedades!"
           dim={0.14}
           stagger={0.06}
           className="mt-14 text-center font-body text-ink/70 max-w-md mx-auto leading-relaxed"

@@ -8,6 +8,7 @@ import {
   LOCATION,
 } from '../data/content'
 import { SERVICIOS } from '../data/servicios'
+import { Logo } from '../components/Marca'
 
 /* Pie del sitio.
 
@@ -48,14 +49,8 @@ export default function Ending() {
         {/* La marca. Faltaba por completo: el pie arrancaba directo con la
             columna de secciones y el sitio terminaba sin firmar. */}
         <div className="flex flex-col items-center gap-4 border-b border-white/10 pb-10 md:flex-row md:items-end md:justify-between md:gap-8">
-          <Link to="/" aria-label="LT WEB" className="shrink-0">
-            <img
-              src="/images/logo-blanco.webp"
-              alt="LT WEB"
-              className="h-9 w-auto"
-              width="220"
-              height="36"
-            />
+          <Link to="/" aria-label="LTWEB" className="shrink-0">
+            <Logo variante="blanco" alto={48} className="h-12 w-auto" />
           </Link>
           <p className="max-w-sm font-body text-[13.5px] leading-relaxed text-white/55">
             Estudio de diseño y desarrollo web en {LOCATION}. Trabajamos con empresas que
@@ -146,7 +141,7 @@ export default function Ending() {
 
         <div className="mt-8 flex justify-center sm:justify-end">
           <p className="font-body text-[12.5px] text-white/70">
-            © Copyright {new Date().getFullYear()} by LT WEB 🚀
+            © Copyright {new Date().getFullYear()} by LTWEB
           </p>
         </div>
       </div>

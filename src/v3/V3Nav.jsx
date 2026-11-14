@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowUpRight, ChevronDown, Menu, X } from 'lucide-react'
 import { WHATSAPP_URL } from '../data/content'
 import { EASE } from '../lib/motion'
+import { Logo } from '../components/Marca'
 
 /* Barra superior de la v3.
 
@@ -80,7 +81,7 @@ function Ondas({ grande = false }) {
       {[0.55, 1, 0.7].map((h, k) => (
         <motion.i
           key={k}
-          className={`block h-full origin-bottom rounded-full bg-lilac ${grande ? 'w-[3px]' : 'w-[2px]'}`}
+          className={`block h-full origin-bottom rounded-full bg-celeste ${grande ? 'w-[3px]' : 'w-[2px]'}`}
           initial={{ scaleY: h }}
           animate={reducir ? { scaleY: h } : { scaleY: [h, 0.3, 1, h] }}
           transition={{ duration: 1.5 + k * 0.35, repeat: Infinity, ease: 'easeInOut', delay: k * 0.2 }}
@@ -284,14 +285,8 @@ export default function V3Nav() {
       >
         <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-3 px-6 py-4">
           <Link to="/" aria-label="LT WEB" className="shrink-0">
-            <img
-              draggable={false}
-              src="/images/logo-blanco.webp"
-              alt="LT WEB"
-              className="h-7 w-auto sm:h-8"
-              width="200"
-              height="32"
-            />
+            {/* Imagotipo nuevo en blanco, como iba el logo de antes. */}
+            <Logo variante="blanco" alto={40} className="h-9 w-auto sm:h-10" />
           </Link>
 
           <div className="hidden items-center gap-8 md:flex">

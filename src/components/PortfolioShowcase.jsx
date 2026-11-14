@@ -129,11 +129,11 @@ export default function PortfolioShowcase({ items }) {
             >
               Contanos tu proyecto
             </h3>
-            <p className="mt-2 font-display font-semibold uppercase text-[#a796f0] text-xs sm:text-sm tracking-wide">
+            <p className="mt-2 font-display font-semibold uppercase text-celeste text-xs sm:text-sm tracking-wide">
               Nuevo proyecto
             </p>
           </div>
-          <span className="shrink-0 flex items-center justify-center w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white text-[#3b2a8f] group-hover:rotate-90 transition-transform duration-500 ease-out">
+          <span className="shrink-0 flex items-center justify-center w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white text-brillante group-hover:rotate-90 transition-transform duration-500 ease-out">
             <Plus className="w-5 h-5" strokeWidth={2.5} />
           </span>
         </motion.a>

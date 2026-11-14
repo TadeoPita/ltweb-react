@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Logo } from '../components/Marca'
 import { useAuth } from '../context/AuthContext'
 
 export default function LoginPage() {
@@ -53,7 +54,7 @@ export default function LoginPage() {
           {/* Header */}
           <div className="mb-8">
             <a href="/" className="inline-block mb-6">
-              <img src="/images/logo-negro.webp" alt="LT WEB" className="h-7 w-auto" />
+              <Logo variante="noche" alto={40} className="h-10 w-auto" />
             </a>
             <h1 className="font-display font-bold text-2xl text-ink mb-2">Acceder al Panel</h1>
             <p className="text-sm text-ink/60 font-body">Ingresa tus credenciales de administrador</p>

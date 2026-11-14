@@ -60,9 +60,9 @@ function NewProjectGalleryCard() {
       href={WHATSAPP_URL}
       target="_blank"
       rel="noreferrer"
-      className="group relative shrink-0 w-[78vw] sm:w-[420px] h-[420px] sm:h-[460px] rounded-2xl border-2 border-dashed border-white/25 bg-gradient-to-br from-[#3b2a8f] to-[#5a2ea6] flex flex-col items-center justify-center gap-6 text-center p-8"
+      className="group relative shrink-0 w-[78vw] sm:w-[420px] h-[420px] sm:h-[460px] rounded-2xl border-2 border-dashed border-white/25 bg-gradient-to-br from-brillante to-indigo-marca flex flex-col items-center justify-center gap-6 text-center p-8"
     >
-      <span className="flex items-center justify-center w-20 h-20 rounded-full bg-white text-[#3b2a8f] group-hover:rotate-90 transition-transform duration-500 ease-out">
+      <span className="flex items-center justify-center w-20 h-20 rounded-full bg-white text-brillante group-hover:rotate-90 transition-transform duration-500 ease-out">
         <Plus className="w-9 h-9" strokeWidth={2.5} />
       </span>
       <div>

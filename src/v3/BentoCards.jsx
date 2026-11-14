@@ -21,7 +21,6 @@ import {
   Megaphone,
   MessageCircle,
   Package,
-  Rocket,
   ShoppingBag,
   SlidersHorizontal,
   Zap,
@@ -30,6 +29,7 @@ import { WHATSAPP_URL, INSTAGRAM_URL } from '../data/content'
 import { SERVICIO_POR_AREA } from '../data/servicios'
 import { chica } from '../lib/imagen'
 import { EASE, blurChild, blurStagger } from '../lib/motion'
+import { Logo, Isotipo } from '../components/Marca'
 
 /* Tarjetas del bento de la v3.
 
@@ -165,14 +165,15 @@ function Charla() {
   )
 }
 
-/* Marca. Usa el cohete del logo, el mismo que está en el favicon.
+/* Marca. Lleva el imagotipo nuevo y, en la esquina, el isotipo: la misma
+   estrella que está en el favicon.
 
    Tenía un brillo lila que seguía al cursor por dentro de la tarjeta; se
    sacó. Al pasar el mouse solo gira la estrella de la esquina. */
 export function CardMarca() {
   return (
     <div className={`${BASE} group bg-[#1c1c20] p-6 flex flex-col justify-between`}>
-      <img draggable={false} src="/images/logo-blanco.webp" alt="LT WEB" className="relative h-7 w-auto self-start" />
+      <Logo variante="blanco" alto={40} className="relative h-10 w-auto self-start" />
       <motion.div {...blurStagger(0.08)} className="relative">
         <motion.p variants={blurChild} className="font-display font-bold uppercase text-white/95 leading-[0.95] text-2xl">
           Estudio de
@@ -183,13 +184,7 @@ export function CardMarca() {
           Buenos Aires, Argentina
         </motion.p>
       </motion.div>
-      <img
-        draggable={false}
-        src="/images/sparkle.svg"
-        alt=""
-        aria-hidden
-        className="pointer-events-none absolute -bottom-6 -right-6 w-28 opacity-20 transition-transform duration-700 ease-out group-hover:rotate-12 group-hover:scale-110"
-      />
+      <Isotipo className="pointer-events-none absolute -bottom-6 -right-5 w-28 opacity-30 transition-transform duration-700 ease-out group-hover:rotate-12 group-hover:scale-110" />
     </div>
   )
 }
@@ -423,8 +418,8 @@ export function CardRedes() {
 
    Antes tenía el número, dos textos y una barra de catorce bloques con
    etiquetas. Ahora es un almanaque de dos semanas: los días se van tachando
-   y uno de la segunda se prende con el cohete del logo. El plazo se entiende
-   sin leer nada más. */
+   y uno de la segunda se prende en azul con la estrella del logo. El plazo se
+   entiende sin leer nada más. */
 const DIAS = 14
 const DIA_ONLINE = 10
 
@@ -449,7 +444,7 @@ export function CardPlazo() {
               variants={{
                 antes: { backgroundColor: 'rgba(22,22,22,0.05)' },
                 despues: {
-                  backgroundColor: online ? '#a796f0' : 'rgba(22,22,22,0.05)',
+                  backgroundColor: online ? '#3e87fa' : 'rgba(22,22,22,0.05)',
                   transition: { delay: paso(i), duration: 0.3 },
                 },
               }}
@@ -472,7 +467,7 @@ export function CardPlazo() {
                   }}
                   className="transition-transform duration-500 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                 >
-                  <Rocket className="h-3.5 w-3.5 text-ink" strokeWidth={2.2} />
+                  <Isotipo variante="blanco" className="h-4 w-4" />
                 </motion.span>
               )}
             </motion.span>
@@ -540,7 +535,7 @@ export function CardContacto() {
    notificación del celular, y el que se va queda apilado atrás. Tocarla pasa
    al siguiente. */
 const AVISOS = [
-  { icono: CalendarCheck, titulo: 'Turno reservado', texto: 'Martes 10:30 · desde la web', color: '#5b46b8' },
+  { icono: CalendarCheck, titulo: 'Turno reservado', texto: 'Martes 10:30 · desde la web', color: '#3e87fa' },
   { icono: Package, titulo: 'Quedan 6 buzos', texto: 'Stock bajo, conviene reponer', color: '#c2410c' },
   { icono: ShoppingBag, titulo: 'Pedido #1043 listo', texto: 'Ya le avisamos a Lucía', color: '#2c6e52' },
 ]

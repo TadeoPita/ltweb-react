@@ -55,14 +55,14 @@ export function NewProjectCard({ className = '' }) {
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       className={
-        'flex flex-col items-center justify-center gap-6 rounded-2xl border-2 border-dashed border-white/25 bg-gradient-to-br from-[#3b2a8f] to-[#5a2ea6] min-h-90 p-8 text-center ' +
+        'flex flex-col items-center justify-center gap-6 rounded-2xl border-2 border-dashed border-white/25 bg-gradient-to-br from-brillante to-indigo-marca min-h-90 p-8 text-center ' +
         className
       }
     >
       <motion.span
         whileHover={{ rotate: 90 }}
         transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-        className="flex items-center justify-center w-20 h-20 rounded-full bg-white text-[#3b2a8f]"
+        className="flex items-center justify-center w-20 h-20 rounded-full bg-white text-brillante"
       >
         <Plus className="w-9 h-9" strokeWidth={2.5} />
       </motion.span>

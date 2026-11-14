@@ -674,7 +674,7 @@ function Carrusel({ lista }) {
               top: medida.ancho * (PROPORCION / 2 - 1),
               marginLeft: -medida.ancho,
               background:
-                'radial-gradient(circle, rgba(167,150,240,0.95) 0%, rgba(167,150,240,0.45) 38%, rgba(167,150,240,0) 66%)',
+                'radial-gradient(circle, rgba(62,135,250,0.8) 0%, rgba(156,217,255,0.45) 38%, rgba(156,217,255,0) 66%)',
               opacity: 0,
               transform: 'scale(0.85)',
             }}
@@ -690,7 +690,7 @@ function Carrusel({ lista }) {
           onPanStart={varios ? alEmpezarArrastre : undefined}
           onPan={varios ? alArrastrar : undefined}
           onPanEnd={varios ? alSoltar : undefined}
-          className="relative mx-auto select-none outline-none [touch-action:pan-y] focus-visible:ring-2 focus-visible:ring-lilac/50"
+          className="relative mx-auto select-none outline-none [touch-action:pan-y] focus-visible:ring-2 focus-visible:ring-brillante/50"
           style={{ height: alto }}
         >
           {lista.map((t, i) => {

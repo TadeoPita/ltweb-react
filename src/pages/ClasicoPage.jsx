@@ -52,8 +52,10 @@ export default function ClasicoPage() {
     })),
   })
 
+  /* .clasico devuelve los acentos de antes (ver index.css): esta página es el
+     archivo de la home anterior y no toma la identidad nueva. */
   return (
-    <>
+    <div className="clasico">
       <Navbar />
       <main>
         <Hero />
@@ -72,6 +74,6 @@ export default function ClasicoPage() {
       </main>
       <Footer />
       <BottomNav />
-    </>
+    </div>
   )
 }

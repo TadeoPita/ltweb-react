@@ -50,7 +50,7 @@ export default function NotFoundPage() {
         <div className="w-[420px] h-[420px] rounded-full bg-[#7db6e8]/25 blur-[110px] animate-[float-orb-a_16s_ease-in-out_infinite]" />
       </motion.div>
       <motion.div style={{ x: axB, y: ayB }} className="pointer-events-none absolute -bottom-32 -right-16">
-        <div className="w-[460px] h-[460px] rounded-full bg-[#a78bfa]/25 blur-[120px] animate-[float-orb-b_20s_ease-in-out_infinite]" />
+        <div className="w-[460px] h-[460px] rounded-full bg-brillante/25 blur-[120px] animate-[float-orb-b_20s_ease-in-out_infinite]" />
       </motion.div>
       <motion.div style={{ x: axC, y: ayC }} className="pointer-events-none absolute top-1/3 right-1/4">
         <div className="w-64 h-64 rounded-full bg-[#fbd2cf]/10 blur-[90px] animate-[float-orb-a_13s_ease-in-out_infinite_reverse]" />
@@ -89,7 +89,7 @@ export default function NotFoundPage() {
           <span
             className="absolute inset-0 flex items-center justify-center font-display font-bold text-[clamp(7rem,28vw,18rem)] bg-clip-text text-transparent"
             style={{
-              backgroundImage: 'linear-gradient(135deg, #7db6e8 0%, #a78bfa 50%, #7db6e8 100%)',
+              backgroundImage: 'linear-gradient(135deg, #9cd9ff 0%, #3e87fa 50%, #9cd9ff 100%)',
               letterSpacing: '-0.04em',
             }}
           >
@@ -102,7 +102,7 @@ export default function NotFoundPage() {
             404
           </span>
           <span
-            className="absolute inset-0 flex items-center justify-center font-display font-bold text-[clamp(7rem,28vw,18rem)] text-[#fb7cd2] mix-blend-screen animate-[glitch-shift-2_6s_infinite]"
+            className="absolute inset-0 flex items-center justify-center font-display font-bold text-[clamp(7rem,28vw,18rem)] text-brillante mix-blend-screen animate-[glitch-shift-2_6s_infinite]"
             style={{ letterSpacing: '-0.04em' }}
           >
             404

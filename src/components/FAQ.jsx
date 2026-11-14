@@ -44,11 +44,18 @@ export default function FAQ() {
 
   return (
     <section id="faq" className="relative bg-paper py-24 sm:py-32 overflow-hidden">
+      {/* El brillo de atrás del título era violeta. Con la identidad 2026 es
+          el mismo brillo, del mismo tamaño, en celeste y azul de la marca. En
+          /clasico sigue la imagen de antes. */}
       <img
         src="/images/glow.png"
         alt=""
         aria-hidden
-        className="absolute top-16 left-1/2 -translate-x-1/2 w-72 pointer-events-none select-none"
+        className="absolute top-16 left-1/2 -translate-x-1/2 w-72 pointer-events-none select-none hidden [.clasico_&]:block"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-24 left-1/2 h-40 w-56 -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_40%_60%,rgba(62,135,250,0.55),rgba(156,217,255,0.35)_45%,transparent_70%)] blur-2xl [.clasico_&]:hidden"
       />
       <div className="relative mx-auto max-w-[1140px] px-6">
         <motion.h2

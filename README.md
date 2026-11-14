@@ -53,3 +53,4 @@ Las imágenes locales viven en `public/images/`. Algunas se hotlinkean desde ltw
 
 - **Phudu** — títulos display uppercase · **Be Vietnam Pro** — cuerpo · **Poppins** — subtítulos/nav
 - Dark `#161616 / #141414` · Paper `#F7F7F7` · Lila `#A796F0` · Pasteles: celeste `#BFCFF5`, rosa `#FBD2CF`, verde `#C9F0D4`, naranja `#FFE2C4`, lila `#F0DBFF`, gris `#F0EFEF`
+- Identidad 2026: logo en `public/marca/` (`<Logo>` / `<Isotipo>` de `src/components/Marca.jsx`), en blanco sobre los fondos oscuros como el anterior. Los acentos lila y violeta pasan a celeste pastel `#9CD9FF` / azul brillante `#3E87FA` / índigo `#223498`; los fondos no cambian. `/clasico` conserva los acentos de antes.
