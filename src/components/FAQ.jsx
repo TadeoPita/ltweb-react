@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import { FAQS } from '../data/content'
+import { Isotipo } from './Marca'
 
 function FaqItem({ faq, isOpen, onToggle }) {
   return (
@@ -16,7 +17,10 @@ function FaqItem({ faq, isOpen, onToggle }) {
           transition={{ type: 'spring', stiffness: 300, damping: 22 }}
           className="shrink-0 flex items-center justify-center w-11 h-11 rounded-full bg-white group-hover:bg-[#efefef] transition-colors"
         >
-          <Plus className="w-5 h-5" />
+          {/* Identidad 2026: en vez del "+" va la estrella del logo, que gira
+              igual al abrir la pregunta. /clasico sigue con el "+". */}
+          <Isotipo variante="noche" className="h-[22px] w-auto [.clasico_&]:hidden" />
+          <Plus className="hidden w-5 h-5 [.clasico_&]:block" />
         </motion.span>
       </button>
       <AnimatePresence initial={false}>
