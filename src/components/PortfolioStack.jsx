@@ -47,10 +47,12 @@ function CardVisual({ project }) {
 function CtaVisual() {
   return (
     <div className="clip-fix absolute inset-0 rounded-3xl overflow-hidden border-2 border-dashed border-white/25 bg-gradient-to-br from-brillante to-indigo-marca flex flex-col items-center justify-center gap-6 text-center p-8 shadow-2xl shadow-black/50">
-      <span className="flex items-center justify-center w-20 h-20 rounded-full bg-white text-brillante">
+      {/* Identidad 2026: la misma grilla con cruces, tenue, de la tarjeta de contacto. */}
+      <span aria-hidden className="grilla-cruces desvanecer-esquina pointer-events-none absolute inset-0 opacity-80 transition-opacity duration-500 group-hover:opacity-100 [.clasico_&]:hidden" />
+      <span className="relative flex items-center justify-center w-20 h-20 rounded-full bg-white text-brillante">
         <Plus className="w-9 h-9" strokeWidth={2.5} />
       </span>
-      <div>
+      <div className="relative">
         <p className="font-display font-bold uppercase text-2xl text-white">Contanos tu proyecto</p>
         <p className="font-display font-semibold uppercase text-lg mt-2 text-white/70">Nuevo proyecto</p>
       </div>
