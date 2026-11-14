@@ -81,6 +81,28 @@ h3.font-display {
   background: var(--color-lilac);
 }
 
+/* ---------------------------------------------------------------------------
+   Grilla con cruces (identidad 2026)
+
+   El cuadrado azul del manual: una cuadrícula fina con una "+" cada cuatro
+   celdas. Va muy tenue y se desvanece desde la esquina de arriba a la
+   derecha, para que la zona del texto quede limpia. El color va fijo en el
+   SVG porque una imagen de fondo no puede leer currentColor.
+--------------------------------------------------------------------------- */
+.grilla-cruces {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='88'%3E%3Cpath d='M44 39.5v9M39.5 44h9' stroke='%23fff' stroke-opacity='.4' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E"),
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 88px 88px, 22px 22px, 22px 22px;
+  background-position: 0 0, 0 0, 0 0;
+}
+
+.desvanecer-esquina {
+  -webkit-mask-image: radial-gradient(ellipse 130% 120% at 100% 0%, #000 15%, transparent 70%);
+  mask-image: radial-gradient(ellipse 130% 120% at 100% 0%, #000 15%, transparent 70%);
+}
+
 /* Bug de Chrome/Safari: un elemento con overflow-hidden + border-radius
    pierde el recorte redondeado por un instante cuando se transforma
    (scale, rotate) en el hover. Forzar un mask-image evita que el navegador

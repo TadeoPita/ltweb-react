@@ -465,8 +465,10 @@ export function CardPlazo() {
                     antes: { scale: 0, opacity: 0 },
                     despues: { scale: 1, opacity: 1, transition: { ...RESORTE, delay: paso(i) + 0.15 } },
                   }}
-                  className="transition-transform duration-500 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  className="flex items-center justify-center"
                 >
+                  {/* Quieta y centrada: el corrimiento al pasar el cursor era
+                      el despegue del cohete de antes y con la estrella no va. */}
                   <Isotipo variante="blanco" className="h-4 w-4" />
                 </motion.span>
               )}
@@ -486,7 +488,11 @@ export function CardPlazo() {
   )
 }
 
-/* Cierre: la acción. */
+/* Cierre: la acción.
+
+   Identidad 2026: azul brillante de la marca con la grilla con cruces del
+   manual, muy tenue. Arranca en la esquina de arriba a la derecha y se
+   desvanece antes de llegar al texto; al pasar el cursor se marca un poco más. */
 export function CardContacto() {
   const clic = usarClicSinArrastre(() => window.open(WHATSAPP_URL, '_blank', 'noopener'))
   const reducir = useReducedMotion()
@@ -498,27 +504,30 @@ export function CardContacto() {
       href={WHATSAPP_URL}
       target="_blank"
       rel="noreferrer"
-      className={`${BASE} group p-6 flex flex-col justify-between`}
-      style={{ backgroundColor: '#d7c6f7' }}
+      className={`${BASE} group bg-brillante p-6 flex flex-col justify-between`}
     >
-      <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/45 text-ink/85 transition-transform duration-500 ease-out group-hover:scale-105">
+      <span
+        aria-hidden
+        className="grilla-cruces desvanecer-esquina pointer-events-none absolute inset-0 opacity-80 transition-opacity duration-500 group-hover:opacity-100"
+      />
+      <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white transition-transform duration-500 ease-out group-hover:scale-105">
         {!reducir && (
           <motion.span
             aria-hidden
             animate={{ scale: [1, 1.7], opacity: [0.45, 0] }}
             transition={{ duration: 2.2, repeat: Infinity, ease: 'easeOut' }}
-            className="absolute inset-0 rounded-full border border-ink/45"
+            className="absolute inset-0 rounded-full border border-white/60"
           />
         )}
         <MessageCircle className="relative h-5 w-5" strokeWidth={1.9} />
       </span>
-      <div>
-        <p className="font-display font-bold uppercase text-ink leading-[0.95] text-2xl">
+      <div className="relative">
+        <p className="font-display font-bold uppercase text-white leading-[0.95] text-2xl">
           Contanos
           <br />
           tu proyecto
         </p>
-        <span className="mt-3 inline-flex items-center gap-1.5 font-body text-[13.5px] font-semibold text-ink/70">
+        <span className="mt-3 inline-flex items-center gap-1.5 font-body text-[13.5px] font-semibold text-white/85">
           Escribinos por WhatsApp
           <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
         </span>
