@@ -135,6 +135,15 @@ h3.font-display {
   to { transform: scaleX(1); }
 }
 
+/* La misma grilla en versión clara: líneas índigo muy tenues sobre blanco
+   frío. La usa la tarjeta de proyectos entregados. */
+.grilla-clara {
+  background-image:
+    linear-gradient(rgba(34, 52, 152, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 52, 152, 0.045) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
 .desvanecer-esquina {
   -webkit-mask-image: radial-gradient(ellipse 130% 120% at 100% 0%, #000 15%, transparent 70%);
   mask-image: radial-gradient(ellipse 130% 120% at 100% 0%, #000 15%, transparent 70%);

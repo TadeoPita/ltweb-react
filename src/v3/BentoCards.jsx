@@ -238,9 +238,13 @@ export function CardPortfolio({ cantidad }) {
       to="/portfolio"
       initial="reposo"
       {...abrir}
-      className={`${BASE} group block p-6 flex flex-col justify-center`}
-      style={{ backgroundColor: 'var(--color-pastel-blue)' }}
+      className={`${BASE} isolate group block p-6 flex flex-col justify-center`}
+      style={{ backgroundColor: '#f3f5ff' }}
     >
+      {/* Blanco frío con un cuadrillé muy suave, que se desvanece desde la
+          esquina de arriba a la derecha. Va por detrás del texto (-z-10
+          dentro de la tarjeta, que es isolate). */}
+      <span aria-hidden className="grilla-clara desvanecer-esquina pointer-events-none absolute inset-0 -z-10" />
       <div className="flex items-baseline gap-1">
         <span className="font-display font-bold text-ink/90 leading-none text-6xl tabular-nums">
           <Contador hasta={cantidad} />
