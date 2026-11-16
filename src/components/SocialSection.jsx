@@ -6,7 +6,7 @@ import { INSTAGRAM_URL, SOCIAL_CHIPS_LEFT, SOCIAL_CHIPS_RIGHT } from '../data/co
 
 /* Chip estática; al hacer hover la estrella cruza al otro lado del texto
    con una animación de layout muy suave. */
-function Chip({ text, delay }) {
+function Chip({ text, delay, estrella }) {
   const [hovered, setHovered] = useState(false)
   return (
     <motion.span
@@ -21,7 +21,7 @@ function Chip({ text, delay }) {
       <motion.img
         layout
         transition={{ duration: 0.55, ease: [0.32, 0.72, 0, 1] }}
-        src="/images/sparkle.svg"
+        src={estrella}
         alt=""
         aria-hidden
         className="w-3.5 h-3.5"
@@ -41,7 +41,7 @@ const RIGHT_OFFSETS = [150, 0, 150, 20]
 /* En la home el teléfono es el perfil de Instagram interactivo (ver
    PerfilInstagram). /clasico pasa la captura de antes en `imagen`: es el
    archivo de la home anterior y tiene que verse como era. */
-export default function SocialSection({ imagen }) {
+export default function SocialSection({ imagen, estrella = '/images/sparkle-azul.svg' }) {
   return (
     <section className="bg-paper py-24 sm:py-32 overflow-hidden">
       <div className="mx-auto max-w-[1440px] px-6">
@@ -74,7 +74,7 @@ export default function SocialSection({ imagen }) {
           <div className="hidden lg:flex flex-col items-start gap-12">
             {SOCIAL_CHIPS_LEFT.map((c, i) => (
               <span key={c} style={{ marginLeft: `${LEFT_OFFSETS[i]}px` }}>
-                <Chip text={c} delay={i * 0.1} />
+                <Chip text={c} delay={i * 0.1} estrella={estrella} />
               </span>
             ))}
           </div>
@@ -109,7 +109,7 @@ export default function SocialSection({ imagen }) {
           <div className="hidden lg:flex flex-col items-end gap-12">
             {SOCIAL_CHIPS_RIGHT.map((c, i) => (
               <span key={c} style={{ marginRight: `${RIGHT_OFFSETS[i]}px` }}>
-                <Chip text={c} delay={i * 0.1 + 0.1} />
+                <Chip text={c} delay={i * 0.1 + 0.1} estrella={estrella} />
               </span>
             ))}
           </div>
