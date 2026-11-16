@@ -582,7 +582,19 @@ export function CardSistemas() {
   const Icono = aviso.icono
 
   return (
-    <div ref={raiz} className={`${BASE} p-6 flex flex-col justify-between`} style={{ backgroundColor: '#6fc0f3' }}>
+    <div ref={raiz} className={`${BASE} isolate p-6 flex flex-col justify-between`} style={{ backgroundColor: '#6fc0f3' }}>
+      {/* Las formas desenfocadas del manual: el anillo blanco asomando
+          arriba a la derecha y una mancha azul abajo a la izquierda. */}
+      <span aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <i
+          className="absolute rounded-full"
+          style={{ right: -70, top: -80, width: 230, height: 230, border: '30px solid rgba(255,255,255,.45)', filter: 'blur(10px)' }}
+        />
+        <i
+          className="absolute rounded-full"
+          style={{ left: -60, bottom: -70, width: 220, height: 160, background: '#3e87fa', filter: 'blur(40px)', opacity: 0.55 }}
+        />
+      </span>
       <button
         type="button"
         onClick={siguiente}
