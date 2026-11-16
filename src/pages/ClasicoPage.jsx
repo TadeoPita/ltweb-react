@@ -69,7 +69,7 @@ export default function ClasicoPage() {
         <ClientsShowcase />
         <Steps />
         <FAQ />
-        <SocialSection />
+        <SocialSection imagen="/images/instagram-phone.webp" />
         <FinalCTA />
       </main>
       <Footer />

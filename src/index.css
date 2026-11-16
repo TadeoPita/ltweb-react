@@ -115,6 +115,26 @@ h3.font-display {
   background-position: center center;
 }
 
+/* Teléfono de Instagram de "Seguinos en redes": la letra del sistema, como
+   la app, y scroll sin barra. */
+.ig {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sin-barra {
+  scrollbar-width: none;
+}
+
+.sin-barra::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes ig-progreso {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 .desvanecer-esquina {
   -webkit-mask-image: radial-gradient(ellipse 130% 120% at 100% 0%, #000 15%, transparent 70%);
   mask-image: radial-gradient(ellipse 130% 120% at 100% 0%, #000 15%, transparent 70%);

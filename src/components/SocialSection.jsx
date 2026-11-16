@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import TextReveal from './TextReveal'
+import PerfilInstagram from './PerfilInstagram'
 import { INSTAGRAM_URL, SOCIAL_CHIPS_LEFT, SOCIAL_CHIPS_RIGHT } from '../data/content'
 
 /* Chip estática; al hacer hover la estrella cruza al otro lado del texto
@@ -37,7 +38,10 @@ function Chip({ text, delay }) {
 const LEFT_OFFSETS = [0, 180, 30, 170]
 const RIGHT_OFFSETS = [150, 0, 150, 20]
 
-export default function SocialSection() {
+/* En la home el teléfono es el perfil de Instagram interactivo (ver
+   PerfilInstagram). /clasico pasa la captura de antes en `imagen`: es el
+   archivo de la home anterior y tiene que verse como era. */
+export default function SocialSection({ imagen }) {
   return (
     <section className="bg-paper py-24 sm:py-32 overflow-hidden">
       <div className="mx-auto max-w-[1440px] px-6">
@@ -76,19 +80,30 @@ export default function SocialSection() {
           </div>
 
           {/* Teléfono con Instagram */}
-          <motion.a
-            href={INSTAGRAM_URL}
-            target="_blank"
-            rel="noreferrer"
-            initial={{ opacity: 0, y: 48 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            
-            className="block mx-auto w-full max-w-md border-0 border-ink rounded-[22px] overflow-hidden"
-          >
-            <img src="/images/instagram-phone.webp" alt="Instagram de LTWEB" loading="lazy" className="w-full h-auto rounded-[22px]" />
-          </motion.a>
+          {imagen ? (
+            <motion.a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noreferrer"
+              initial={{ opacity: 0, y: 48 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              className="block mx-auto w-full max-w-md border-0 border-ink rounded-[22px] overflow-hidden"
+            >
+              <img src={imagen} alt="Instagram de LTWEB" loading="lazy" className="w-full h-auto rounded-[22px]" />
+            </motion.a>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 48 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              className="mx-auto w-full max-w-md lg:w-[28rem]"
+            >
+              <PerfilInstagram />
+            </motion.div>
+          )}
 
           {/* Chips derecha */}
           <div className="hidden lg:flex flex-col items-end gap-12">
