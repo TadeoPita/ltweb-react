@@ -52,7 +52,7 @@ import { chica } from '../lib/imagen'
    sentido pedirla toda de entrada. */
 function Tarjeta({ p, prioritaria }) {
   return (
-    <div className="muro-tarjeta relative h-[168px] w-[268px] shrink-0 overflow-hidden rounded-xl border border-white/10 bg-white/5 sm:h-[210px] sm:w-[336px]">
+    <div className="muro-tarjeta relative h-[168px] w-[268px] shrink-0 overflow-hidden rounded-xl border border-white/10 bg-[#0e0e10] sm:h-[210px] sm:w-[336px]">
       <img
         draggable={false}
         src={chica(p.image)}
@@ -128,8 +128,18 @@ export default function HeroWall() {
       id="inicio-v3"
       className="muro relative flex min-h-screen items-center justify-center overflow-hidden bg-[#08080a]"
     >
+      {/* Cuadrillé de la identidad, al fondo de todo: va por detrás del muro,
+          así se ve en los espacios entre capturas y arriba y abajo de las
+          filas, nunca encima de los proyectos. Queda quieto mientras las
+          filas se mueven, que es lo que le da profundidad.
+
+          Para que no se transparente a través de las capturas, cada tarjeta
+          tiene fondo opaco y la opacidad va solo en la imagen (antes la tenía
+          toda la fila, y eso dejaba ver la grilla por adentro de las fotos). */}
+      <div aria-hidden className="grilla-fondo pointer-events-none absolute inset-0" />
+
       {/* El muro de proyectos */}
-      <div className="absolute inset-0 flex flex-col justify-center gap-4 opacity-90">
+      <div className="absolute inset-0 flex flex-col justify-center gap-4">
         <Fila proyectos={filas[0]} duracion={64} />
         <Fila proyectos={filas[1]} duracion={82} invertida />
         <Fila proyectos={filas[2]} duracion={72} />

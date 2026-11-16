@@ -107,6 +107,14 @@ h3.font-display {
     linear-gradient(90deg, rgba(255, 255, 255, 0.095) 1px, transparent 1px);
 }
 
+.grilla-fondo {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: center center;
+}
+
 .desvanecer-esquina {
   -webkit-mask-image: radial-gradient(ellipse 130% 120% at 100% 0%, #000 15%, transparent 70%);
   mask-image: radial-gradient(ellipse 130% 120% at 100% 0%, #000 15%, transparent 70%);
@@ -312,8 +320,11 @@ h3.font-display {
   transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease;
 }
 
+/* La imagen va al 79% sobre el fondo opaco de la tarjeta: es el mismo tono
+   que daban antes el 88% de la imagen y el 90% de toda la fila, pero sin que
+   se vea a través lo que hay detrás (la grilla del fondo). */
 .muro-tarjeta img {
-  opacity: 0.88;
+  opacity: 0.79;
   transition: opacity 0.45s ease;
 }
 
@@ -322,7 +333,7 @@ h3.font-display {
   box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.85);
 }
 
-.muro-tarjeta:hover img { opacity: 1; }
+.muro-tarjeta:hover img { opacity: 0.9; }
 
 @media (prefers-reduced-motion: reduce) {
   .muro-fila { animation: none; }
