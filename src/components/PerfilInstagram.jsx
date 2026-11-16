@@ -105,7 +105,19 @@ const IcoFijado = () => (
     <path d="M15.6 2.8 l5.6 5.6 -2.3 1.1 -3.6 4.6 .4 4 -1.6 1.6 -3.6 -3.6 -5 5 -.9 -.9 5 -5 -3.6 -3.6 1.6 -1.6 4 .4 4.6 -3.6 Z" fill="#fff" />
   </svg>
 )
-const IcoPlay = () => <svg width="18" height="18" viewBox="0 0 24 24" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.5))' }}><path d="M7 4.5 v15 l12-7.5 Z" fill="#fff" /></svg>
+/* El tilde azul de cuenta verificada: un círculo con ocho ondas y la tilde
+   blanca adentro. */
+const IcoVerificado = ({ tam = 18 }) => (
+  <svg width={tam} height={tam} viewBox="0 0 24 24" aria-label="Verificado" role="img" className="shrink-0">
+    <circle cx="12" cy="12" r="8.8" fill="#0095f6" />
+    {Array.from({ length: 8 }, (_, n) => {
+      const a = (n * Math.PI) / 4
+      return <circle key={n} cx={12 + 7.4 * Math.cos(a)} cy={12 + 7.4 * Math.sin(a)} r="3.4" fill="#0095f6" />
+    })}
+    <path d="M8.1 12.3 l2.7 2.7 l5.1-5.4" fill="none" stroke="#fff" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+)
+const IcoPlay = () =><svg width="18" height="18" viewBox="0 0 24 24" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.5))' }}><path d="M7 4.5 v15 l12-7.5 Z" fill="#fff" /></svg>
 
 /* --------------------------------------------------------------- historia */
 
@@ -305,7 +317,10 @@ function Historia({ destacada, onCerrar, hora, zoom, alto }) {
           </div>
           <div className="flex items-center" style={{ gap: 9, padding: '10px 12px' }}>
             <img src="/marca/isotipo-blanco.svg" alt="" className="rounded-full" style={{ width: 32, height: 32, padding: 7, background: 'linear-gradient(90deg,#9cd9ff,#3e87fa)' }} />
-            <span style={{ fontSize: 14, fontWeight: 600 }}>{USUARIO}</span>
+            <span className="flex items-center" style={{ fontSize: 14, fontWeight: 600, gap: 4 }}>
+              {USUARIO}
+              <IcoVerificado tam={13} />
+            </span>
             <span className="text-white/60" style={{ fontSize: 14 }}>{destacada.nombre}</span>
           </div>
         </div>
@@ -412,7 +427,10 @@ export default function PerfilInstagram() {
                     <BarraEstado hora={hora} />
                     <div className="flex items-center" style={{ height: 46, padding: '0 12px 0 10px', gap: 10 }}>
                       <IcoAtras />
-                      <b style={{ fontSize: 21, fontWeight: 700, letterSpacing: '-0.015em' }}>{USUARIO}</b>
+                      <b className="flex items-center" style={{ fontSize: 21, fontWeight: 700, letterSpacing: '-0.015em', gap: 5 }}>
+                        {USUARIO}
+                        <IcoVerificado tam={17} />
+                      </b>
                       <span className="ml-auto flex items-center" style={{ gap: 18 }}>
                         <IcoCampana />
                         <IcoMas />
