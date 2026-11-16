@@ -458,7 +458,10 @@ export default function PerfilInstagram() {
                       </span>
                     </button>
                     <div>
-                      <p style={{ fontSize: 15, fontWeight: 600, marginBottom: 9 }}>LTWEB</p>
+                      <p className="flex items-center" style={{ fontSize: 15, fontWeight: 600, marginBottom: 9, gap: 4 }}>
+                        LTWEB
+                        <IcoVerificado tam={14} />
+                      </p>
                       <div className="flex" style={{ gap: 22, fontSize: 14, letterSpacing: '-0.01em' }}>
                         <div><b className="block" style={{ fontSize: 16.5, fontWeight: 600 }}>{proyectos.length}</b>publicaciones</div>
                         <div><b className="block" style={{ fontSize: 16.5, fontWeight: 600 }}>{fmt(SEGUIDORES + (siguiendo ? 1 : 0))}</b>seguidores</div>
