@@ -13,6 +13,7 @@ import { usarClicSinArrastre } from './usarClicSinArrastre'
 import {
   ArrowUpRight,
   Bot,
+  BriefcaseBusiness,
   CalendarCheck,
   Clapperboard,
   Cpu,
@@ -66,6 +67,7 @@ const ICONOS_AREAS = {
   Videos: Clapperboard,
   'Chatbots para WhatsApp, Instagram y Facebook': Bot,
   'Meta Ads': Megaphone,
+  'Asesoría de negocio': BriefcaseBusiness,
 }
 const MotionLink = motion.create(Link)
 
@@ -279,7 +281,7 @@ function FilaArea({ area }) {
   const clic = usarClicSinArrastre(() => navegar(destino))
   const Icono = ICONOS_AREAS[area] ?? Globe
   return (
-    <Link draggable={false} to={destino} {...clic} className="group/fila flex items-center gap-2 py-[3px]">
+    <Link draggable={false} to={destino} {...clic} className="group/fila flex items-center gap-2 py-[2px]">
       <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-paper text-ink/60 transition-colors duration-300 group-hover/fila:bg-ink group-hover/fila:text-white">
         <Icono className="h-3 w-3" strokeWidth={2.2} />
       </span>
@@ -291,7 +293,9 @@ function FilaArea({ area }) {
   )
 }
 
-/* Las tres áreas de trabajo, en lista. */
+/* Las áreas de trabajo, en lista. Con siete filas el alto de la tarjeta
+   queda justo: el paso de cada fila es de 2px arriba y abajo para que la
+   última no quede pegada al borde. */
 export function CardAreas({ areas }) {
   return (
     <div className={`${BASE} border border-black/[0.07] bg-white p-6 flex flex-col`}>

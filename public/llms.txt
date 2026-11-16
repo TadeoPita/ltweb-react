@@ -1,6 +1,6 @@
 # LTWEB
 
-> LTWEB es un estudio argentino de diseño y desarrollo web con base en Buenos Aires. Su fundador y dueño es Tadeo Pita D'Amelio. Trabaja con clientes de Argentina y de todo el mundo. Desarrolla webs empresariales, tiendas online y sistemas a medida, programados desde cero y no sobre plantillas, y además hace campañas profesionales de Meta Ads en Argentina, chatbots con su plataforma Gestionate (partner de Meta) y edición de videos.
+> LTWEB es un estudio argentino de diseño y desarrollo web con base en Buenos Aires. Su fundador y dueño es Tadeo Pita D'Amelio. Trabaja con clientes de Argentina y de todo el mundo. Desarrolla webs empresariales, tiendas online y sistemas a medida, programados desde cero y no sobre plantillas, y además hace campañas profesionales de Meta Ads en Argentina, chatbots con su plataforma Gestionate (partner de Meta), edición de videos y asesoría de negocio.
 
 ## Quiénes somos
 
@@ -16,6 +16,7 @@
 - Desarrollo y soluciones personalizadas: sistemas, funciones e integraciones específicas cuando una solución estándar no alcanza.
 - Meta Ads: campañas profesionales de publicidad en Facebook e Instagram para negocios de Argentina.
 - Videos: edición de reels, anuncios para Meta Ads y videos para la web, a partir del material del cliente.
+- Asesoría de negocio: diagnóstico, estrategia digital, procesos, ventas y un plan de acción concreto para emprendimientos y empresas.
 - También: SEO, mantenimiento, rendimiento y soporte.
 
 ## Plazos
@@ -34,6 +35,7 @@
 - [Chatbots](https://ltweb.com.ar/chatbots): chatbots para WhatsApp, Instagram y Facebook.
 - [Meta Ads](https://ltweb.com.ar/meta-ads): campañas de publicidad en Facebook e Instagram.
 - [Videos](https://ltweb.com.ar/videos): edición de reels, anuncios y videos para la web.
+- [Asesoría de negocio](https://ltweb.com.ar/asesoria-de-negocio): diagnóstico, estrategia digital, procesos y plan de acción.
 - [Reseñas](https://ltweb.com.ar/resenas): reseñas en video de clientes, con la transcripción completa de cada una.
 
 ## Contacto

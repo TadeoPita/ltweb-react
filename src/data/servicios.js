@@ -207,6 +207,39 @@ export const SERVICIOS = [
     proyectos: [],
     mensaje: '¡Hola LTWEB! Vi la página de videos y quiero consultar por la edición de videos para mi marca.',
   },
+  {
+    slug: 'asesoria-de-negocio',
+    area: 'Asesoría de negocio',
+    nombre: 'Asesoría de negocio',
+    titulo: 'Asesoría de negocio y estrategia digital para empresas | LTWEB',
+    descripcion:
+      'Asesoría de negocio para emprendimientos, profesionales y empresas: diagnóstico, estrategia digital, procesos, ventas y un plan de acción concreto para crecer.',
+    volanta: 'Asesoría de negocio',
+    h1: 'Asesoría para ordenar y hacer crecer tu negocio',
+    intro:
+      'Te ayudamos a mirar tu negocio de punta a punta: cómo te encuentran, cómo vendés, cómo atendés y cómo se organiza el trabajo. Detectamos qué conviene mejorar primero y armamos con vos un plan concreto para avanzar.',
+    incluye: [
+      { t: 'Diagnóstico del negocio', d: 'Revisamos cómo funciona hoy tu negocio y dónde se traba: ventas, atención, procesos y presencia online.' },
+      { t: 'Estrategia digital', d: 'Definimos qué canales te conviene usar (web, tienda, redes, WhatsApp o anuncios) según tu cliente y tu presupuesto.' },
+      { t: 'Procesos y organización', d: 'Ordenamos las tareas y los circuitos internos, y vemos qué se puede automatizar.' },
+      { t: 'Ventas y atención', d: 'Revisamos cómo llegan las consultas y cómo se responden, para que se pierdan menos clientes en el camino.' },
+      { t: 'Prioridades claras', d: 'Te ayudamos a decidir qué hacer primero y en qué conviene invertir, sin gastar en lo que todavía no necesitás.' },
+      { t: 'Acompañamiento', d: 'Seguimos de cerca la puesta en marcha y ajustamos el plan según cómo responde el negocio.' },
+    ],
+    proceso: [
+      { t: 'Primera charla', d: 'Nos contás tu negocio, qué querés lograr y qué te preocupa hoy.' },
+      { t: 'Diagnóstico', d: 'Analizamos cómo vendés, cómo atendés y cómo se organiza el trabajo.' },
+      { t: 'Plan de acción', d: 'Te pasamos las prioridades y los próximos pasos, ordenados y concretos.' },
+      { t: 'Seguimiento', d: 'Acompañamos la implementación y ajustamos sobre la marcha.' },
+    ],
+    faqs: [
+      { q: '¿Para qué tipo de negocios es?', a: 'Para emprendimientos, comercios, profesionales y empresas que quieren ordenar su negocio, vender más o dar el paso a lo digital.' },
+      { q: '¿Tengo que hacer la web con ustedes?', a: 'No. La asesoría sirve por sí sola. Si del plan surge una web, un sistema, un chatbot o campañas, también podemos encargarnos nosotros.' },
+      { q: '¿Cómo arrancamos?', a: 'Con una primera charla para conocer tu negocio. Después te pasamos una propuesta con el alcance de la asesoría.' },
+    ],
+    proyectos: [],
+    mensaje: '¡Hola LTWEB! Vi la página de asesoría de negocio y quiero consultar por una asesoría para mi negocio.',
+  },
 ]
 
 export const SERVICIO_POR_AREA = Object.fromEntries(SERVICIOS.map((s) => [s.area, s.slug]))

@@ -59,6 +59,7 @@ const AREAS = [
   'Videos',
   'Chatbots para WhatsApp, Instagram y Facebook',
   'Meta Ads',
+  'Asesoría de negocio',
 ]
 const RUBROS = ['Salud', 'Educación', 'Tecnología', 'Gastronomía', 'Servicios profesionales', 'Comercio']
 
