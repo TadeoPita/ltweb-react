@@ -582,7 +582,7 @@ export function CardSistemas() {
   const Icono = aviso.icono
 
   return (
-    <div ref={raiz} className={`${BASE} p-6 flex flex-col justify-between`} style={{ backgroundColor: 'var(--color-pastel-green)' }}>
+    <div ref={raiz} className={`${BASE} p-6 flex flex-col justify-between`} style={{ backgroundColor: '#6fc0f3' }}>
       <button
         type="button"
         onClick={siguiente}
@@ -615,8 +615,8 @@ export function CardSistemas() {
       </button>
 
       <div>
-        <p className="font-display text-[15px] font-bold uppercase leading-tight text-ink/90">Sistemas personalizados</p>
-        <p className="mt-2 font-body text-[13.5px] leading-relaxed text-ink/60">Turnos, stock y pedidos que se ordenan solos.</p>
+        <p className="font-display text-[18px] font-bold uppercase leading-tight text-white">Sistemas personalizados</p>
+        <p className="mt-2 font-body text-[13.5px] leading-relaxed text-white/90">Turnos, stock y pedidos que se ordenan solos.</p>
       </div>
     </div>
   )
