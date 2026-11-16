@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AnimatePresence, motion, useReducedMotion, useSpring } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import IconoMarca from './IconoMarca'
 import { usePortfolio } from '../data/portfolioStore'
 import { SERVICIOS } from '../data/servicios'
@@ -107,6 +107,29 @@ const IcoFijado = () => (
 )
 const IcoPlay = () => <svg width="18" height="18" viewBox="0 0 24 24" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.5))' }}><path d="M7 4.5 v15 l12-7.5 Z" fill="#fff" /></svg>
 
+/* --------------------------------------------------------------- historia */
+
+/* El aro de historia nueva, con el degradé de Instagram. */
+const ARO_HISTORIA = 'linear-gradient(45deg,#ffd600 0%,#ff7a00 28%,#ff0069 60%,#d300c5 100%)'
+
+/* La historia que se abre al tocar la foto de perfil. */
+const HISTORIA = {
+  id: 'historia',
+  nombre: 'Ahora',
+  slides: [
+    { titulo: 'Diseño claro. Desarrollo sólido.', texto: 'Webs, tiendas online y sistemas a medida, pensados desde cero.', icono: 'logo' },
+    { titulo: 'Nuevo: asesoría de negocio', texto: 'Te ayudamos a ordenar y hacer crecer tu negocio.', enlace: '/asesoria-de-negocio', accion: 'Ver más', icono: 'anillos' },
+    {
+      titulo: '¿Hacemos tu web?',
+      texto: 'Hablás directo con quien diseña y desarrolla tu proyecto.',
+      enlace: WHATSAPP_URL,
+      externo: true,
+      accion: 'Escribinos por WhatsApp',
+      icono: 'chat',
+    },
+  ],
+}
+
 /* ------------------------------------------------------------ destacadas */
 
 /* Las portadas usan los íconos del manual de identidad, cada uno en su
@@ -201,7 +224,11 @@ function Slide({ s }) {
       }}
     >
       <span className="flex items-center justify-center rounded-full bg-[#f3f5ff]" style={{ width: 96, height: 96, boxShadow: '0 20px 40px -20px rgba(10,20,80,.8)' }}>
-        <IconoMarca nombre={s.icono} style={{ width: 48, height: 48 }} />
+        {s.icono === 'logo' ? (
+          <img src="/marca/isotipo.svg" alt="" style={{ width: 50, height: 54 }} />
+        ) : (
+          <IconoMarca nombre={s.icono} style={{ width: 48, height: 48 }} />
+        )}
       </span>
       <p className="mt-7 font-display font-bold uppercase leading-[0.95] text-white" style={{ fontSize: 34 }}>{s.titulo}</p>
       <p className="mt-3 text-white/80" style={{ fontSize: 16, lineHeight: 1.4 }}>{s.texto}</p>
@@ -301,7 +328,6 @@ function Historia({ destacada, onCerrar, hora, zoom, alto }) {
 export default function PerfilInstagram() {
   const { items } = usePortfolio()
   const hora = useHora()
-  const reducir = useReducedMotion()
   const marco = useRef(null)
   const [tam, setTam] = useState({ ancho: 0, alto: 0 })
   const [siguiendo, setSiguiendo] = useState(false)
@@ -319,24 +345,9 @@ export default function PerfilInstagram() {
     return () => ro.disconnect()
   }, [])
 
-  /* Inclinación siguiendo al cursor, solo con mouse y si no se pidió menos
-     movimiento. En táctil el dedo ya está ocupado scrolleando. */
-  const rotX = useSpring(0, { stiffness: 140, damping: 18 })
-  const rotY = useSpring(0, { stiffness: 140, damping: 18 })
-  const mover = (e) => {
-    if (e.pointerType !== 'mouse' || reducir || !marco.current) return
-    const r = marco.current.getBoundingClientRect()
-    rotY.set(((e.clientX - r.left) / r.width - 0.5) * 12)
-    rotX.set(-((e.clientY - r.top) / r.height - 0.5) * 8)
-  }
-  const soltar = () => {
-    rotX.set(0)
-    rotY.set(0)
-  }
-
   const proyectos = items.filter((p) => p.image && !p.blurred)
   const destacadas = armarDestacadas(proyectos)
-  const destacada = destacadas.find((d) => d.id === abierta)
+  const destacada = abierta === HISTORIA.id ? HISTORIA : destacadas.find((d) => d.id === abierta)
 
   const escala = tam.ancho / TARJETA.ancho
   const k = (tam.ancho * (BASE / TARJETA.ancho)) / BASE
@@ -349,8 +360,6 @@ export default function PerfilInstagram() {
   return (
     <div
       ref={marco}
-      onPointerMove={mover}
-      onPointerLeave={soltar}
       className="relative w-full overflow-hidden rounded-[22px]"
       style={{ aspectRatio: `${TARJETA.ancho} / ${TARJETA.alto}` }}
     >
@@ -359,16 +368,13 @@ export default function PerfilInstagram() {
       <div aria-hidden className="absolute rounded-full bg-[#d6f0ff] opacity-55 blur-[90px]" style={{ left: '-20%', top: '-19%', width: '88%', height: '59%' }} />
 
       {tam.ancho > 0 && (
-        <motion.div
+        <div
           className="absolute"
           style={{
             left: TELEFONO.izquierda * escala,
             top: arriba,
             width: W,
             height: tam.alto - arriba + 200 * k,
-            rotateX: rotX,
-            rotateY: rotY,
-            transformPerspective: 1400,
           }}
         >
           {/* Botones laterales */}
@@ -414,8 +420,25 @@ export default function PerfilInstagram() {
                     </div>
                   </div>
 
-                  <div className="flex items-center" style={{ gap: 26, padding: '8px 16px 0' }}>
-                    <img src="/marca/isotipo-blanco.svg" alt="" className="shrink-0 rounded-full" style={{ width: 86, height: 86, padding: 22, background: 'linear-gradient(90deg,#9cd9ff 0%,#63c9ff 36%,#4da2fc 74%,#3e87fa 100%)' }} />
+                  <div className="flex items-center" style={{ gap: 22, padding: '8px 16px 0' }}>
+                    {/* La foto con el aro de historia: al tocarla se abre,
+                        como en la app. */}
+                    <button
+                      type="button"
+                      onClick={() => setAbierta(HISTORIA.id)}
+                      aria-label={`Ver la historia de ${USUARIO}`}
+                      className="shrink-0 rounded-full transition-transform active:scale-95"
+                      style={{ width: 92, height: 92, padding: 3, background: ARO_HISTORIA }}
+                    >
+                      <span className="block h-full w-full rounded-full bg-black" style={{ padding: 3 }}>
+                        <img
+                          src="/marca/isotipo-blanco.svg"
+                          alt=""
+                          className="h-full w-full rounded-full"
+                          style={{ padding: 19, background: 'linear-gradient(90deg,#9cd9ff 0%,#63c9ff 36%,#4da2fc 74%,#3e87fa 100%)' }}
+                        />
+                      </span>
+                    </button>
                     <div>
                       <p style={{ fontSize: 15, fontWeight: 600, marginBottom: 9 }}>LTWEB</p>
                       <div className="flex" style={{ gap: 22, fontSize: 14, letterSpacing: '-0.01em' }}>
@@ -566,7 +589,7 @@ export default function PerfilInstagram() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   )
