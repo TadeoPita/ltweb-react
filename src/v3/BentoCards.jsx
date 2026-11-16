@@ -31,6 +31,7 @@ import { SERVICIO_POR_AREA } from '../data/servicios'
 import { chica } from '../lib/imagen'
 import { EASE, blurChild, blurStagger } from '../lib/motion'
 import { Logo, Isotipo } from '../components/Marca'
+import IconoMarca from '../components/IconoMarca'
 
 /* Tarjetas del bento de la v3.
 
@@ -372,7 +373,17 @@ export function CardPanel() {
 /* Trato directo: el diferencial que más repiten los clientes. */
 export function CardDirecto() {
   return (
-    <div className={`${BASE} group p-6 flex flex-col justify-between`} style={{ backgroundColor: 'var(--color-pastel-orange)' }}>
+    <div className={`${BASE} isolate group p-6 flex flex-col justify-between`} style={{ backgroundColor: '#cdd6ff' }}>
+      {/* Lavanda fría con el ícono de chat del manual, grande y tenue, asomando
+          arriba a la derecha por detrás de los mensajes. */}
+      <span aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <IconoMarca
+          nombre="chat"
+          color="#ffffff"
+          className="absolute"
+          style={{ right: -44, top: -58, width: 236, height: 236, opacity: 0.55, transform: 'rotate(-8deg)' }}
+        />
+      </span>
       <Charla />
       <div>
         <p className="flex items-center gap-1.5 font-display font-bold uppercase text-ink/90 text-[15px] leading-tight">
