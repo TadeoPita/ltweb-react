@@ -527,7 +527,7 @@ export function CardContacto() {
     >
       <span
         aria-hidden
-        className="grilla-cruces marcada desvanecer-amplio pointer-events-none absolute inset-0 opacity-90 transition-opacity duration-500 group-hover:opacity-100"
+        className="grilla-cruces marcada desvanecer-amplio pointer-events-none absolute inset-0 opacity-85 transition-opacity duration-500 group-hover:opacity-100"
       />
       <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white transition-transform duration-500 ease-out group-hover:scale-105">
         {!reducir && (
