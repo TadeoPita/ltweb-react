@@ -1,6 +1,7 @@
 import { readFile, stat } from 'node:fs/promises'
 import { join } from 'node:path'
-import { descripcionProyecto, nombreProyecto, proyectoConFicha, tituloProyecto, urlSitio } from '../../src/lib/titulos.js'
+import { descripcionProyecto, nombreProyecto, proyectoConFicha, proyectoIndexable, tituloProyecto, urlSitio } from '../../src/lib/titulos.js'
+import { armarSitemap } from './sitemap.js'
 import { DESCRIPCION_RESENAS, descripcionResena, esquemaResena, esquemaResenas, esquemaServicio } from '../../src/lib/esquemas.js'
 import { SERVICIOS, whatsappCon } from '../../src/data/servicios.js'
 import { TESTIMONIOS } from '../../src/data/testimonios.js'
@@ -138,7 +139,6 @@ function paginaPortfolio(proyectos) {
 function paginaProyecto(p, proyectos) {
   const nombre = nombreProyecto(p)
   const url = `${SITIO}/proyecto/${p.id}`
-  const ficha = proyectoConFicha(p)
   const rubro = texto(p.category).split(',')[0].trim()
 
   const otros = visibles(proyectos)
@@ -169,7 +169,7 @@ function paginaProyecto(p, proyectos) {
     canonica: url,
     imagen: absoluta(p.image),
     tipo: 'article',
-    noindex: !ficha || Boolean(p.blurred),
+    noindex: !proyectoIndexable(p),
     cuerpo: bloque(`<p><a href="/portfolio">Proyectos</a></p>
       <h1>${esc(nombre)}</h1>
       <p>${esc(enFrase(p.type) || 'Sitio web')}${rubro ? ` · ${esc(rubro)}` : ''} · Diseñado y desarrollado por LTWEB</p>
@@ -351,10 +351,46 @@ function aplicar(html, pagina) {
   return h
 }
 
+/* La home trae del build una lista de proyectos para quien no ejecuta
+   JavaScript, sacada de la semilla del repo. Se cambia por la publicada: si
+   no, sigue enlazando fichas borradas desde el panel (que dan 404) y deja
+   afuera las nuevas. */
+function conProyectosPublicados(html, proyectos) {
+  const items = proyectos
+    .filter(proyectoIndexable)
+    .map(
+      (p) => `<li>
+          <a href="/proyecto/${esc(p.id)}">${esc(nombreProyecto(p))}</a>${p.category ? ` — ${esc(texto(p.category))}` : ''}
+          ${texto(p.solution) ? `<p>${esc(texto(p.solution))}</p>` : ''}
+        </li>`,
+    )
+    .join('\n        ')
+  if (!items) return html
+  return html.replace(/<ul data-proyectos>[\s\S]*?<\/ul>/, () => `<ul data-proyectos>\n        ${items}\n      </ul>`)
+}
+
+async function fechaDe(ruta) {
+  try {
+    return new Date((await stat(ruta)).mtimeMs).toISOString().slice(0, 10)
+  } catch {
+    return null
+  }
+}
+
+export async function sitemap({ dist, rutas, raiz }) {
+  const proyectos = await leerProyectos(rutas, raiz)
+  const sitio = (await fechaDe(join(dist, 'index.html'))) || new Date().toISOString().slice(0, 10)
+  return armarSitemap(proyectos, { sitio, proyectos: await fechaDe(rutas.publicado) })
+}
+
 export async function renderizar(camino, { dist, rutas, raiz }) {
   const plantilla = await leerConMemoria(join(dist, 'index.html'), (t) => t)
 
-  if (camino === '/') return { estado: 200, html: aplicar(plantilla, { titulo: 'LTWEB — Diseño y desarrollo web en Buenos Aires', canonica: `${SITIO}/` }) }
+  if (camino === '/') {
+    const proyectos = await leerProyectos(rutas, raiz)
+    const html = aplicar(plantilla, { titulo: 'LTWEB — Diseño y desarrollo web en Buenos Aires', canonica: `${SITIO}/` })
+    return { estado: 200, html: conProyectosPublicados(html, proyectos) }
+  }
 
   if (SIN_INDICE.has(camino)) {
     return { estado: 200, html: aplicar(plantilla, { titulo: 'LTWEB', canonica: null, noindex: true }) }

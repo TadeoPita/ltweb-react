@@ -107,11 +107,12 @@ export async function generarContenido(raiz) {
       </article>`,
   ).join('\n      ')
 
-  /* Solo los que tienen ficha escrita: los vacíos no aportan nada que leer y
-     ya están fuera del índice por la misma razón. */
-  const conFicha = proyectos.filter(
-    (p) => (p.problem || '').trim() || (p.solution || '').trim() || (p.description || '').trim(),
-  )
+  /* Solo los que tienen ficha escrita y están visibles: los demás no aportan
+     nada que leer y ya están fuera del índice por la misma razón. En el sitio
+     publicado el servidor cambia esta lista por la del panel (por eso el
+     data-proyectos del <ul>); esta sale de la semilla y queda de respaldo. */
+  const { proyectoIndexable } = await import('../src/lib/titulos.js')
+  const conFicha = proyectos.filter(proyectoIndexable)
 
   const listaProyectos = conFicha
     .map(
@@ -185,7 +186,7 @@ export async function generarContenido(raiz) {
       ${
         listaProyectos
           ? `<h2>Proyectos</h2>
-      <ul>
+      <ul data-proyectos>
         ${listaProyectos}
       </ul>
       <p><a href="/portfolio">Ver el portfolio completo</a></p>`

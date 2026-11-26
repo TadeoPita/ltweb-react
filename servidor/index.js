@@ -5,7 +5,7 @@ import { resolve, join, normalize, extname, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { manejarApi } from './lib/api.js'
 import { rutasProduccion } from './lib/datos.js'
-import { redireccion, renderizar } from './lib/paginas.js'
+import { redireccion, renderizar, sitemap } from './lib/paginas.js'
 
 /* El servidor.
  *
@@ -197,6 +197,20 @@ const servidor = createServer(async (req, res) => {
       }
       res.writeHead(404).end('No encontrado')
       return
+    }
+
+    /* El sitemap se arma con lo publicado desde el panel, no con la copia del
+       build: así un proyecto borrado sale solo y uno nuevo entra solo. Si
+       algo falla se sirve la copia de dist/sitemap.xml de más abajo. */
+    if (camino === '/sitemap.xml') {
+      try {
+        const xml = await sitemap({ dist: DIST, rutas: RUTAS, raiz: RAIZ })
+        res.writeHead(200, { 'Content-Type': TIPOS['.xml'], 'Cache-Control': 'no-cache, must-revalidate' })
+        res.end(req.method === 'HEAD' ? undefined : xml)
+        return
+      } catch (err) {
+        console.error('[sitemap] se sirve la copia del build:', err)
+      }
     }
 
     // --- El sitio ---

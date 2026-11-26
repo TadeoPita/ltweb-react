@@ -20,6 +20,14 @@ export function proyectoConFicha(p) {
   return [p?.problem, p?.solution, p?.description].some((v) => limpiar(v))
 }
 
+/* La regla única de qué ficha se le ofrece a Google: tiene que estar visible
+   y tener texto cargado. La usan el sitemap, la lista de proyectos de la home
+   y el noindex de cada ficha, así no hay forma de que el sitemap mande una
+   página que después dice "no me indexes". */
+export function proyectoIndexable(p) {
+  return Boolean(p && p.id && !p.blurred && proyectoConFicha(p))
+}
+
 export function tituloProyecto(p) {
   const tipo = enFrase(p?.type) || 'Sitio web'
   const rubro = limpiar(p?.category).split(',')[0].trim().toLowerCase()
